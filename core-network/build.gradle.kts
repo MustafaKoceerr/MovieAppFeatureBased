@@ -58,10 +58,10 @@ dependencies {
     api(project(":core-common"))
 
     // 🌐 NETWORK CORE
-    implementation(libs.retrofit.core)
-    implementation(libs.retrofit.kotlinx.serialization)
+    api(libs.retrofit.core)                    // ✅ Changed to api
+    api(libs.retrofit.kotlinx.serialization)
     implementation(libs.okhttp.logging)
-    implementation(libs.kotlinx.serialization.json)
+    api(libs.kotlinx.serialization.json)
 
     // 💉 DEPENDENCY INJECTION
     implementation(libs.hilt.android)
