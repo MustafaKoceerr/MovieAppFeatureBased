@@ -1,0 +1,42 @@
+package com.mustafakocer.core_network.error
+
+import com.mustafakocer.core_common.AppException
+import com.mustafakocer.core_common.UiState
+import com.mustafakocer.core_common.canRetry
+import com.mustafakocer.core_network.config.NetworkConfig
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.retryWhen
+import kotlin.math.pow
+
+// # Automatic retry logic
+
+fun <T> Flow<UiState<T>>.applyRetryStrategy(): Flow<UiState<T>> {
+    return this.retryWhen { cause, attempt ->
+        val shouldRetry = when {
+            attempt >= NetworkConfig.MAX_RETRY_ATTEMPTS -> false
+            cause is Exception -> {
+                val appException = cause as? AppException ?: AppException.UnknownException(originalCause = cause)
+                appException.canRetry
+            }
+            else -> false
+        }
+
+        if (shouldRetry) {
+            val delayMs = calculateRetryDelay(attempt.toInt())
+            delay(delayMs)
+            true
+        } else {
+            false
+        }
+    }.catch { throwable ->
+        val appException = throwable as? AppException ?: AppException.UnknownException(originalCause = throwable)
+        emit(UiState.Error(appException))
+    }
+}
+
+private fun calculateRetryDelay(attempt: Int): Long {
+    return (NetworkConfig.RETRY_DELAY_MS *
+            NetworkConfig.BACKOFF_MULTIPLIER.pow(attempt.toDouble())).toLong()
+}
