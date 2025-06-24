@@ -54,21 +54,29 @@ android {
 }
 
 dependencies {
-    // Core dependency - FIXED PATH
+// ⭐ CORE DEPENDENCY - Base infrastructure
     api(project(":core-common"))
 
-    // Network
+    // 🌐 NETWORK CORE
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.kotlinx.serialization)
     implementation(libs.okhttp.logging)
     implementation(libs.kotlinx.serialization.json)
 
-    // Hilt
+    // 💉 DEPENDENCY INJECTION
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    // Coroutines
+    // ⚡ COROUTINES
     implementation(libs.kotlinx.coroutines.android)
 
-    // NO UI DEPENDENCIES - Pure network logic!
+    // 📊 TESTING
+    testImplementation(libs.junit)
+    testImplementation("org.mockito:mockito-core:5.8.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    // ⚠️ NO UI DEPENDENCIES - Pure network logic!
+    // ❌ No Compose
+    // ❌ No Activity/Fragment
+    // ❌ No Navigation
 }
