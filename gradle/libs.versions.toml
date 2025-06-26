@@ -1,6 +1,6 @@
 [versions]
 # Android & Kotlin
-agp = "8.10.1"
+agp = "8.8.2"
 kotlin = "2.1.0"
 compose-bom = "2024.12.01"
 core-ktx = "1.16.0"
@@ -13,6 +13,7 @@ material = "1.12.0"
 hilt = "2.56.2"
 navigation = "2.8.4"
 room = "2.6.1"
+paging = "3.2.1"
 
 # Network
 retrofit = "2.11.0"
@@ -29,6 +30,7 @@ coil = "2.8.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
+
 
 [libraries]
 # Core Android
@@ -58,6 +60,10 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+
+# Paging
+paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
+paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
 
 # Network
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
