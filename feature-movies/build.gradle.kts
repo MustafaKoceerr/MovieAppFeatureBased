@@ -1,9 +1,11 @@
+// feature-movies/build.gradle.kts
 /**
  * TEACHING MOMENT: Feature Module Dependencies
  *
  * DEPENDENCY HIERARCHY:
  * feature-movies → core-network → core-common
  * feature-movies → core-ui (for shared components)
+ * feature-movies → core-database (for pagination)
  *
  * ✅ Feature modules depend on CORE modules
  * ❌ Feature modules NEVER depend on other features
@@ -14,6 +16,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
@@ -51,12 +54,12 @@ android {
 }
 
 dependencies {
-    // ⭐ CORE DEPENDENCIES
-    implementation(project(":core-common"))
-    implementation(project(":core-network"))
-    implementation(project(":core-ui"))
+// ⭐ CORE DEPENDENCIES - Inherited chain
+    api(project(":core-common"))      // ✅ Base infrastructure
+    api(project(":core-network"))     // ✅ Network + core-common
+    api(project(":core-database"))    // ✅ Database + core-common
 
-    // 🎨 COMPOSE UI
+    // 🎨 COMPOSE UI (Feature-specific)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -64,22 +67,24 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
-    // 🧭 NAVIGATION
+    // 🧭 NAVIGATION (Feature-specific)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.hilt.navigation.compose)
 
-    // 💉 DEPENDENCY INJECTION
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
+    // 💉 HILT KSP (Required for annotation processing)
+    ksp(libs.hilt.compiler)  // ✅ Still needed for this module's @Inject
+    implementation(libs.hilt.android) // hilt pluginini eklediğimiz için plugin doğrudan iletişime geçiyor, burada olmak zorunda
 
-    // 🌐 NETWORK (inherited from core-network)
-    // Retrofit, OkHttp, Serialization already available
-
-    // 🖼️ IMAGE LOADING
+    // 🖼️ IMAGE LOADING (Feature-specific)
     implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
-    // ⚡ COROUTINES
-    implementation(libs.kotlinx.coroutines.android)
+
+    // ⚡ INHERITED from core modules:
+    // ❌ hilt.android (from core-common)
+    // ❌ kotlinx.coroutines.android (from core-common)
+    // ❌ kotlinx.serialization.json (from core-common)
+    // ❌ retrofit.core (from core-network)
+    // ❌ room.runtime (from core-database)
+    // ❌ paging.runtime (from core-database)
 
     // 📊 TESTING
     testImplementation(libs.junit)

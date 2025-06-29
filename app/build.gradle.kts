@@ -101,11 +101,11 @@ android {
 }
 
 dependencies {
-    // ⭐ CORE MODULES (Independent of each other)
-    implementation(project(":core-common"))
-    implementation(project(":core-network"))
-    implementation(project(":core-database"))
-    // implementation(project(":core-ui"))  // Future
+    // ⭐ FEATURE MODULES
+    implementation(project(":feature-movies"))  // ✅ All movie-related features
+
+    // 🏗️ CORE MODULES (Inherited through feature-movies)
+    // ❌ Don't need explicit core dependencies - inherited through features
 
     // 🎨 APP-SPECIFIC UI
     implementation(libs.androidx.activity.compose)
