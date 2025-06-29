@@ -14,7 +14,6 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
 
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
@@ -51,18 +50,20 @@ android {
 }
 
 dependencies {
-    // Core Android (minimal)
-    implementation(libs.androidx.core.ktx)
+    // 📱 CORE ANDROID
+    api(libs.androidx.core.ktx)  // ✅ Tüm modüller kullanacak
 
-    // Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
+    // 💉 DEPENDENCY INJECTION (Shared)
+    api(libs.hilt.android)       // ✅ api - child modules inherit
+    ksp(libs.hilt.compiler)      // ✅ Annotation processing
 
-    // Coroutines
-    implementation(libs.kotlinx.coroutines.android)
+    // ⚡ COROUTINES (Shared)
+    api(libs.kotlinx.coroutines.android)  // ✅ api - shared
 
-    // Serialization
-    implementation(libs.kotlinx.serialization.json)
+    // 🔄 SERIALIZATION (Shared)
+    api(libs.kotlinx.serialization.json)  // ✅ api - shared
 
+    // 📊 TESTING (Shared)
+    testImplementation(libs.junit)
     // NO UI dependencies - core-common is pure logic!
 }

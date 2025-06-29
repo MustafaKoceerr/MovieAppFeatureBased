@@ -1,6 +1,7 @@
 [versions]
 # Android & Kotlin
 agp = "8.8.2"
+
 kotlin = "2.1.0"
 compose-bom = "2024.12.01"
 core-ktx = "1.16.0"
@@ -24,7 +25,8 @@ kotlinx-serialization = "1.7.3"
 coroutines = "1.9.0"
 
 # Image
-coil = "2.8.0"
+coilCompose = "3.2.0"
+coilNetworkOkhttp = "3.2.0"
 
 # Testing
 junit = "4.13.2"
@@ -72,7 +74,8 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
 # Image Loading
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 
 # Coroutines
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }

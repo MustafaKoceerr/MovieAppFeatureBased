@@ -1,5 +1,7 @@
 package com.mustafakocer.core_common
 
+import com.mustafakocer.core_common.exception.AppException
+
 
 /**
  * TEACHING MOMENT: UiState vs Resource Pattern

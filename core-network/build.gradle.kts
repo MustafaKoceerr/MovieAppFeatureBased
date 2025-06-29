@@ -19,9 +19,9 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
 
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
+
 }
 
 android {
@@ -54,26 +54,24 @@ android {
 }
 
 dependencies {
-// ⭐ CORE DEPENDENCY - Base infrastructure
+    // ⭐ CORE DEPENDENCY (Brings Hilt, Coroutines, Serialization)
     api(project(":core-common"))
 
-    // 🌐 NETWORK CORE
-    api(libs.retrofit.core)                    // ✅ Changed to api
+    // 🌐 NETWORK SPECIFIC ONLY
+    api(libs.retrofit.core)
     api(libs.retrofit.kotlinx.serialization)
     implementation(libs.okhttp.logging)
-    api(libs.kotlinx.serialization.json)
 
-    // 💉 DEPENDENCY INJECTION
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-
-    // ⚡ COROUTINES
-    implementation(libs.kotlinx.coroutines.android)
+    // 💉 HILT KSP (Required for annotation processing)
+    ksp(libs.hilt.compiler)  // ✅ Still needed for this module's @Inject
 
     // 📊 TESTING
-    testImplementation(libs.junit)
     testImplementation("org.mockito:mockito-core:5.8.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    // ❌ NO: hilt.android (inherited from core-common)
+    // ❌ NO: kotlinx.coroutines.android (inherited)
+    // ❌ NO: kotlinx.serialization.json (inherited)
 
     // ⚠️ NO UI DEPENDENCIES - Pure network logic!
     // ❌ No Compose

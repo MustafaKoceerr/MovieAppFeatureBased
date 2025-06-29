@@ -13,7 +13,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization)
+
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
@@ -77,7 +77,7 @@ dependencies {
 
     // 🖼️ IMAGE LOADING
     implementation(libs.coil.compose)
-
+    implementation(libs.coil.network.okhttp)
     // ⚡ COROUTINES
     implementation(libs.kotlinx.coroutines.android)
 

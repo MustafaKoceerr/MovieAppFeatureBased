@@ -1,6 +1,6 @@
 package com.mustafakocer.core_network.error
 
-import com.mustafakocer.core_common.AppException
+import com.mustafakocer.core_common.exception.AppException
 import retrofit2.Response
 import java.io.IOException
 import java.net.SocketTimeoutException

@@ -1,8 +1,8 @@
 package com.mustafakocer.core_network.error
 
-import com.mustafakocer.core_common.AppException
 import com.mustafakocer.core_common.UiState
-import com.mustafakocer.core_common.canRetry
+import com.mustafakocer.core_common.exception.AppException
+import com.mustafakocer.core_common.exception.canRetry
 import com.mustafakocer.core_network.config.NetworkConfig
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

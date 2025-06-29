@@ -20,9 +20,9 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
 
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
+
 }
 
 android {
@@ -55,38 +55,32 @@ android {
 }
 
 dependencies {
-    // ⭐ CORE DEPENDENCY - Base infrastructure
+    // ⭐ CORE DEPENDENCY (Brings Hilt, Coroutines, Serialization)
     api(project(":core-common"))
 
-    // 🗄️ ROOM DATABASE (API - çünkü feature modules kullanacak)
+    // 🗄️ DATABASE SPECIFIC ONLY
     api(libs.room.runtime)
     api(libs.room.ktx)
     ksp(libs.room.compiler)
 
-    // 📄 PAGINATION 3 (API - feature modules kullanacak)
+    // 📄 PAGINATION SPECIFIC
     api(libs.paging.runtime)
     api(libs.paging.compose)
 
-    // 💉 DEPENDENCY INJECTION
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-
-    // 🔄 SERIALIZATION (for type converters)
-    implementation(libs.kotlinx.serialization.json)
-
-    // ⚡ COROUTINES
-    implementation(libs.kotlinx.coroutines.android)
+    // 💉 HILT KSP (Required for annotation processing)
+    ksp(libs.hilt.compiler)  // ✅ Still needed for this module's @Inject
 
     // 📊 TESTING
-    testImplementation(libs.junit)
     testImplementation("androidx.room:room-testing:2.6.1")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("app.cash.turbine:turbine:1.0.0")
 
-    // INSTRUMENTED TESTING
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // ❌ NO: hilt.android (inherited from core-common)
+    // ❌ NO: kotlinx.coroutines.android (inherited)
+    // ❌ NO: Dependencies on core-network!
     // ⚠️ NO NETWORK DEPENDENCIES - Network injection ile gelir
     // ⚠️ NO UI DEPENDENCIES - Pure database logic
 }

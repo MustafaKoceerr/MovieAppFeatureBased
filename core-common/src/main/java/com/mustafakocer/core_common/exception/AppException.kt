@@ -1,4 +1,5 @@
-package com.mustafakocer.core_common
+package com.mustafakocer.core_common.exception
+
 
 import java.io.IOException
 import java.net.SocketTimeoutException
