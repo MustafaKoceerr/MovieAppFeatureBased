@@ -1,7 +1,7 @@
 // core-database/build.gradle.kts
 
 /**
- * TEACHING MOMENT: core-database Module Dependencies
+ * TEACHING MOMENT: Core Database Module Dependencies
  *
  * REUSABLE DATABASE MODULE:
  * ✅ Generic Room infrastructure
@@ -71,13 +71,11 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-
     // 🔄 SERIALIZATION (for type converters)
     implementation(libs.kotlinx.serialization.json)
 
     // ⚡ COROUTINES
     implementation(libs.kotlinx.coroutines.android)
-
 
     // 📊 TESTING
     testImplementation(libs.junit)
