@@ -7,3 +7,4 @@ interface NetworkConfigProvider {
     val isDebug: Boolean
     val enableLogging: Boolean
 }
+// core common modülünde interface olarak durmalı .

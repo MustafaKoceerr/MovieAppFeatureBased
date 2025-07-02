@@ -32,13 +32,3 @@ data class PaginatedResponse<T>(
     val hasPrevious: Boolean get() = page > 1
 }
 
-/**
- * Standard error response format
- */
-@Serializable
-data class ErrorResponse(
-    val error: String,
-    val message: String? = null,
-    val code: String? = null,
-    val details: Map<String, String>? = null
-)

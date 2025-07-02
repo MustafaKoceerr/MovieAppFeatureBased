@@ -33,6 +33,9 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 
+# Icons Extended
+compose-material = "1.7.8"
+materialVersion = "1.12.0"
 
 [libraries]
 # Core Android
@@ -89,8 +92,10 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 
-# Material
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+# Icons Extended
+androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "compose-material" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose-material" }
+material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
