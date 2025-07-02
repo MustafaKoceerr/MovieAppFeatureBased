@@ -1,6 +1,6 @@
 package com.mustafakocer.core_network.utils
 
-import com.mustafakocer.core_common.UiState
+import com.mustafakocer.core_common.result.UiState
 import com.mustafakocer.core_network.error.applyRetryStrategy
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

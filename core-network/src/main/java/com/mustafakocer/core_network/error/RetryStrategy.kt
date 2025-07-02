@@ -1,6 +1,6 @@
 package com.mustafakocer.core_network.error
 
-import com.mustafakocer.core_common.UiState
+import com.mustafakocer.core_common.result.UiState
 import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.core_common.exception.canRetry
 import com.mustafakocer.core_network.config.NetworkConfig
