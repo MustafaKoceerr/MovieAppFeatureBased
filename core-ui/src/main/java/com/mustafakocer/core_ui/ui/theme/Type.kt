@@ -1,4 +1,4 @@
-package com.mustafakocer.movieappfeaturebasedclean.ui.theme
+package com.mustafakocer.core_ui.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
