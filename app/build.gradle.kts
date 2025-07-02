@@ -101,19 +101,25 @@ android {
 }
 
 dependencies {
-    // ⭐ FEATURE MODULES
-    implementation(project(":feature-movies"))  // ✅ All movie-related features
+// ⭐ FEATURE MODULES (All dependencies inherited through these)
+    implementation(project(":core-ui"))        // → Compose, Material3, Coil, core-common
+    implementation(project(":core-network"))   // → Retrofit, Serialization, core-common
+    implementation(project(":core-database"))  // → Room, Paging, core-common
+    implementation(project(":feature-movies"))
+    implementation(project(":navigation-contracts"))  // ✅ NEW
 
-    // 🏗️ CORE MODULES (Inherited through feature-movies)
-    // ❌ Don't need explicit core dependencies - inherited through features
+    // Future features:
+    // implementation(project(":feature-auth"))
+    // implementation(project(":feature-profile"))
+    // implementation(project(":feature-favorites"))
+
+    // navigation
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
 
     // 🎨 APP-SPECIFIC UI
     implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
 
     // 💉 HILT KSP (For app's @Inject annotations)
     ksp(libs.hilt.compiler)
@@ -121,15 +127,14 @@ dependencies {
     // core-common'dan katılım almak bu durumda yetmiyor.
     // serialization plugininin implementasyon istememes, hilt-serialization pluginlerinin beklenti farkları olmasından kaynaklanır.
 
-    // 📊 APP TESTING
+    // 📊 TESTING
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
+    // 🛠️ DEBUG
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    // ❌ NO: hilt.android (inherited from core modules)
 }
