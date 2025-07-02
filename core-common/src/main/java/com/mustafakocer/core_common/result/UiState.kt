@@ -1,4 +1,4 @@
-package com.mustafakocer.core_common
+package com.mustafakocer.core_common.result
 
 import com.mustafakocer.core_common.exception.AppException
 
