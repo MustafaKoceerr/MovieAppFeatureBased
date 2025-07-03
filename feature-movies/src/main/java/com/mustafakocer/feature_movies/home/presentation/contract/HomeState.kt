@@ -38,6 +38,7 @@ sealed interface HomeUiState {
     }
 }
 
+// TODO Buradaki ekranları navigation modülünden al
 // Route definitions
 @Serializable
 data class MovieDetailRoute(
