@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
+import com.mustafakocer.feature_movies.details.presentation.screen.MovieDetailsRoute
 
 /**
  * Main navigation host for the entire application
@@ -92,14 +93,9 @@ fun AppNavHost(
 
             composable<MovieDetailsDestination> { backStackEntry ->
                 val destination = backStackEntry.toRoute<MovieDetailsDestination>()
-
-                // TODO: MovieDetailsScreen(
-                //     movieId = destination.movieId,
-                //     movieTitle = destination.movieTitle,
-                //     navActions = navActions
-                // )
-                androidx.compose.material3.Text(
-                    "Movie Details - ID: ${destination.movieId}, Title: ${destination.movieTitle}"
+                MovieDetailsRoute(
+                    movieId = destination.movieId,
+                    navController = navController
                 )
             }
 
