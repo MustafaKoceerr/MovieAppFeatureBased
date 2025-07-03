@@ -6,7 +6,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -18,8 +17,5 @@ object ApiModule {
     fun provideMovieDetailsApiService(retrofit: Retrofit): MovieDetailsApiService =
         retrofit.create(MovieDetailsApiService::class.java)
 
-    @Provides
-    @Named("tmdb_api_key")
-    // TODO API KEY'I KALDIR
-    fun provideApiKey(): String = "60cdc972a61d74fa8a6d7e21cc4a968f"
+
 }
