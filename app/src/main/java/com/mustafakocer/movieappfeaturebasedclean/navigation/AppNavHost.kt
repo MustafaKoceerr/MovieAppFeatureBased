@@ -19,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.mustafakocer.feature_movies.details.presentation.screen.MovieDetailsRoute
+import com.mustafakocer.feature_movies.list.presentation.screen.MovieListRoute
 
 /**
  * Main navigation host for the entire application
@@ -102,13 +103,11 @@ fun AppNavHost(
             composable<MoreMoviesDestination> { backStackEntry ->
                 val destination = backStackEntry.toRoute<MoreMoviesDestination>()
 
-                // TODO: MoreMoviesScreen(
-                //     category = destination.category,
-                //     categoryTitle = destination.categoryTitle,
-                //     navActions = navActions
-                // )
-                androidx.compose.material3.Text(
-                    "More Movies - Category: ${destination.category}, Title: ${destination.categoryTitle}"
+                // MovieListRoute'u kullan
+                MovieListRoute(
+                    categoryEndpoint = destination.category,
+                    categoryTitle = destination.categoryTitle,
+                    navController = navController
                 )
             }
         }
