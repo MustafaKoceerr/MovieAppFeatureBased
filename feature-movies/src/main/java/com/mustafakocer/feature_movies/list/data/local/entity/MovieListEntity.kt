@@ -1,10 +1,10 @@
+// feature-movies/src/main/java/com/mustafakocer/feature_movies/list/data/local/entity/MovieListEntity.kt
 package com.mustafakocer.feature_movies.list.data.local.entity
 
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.mustafakocer.core_database.cache.CacheMetadata
-import com.mustafakocer.database_contracts.MovieEntityContract
 
 /**
  * Movie list entity for pagination
@@ -12,50 +12,48 @@ import com.mustafakocer.database_contracts.MovieEntityContract
  * CLEAN ARCHITECTURE: Infrastructure Layer - Data Storage
  * EXTENDS: Core database CacheMetadata for cache management
  *
- *  * DATABASE CONTRACTS PATTERN:
- *  * ✅ Implements MovieEntityContract interface
- *  * ✅ Room entity for actual database storage
- *  * ✅ Composition with core CacheMetadata
+ * DATABASE CONTRACTS PATTERN:
+ * ✅ Room entity for actual database storage
+ * ✅ Composition with core CacheMetadata
  */
 @Entity(tableName = "movie_list_items")
 data class MovieListEntity(
     @PrimaryKey
-    override val id: Int,
-    override val title: String,
-    override val overview: String,
-    override val posterPath: String?,
-    override val backdropPath: String?,
-    override val releaseDate: String,
-    override val voteAverage: Double,
-    override val genreIds: String, // JSON string of List<Int>
-    override val adult: Boolean,
-    override val originalLanguage: String,
-    override val originalTitle: String,
-    override val popularity: Double,
-    override val video: Boolean,
-    override val voteCount: Int,
+    val id: Int,
+    val title: String,
+    val overview: String,
+    val posterPath: String?,
+    val backdropPath: String?,
+    val releaseDate: String,
+    val voteAverage: Double,
+    val genreIds: String, // JSON string of List<Int>
+    val adult: Boolean,
+    val originalLanguage: String,
+    val originalTitle: String,
+    val popularity: Double,
+    val video: Boolean,
+    val voteCount: Int,
 
     // Pagination metadata
-    override val category: String,
-    override val page: Int,
-    override val position: Int,
+    val category: String,
+    val page: Int,
+    val position: Int,
 
     // Cache metadata via composition
-    @Embedded(prefix = "movie_cache_") // ✅ Prefix eklendi
-    private val cacheMetadata: CacheMetadata,
-) : MovieEntityContract {
+    @Embedded(prefix = "movie_cache_")
+    val cacheMetadata: CacheMetadata,
+) {
 
     // Implement CacheAwareEntityContract via delegation
-    override val cachedAt: Long get() = cacheMetadata.cachedAt
-    override val expiresAt: Long get() = cacheMetadata.expiresAt
-    override val cacheVersion: Int get() = cacheMetadata.cacheVersion
-    override val isPersistent: Boolean get() = cacheMetadata.isPersistent
+    val cachedAt: Long get() = cacheMetadata.cachedAt
+    val expiresAt: Long get() = cacheMetadata.expiresAt
+    val cacheVersion: Int get() = cacheMetadata.cacheVersion
+    val isPersistent: Boolean get() = cacheMetadata.isPersistent
 
     companion object {
         /**
          * Create cache metadata for movie list item
          */
-
         fun createCacheMetadata(
             category: String,
             page: Int,
@@ -67,8 +65,8 @@ data class MovieListEntity(
             return CacheMetadata(
                 cachedAt = System.currentTimeMillis(),
                 expiresAt = System.currentTimeMillis() + cacheTimeoutMs,
-                isPersistent = isPersistent,
-                cacheVersion = cacheVersion
+                cacheVersion = cacheVersion,
+                isPersistent = isPersistent
             )
         }
     }

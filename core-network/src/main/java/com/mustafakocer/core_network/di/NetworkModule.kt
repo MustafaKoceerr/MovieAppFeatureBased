@@ -27,15 +27,15 @@ object NetworkModule {
         return EnvironmentConfig.DEVELOPMENT
     }
 
-//    @Provides
-//    @Singleton
-//    fun provideJson(): Json {
-//        return Json {
-//            ignoreUnknownKeys = true
-//            coerceInputValues = true
-//            isLenient = true
-//        }
-//    }
+    @Provides
+    @Singleton
+    fun provideJson(): Json {
+        return Json {
+            ignoreUnknownKeys = true    // API'dan bilinmeyen field'lar ignore
+            coerceInputValues = true    // Type coercion (string->int vs.)
+            isLenient = true           // Flexible parsing
+        }
+    }
 
     @Provides
     @Singleton

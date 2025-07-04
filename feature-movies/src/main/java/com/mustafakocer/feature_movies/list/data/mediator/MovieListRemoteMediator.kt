@@ -15,7 +15,7 @@ import com.mustafakocer.feature_movies.list.data.mapper.toEntity
 import com.mustafakocer.feature_movies.list.data.remote.MovieListApiService
 import com.mustafakocer.feature_movies.list.domain.model.MovieCategory
 import kotlinx.coroutines.delay
-import javax.inject.Inject
+
 
 /**
  * Remote Mediator for Movie List pagination
@@ -29,12 +29,13 @@ import javax.inject.Inject
  * - Uses core database RemoteKey for pagination state
  */
 @OptIn(ExperimentalPagingApi::class)
-class MovieListRemoteMediator @Inject constructor(
+class MovieListRemoteMediator(
     private val apiService: MovieListApiService,
     private val movieListDao: MovieListDao,
     private val remoteKeyDao: MovieListRemoteKeyDao,
     private val database: androidx.room.RoomDatabase,
     private val category: MovieCategory,
+    private val apiKey: String,
 ) : RemoteMediator<Int, MovieListEntity>() {
 
     companion object {
@@ -85,6 +86,7 @@ class MovieListRemoteMediator @Inject constructor(
 
             val apiResponse = apiService.getMoviesByCategory(
                 category = category.apiEndpoint,
+                apiKey = apiKey,
                 page = page
             )
 
@@ -118,7 +120,7 @@ class MovieListRemoteMediator @Inject constructor(
                 remoteKeyDao.upsert(remoteKey)
 
                 val movieEntities = movies.toEntity(category.apiEndpoint, page)
-                movieListDao.insertAll(movieEntities)
+                movieListDao.upsertAll(movieEntities)
             }
 
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
@@ -127,6 +129,8 @@ class MovieListRemoteMediator @Inject constructor(
             MediatorResult.Error(exception)
         }
     }
+
+    // ==================== HELPER METHODS ====================
 
     private suspend fun getRemoteKeyClosestToCurrentPosition(
         state: PagingState<Int, MovieListEntity>,

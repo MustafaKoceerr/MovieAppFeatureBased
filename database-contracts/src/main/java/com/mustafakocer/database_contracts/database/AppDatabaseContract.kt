@@ -9,9 +9,5 @@ import com.mustafakocer.core_database.pagination.RemoteKey
  * app modülünde concrete implementation yapılacak
  */
 abstract class AppDatabaseContract : RoomDatabase() {
-    // Feature DAOs - feature'lar kendi DAO'larını burada expose edecek
-    // Bu methodlar app modülünde override edilecek
 
-    // Core DAO'lar app modülünde doğrudan tanımlanacak
-    // abstract fun remoteKeyDao(): RemoteKeyDao // ← KALDIRILDI
 }

@@ -17,11 +17,23 @@ data class RemoteKey(
     @PrimaryKey
     val query: String,  // "movies_popular", "movies_top_rated" vs.
 
+    @ColumnInfo(name = "entity_type")
+    val entityType: String, // "movies", "users", etc.
+
     @ColumnInfo(name = "current_page")
     val currentPage: Int,
 
+    @ColumnInfo(name = "next_key")
+    val nextKey: String? = null,
+
+    @ColumnInfo(name = "prev_key")
+    val prevKey: String? = null,
+
     @ColumnInfo(name = "total_pages")
     val totalPages: Int? = null,
+
+    @ColumnInfo(name = "total_items")
+    val totalItems: Int? = null,
 
     @Embedded(prefix = "cache_")
     val cache: CacheMetadata,
@@ -50,11 +62,13 @@ data class RemoteKey(
          */
         fun create(
             query: String,
+            entityType: String = "movies",
             page: Int = 1,
             totalPages: Int? = null,
         ): RemoteKey {
             return RemoteKey(
                 query = query,
+                entityType = entityType,
                 currentPage = page,
                 totalPages = totalPages,
                 cache = CacheMetadata.oneHour()

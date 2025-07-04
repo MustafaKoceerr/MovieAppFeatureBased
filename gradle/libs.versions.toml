@@ -69,6 +69,7 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 # Paging
 paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
 paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
+room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
 
 # Network
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }

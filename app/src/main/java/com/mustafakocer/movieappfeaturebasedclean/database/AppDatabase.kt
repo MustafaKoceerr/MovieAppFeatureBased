@@ -3,6 +3,7 @@ package com.mustafakocer.movieappfeaturebasedclean.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.mustafakocer.core_database.dao.RemoteKeyDao
 import com.mustafakocer.core_database.pagination.RemoteKey
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListRemoteKeyDao
@@ -25,32 +26,19 @@ import com.mustafakocer.feature_movies.list.data.local.entity.MovieListEntity
  */
 @Database(
     entities = [
-        // Core entities
         RemoteKey::class,
-
-        //Feature entities ( registered dynamically)
         MovieListEntity::class,
-
-        // Future feature entities will be added here
-        // UserEntity::class,
-        // SearchHistoryEntity::class,
     ],
-    version = 1, // Will be updated dynamically by AppDatabaseBuilder
+    version = 1,
     exportSchema = false // Set to true in production
 )
 @TypeConverters(
-    // Core converters
-    // DateConverter::class,
-
-    // Feature converters will be added here
-    // MovieGenreConverter::class,
 )
 abstract class AppDatabase : RoomDatabase() {
 
     // ==================== CORE DAOS ====================
 
     abstract fun remoteKeyDao(): RemoteKeyDao
-
     // ==================== FEATURE DAOS ====================
 
     // Movies feature DAOs

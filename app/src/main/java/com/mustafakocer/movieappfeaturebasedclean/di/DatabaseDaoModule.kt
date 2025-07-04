@@ -40,7 +40,8 @@ object DatabaseDaoModule {
 
     @Provides
     @Singleton
-    fun provideRemoteKeyDao(database: AppDatabase) = database.remoteKeyDao()
+    fun provideRemoteKeyDao(database: AppDatabase): com.mustafakocer.core_database.dao.RemoteKeyDao =
+        database.remoteKeyDao()
 
     // ==================== FEATURE DAOS ====================
 

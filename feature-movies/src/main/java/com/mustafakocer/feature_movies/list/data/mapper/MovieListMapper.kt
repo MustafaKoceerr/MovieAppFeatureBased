@@ -11,7 +11,8 @@ import kotlinx.serialization.json.Json
  * Movie list mappers
  *
  * CLEAN ARCHITECTURE: Infrastructure Layer
- * RESPONSIBILITY: Convert between layers (DTO ↔ Entity ↔ Domain) */
+ * RESPONSIBILITY: Convert between layers (DTO ↔ Entity ↔ Domain)
+ */
 
 // ==================== DOMAIN MAPPING ====================
 
@@ -81,7 +82,6 @@ fun MovieListDto.toEntity(
         )
     )
 }
-
 
 /**
  * Convert list of DTOs to entities

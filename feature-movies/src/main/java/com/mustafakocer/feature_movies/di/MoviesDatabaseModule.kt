@@ -1,34 +1,31 @@
 package com.mustafakocer.feature_movies.di
 
-import com.mustafakocer.database_contracts.FeatureDatabaseContributor
-import com.mustafakocer.feature_movies.database.MoviesDatabaseContributor
-import dagger.Binds
+import com.mustafakocer.feature_movies.database.MoviesDatabaseInfo
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dagger.multibindings.IntoSet
-
-
+import javax.inject.Singleton
 
 /**
  * Movies feature database DI module
  *
- * DATABASE CONTRACTS PATTERN:
- * ✅ Registers feature database contributor
- * ✅ Uses Dagger multibinding for modular registration
- * ✅ App module will collect all contributors
+ * SIMPLIFIED APPROACH:
+ * ✅ Provides database info for manual registration
+ * ✅ No dynamic registration complexity
+ * ✅ Focus on getting basic functionality working first
  */
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class MoviesDatabaseModule {
+object MoviesDatabaseModule {
 
     /**
-     * Contribute movies database entities to main database
-     * Uses @IntoSet for multibinding - app module will collect all
+     * Provide movies database info
+     * Used by app module for manual entity registration
      */
-    @Binds
-    @IntoSet
-    abstract fun bindMoviesDatabaseContributor(
-        contributor: MoviesDatabaseContributor
-    ): FeatureDatabaseContributor
+    @Provides
+    @Singleton
+    fun provideMoviesDatabaseInfo(): MoviesDatabaseInfo {
+        return MoviesDatabaseInfo()
+    }
 }

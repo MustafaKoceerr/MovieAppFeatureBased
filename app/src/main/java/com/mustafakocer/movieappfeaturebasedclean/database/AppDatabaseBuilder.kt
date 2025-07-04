@@ -8,10 +8,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * App database builder
+ * App database builder with pagination support
  *
- * DATABASE CONTRACTS PATTERN:
- * ✅ Simple database builder without dynamic registry
+ * SIMPLIFIED APPROACH:
+ * ✅ Manual entity registration in AppDatabase
  * ✅ Room-compatible static configuration
  * ✅ Environment-specific configurations
  * ✅ Focus on working implementation first

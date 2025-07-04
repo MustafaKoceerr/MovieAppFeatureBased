@@ -1,100 +1,53 @@
 package com.mustafakocer.movieappfeaturebasedclean.database
 
-import com.mustafakocer.database_contracts.DatabaseEntityRegistry
-import com.mustafakocer.database_contracts.FeatureDatabaseContributor
-import com.mustafakocer.feature_movies.database.MoviesDatabaseContributor
+import com.mustafakocer.feature_movies.database.MoviesDatabaseInfo
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * App database registry implementation
+ * Simplified app database registry
  *
- * DATABASE CONTRACTS PATTERN:
- * ✅ Implements DatabaseEntityRegistry interface
- * ✅ Collects entities from all feature contributors
- * ✅ Centralized database composition
- * ✅ Version management across features
+ * MANUAL APPROACH:
+ * ✅ Simple info collection from features
+ * ✅ No complex dynamic registration
+ * ✅ Focus on getting basic functionality working
+ * ✅ Easy to debug and understand
  */
 @Singleton
 class AppDatabaseRegistry @Inject constructor(
-    private val featureContributors: Set<@JvmSuppressWildcards FeatureDatabaseContributor> // ✅ Bu annotation eksik
-) : DatabaseEntityRegistry {
-    override fun getEntityClasses(): Array<Class<*>> {
-        val allEntities = mutableListOf<Class<*>>()
-
-        // Add core database entities
-        allEntities.addAll(getCoreEntityClasses())
-
-        // Add entities from all feature contributors
-        featureContributors.forEach { contributor ->
-            allEntities.addAll(contributor.provideEntityClasses())
-        }
-        return allEntities.toTypedArray()
-    }
-
-    override fun getDatabaseVersion(): Int {
-        // Calculate version based on feature versions
-        var baseVersion = 1
-        val featureVersionSum = featureContributors.sumOf { it.getFeatureVersion() }
-        return baseVersion + featureVersionSum
-    }
-
-    override fun getTypeConverters(): Array<Class<*>> {
-        val allConverters = mutableListOf<Class<*>>()
-
-        // add core converters
-        allConverters.addAll(getCoreTypeConverters())
-
-        // Add converters from all feature contributors
-        featureContributors.forEach { contributor ->
-            allConverters.addAll(contributor.provideTypeConverters())
-        }
-        return allConverters.toTypedArray()
-    }
+    private val moviesDatabaseInfo: MoviesDatabaseInfo
+) {
 
     /**
-     * Get feature contributors for debugging
+     * Get all feature database info for debugging
      */
-    fun getFeatureContributors(): Map<String, FeatureDatabaseContributor> {
-        return featureContributors.associateBy { it.getFeatureName() }
-    }
-
-    /**
-     * Validate all contributors are properly registered
-     */
-    fun validateContributors(): List<String> {
-        val issues = mutableListOf<String>()
-
-        featureContributors.forEach { contributor ->
-            // Check if feature name is not empty
-            if (contributor.getFeatureName().isBlank()) {
-                issues.add("Feature contributor has empty name")
-            }
-
-            // Check if entities are provided
-            if (contributor.provideEntityClasses().isEmpty()) {
-                issues.add("Feature '${contributor.getFeatureName()}' provides no entities")
-            }
-
-            // Check version is positive
-            if (contributor.getFeatureVersion() < 1) {
-                issues.add("Feature '${contributor.getFeatureName()}' has invalid version: ${contributor.getFeatureVersion()}")
-            }
-        }
-        return issues
-    }
-
-    private fun getCoreEntityClasses(): List<Class<*>> {
-        return listOf(
-            com.mustafakocer.core_database.pagination.RemoteKey::class.java,
-            // Add other core entities here
+    fun getFeatureInfo(): Map<String, Any> {
+        return mapOf(
+            "movies" to mapOf(
+                "featureName" to moviesDatabaseInfo.getFeatureName(),
+                "featureVersion" to moviesDatabaseInfo.getFeatureVersion(),
+                "entityCount" to moviesDatabaseInfo.getMovieEntities().size,
+                "converterCount" to moviesDatabaseInfo.getMovieTypeConverters().size
+            )
         )
     }
 
-    private fun getCoreTypeConverters(): List<Class<*>>{
-        return listOf(
-            // Add core type converters here
-            // com.mustafakocer.core_database.converters.DateConverter::class.java,
+    /**
+     * Get database statistics for monitoring
+     */
+    fun getDatabaseStats(): DatabaseStats {
+        return DatabaseStats(
+            totalFeatures = 1, // Only movies for now
+            totalEntities = 1 + moviesDatabaseInfo.getMovieEntities().size, // Core + Movies
+            totalConverters = moviesDatabaseInfo.getMovieTypeConverters().size,
+            registrationApproach = "Manual"
         )
     }
+
+    data class DatabaseStats(
+        val totalFeatures: Int,
+        val totalEntities: Int,
+        val totalConverters: Int,
+        val registrationApproach: String
+    )
 }

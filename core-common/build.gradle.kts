@@ -65,5 +65,8 @@ dependencies {
 
     // 📊 TESTING (Shared)
     testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+
     // NO UI dependencies - core-common is pure logic!
 }

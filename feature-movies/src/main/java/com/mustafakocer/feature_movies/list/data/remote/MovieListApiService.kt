@@ -17,7 +17,8 @@ interface MovieListApiService {
     /**
      * Get movies by category with pagination
      *
-     * @param category Movie Category (now_playing, popular, top_rated, upcoming=
+     * @param category Movie Category (now_playing, popular, top_rated, upcoming)
+     * @param apiKey TMDB API key (injected via DI)
      * @param page Page number (starts from 1)
      * @param language Language code (default: en-US)
      * @param region Region code (optional)
@@ -26,8 +27,8 @@ interface MovieListApiService {
     @GET("movie/{category}")
     suspend fun getMoviesByCategory(
         @Path("category") category: String,
+        @Query("api_key") apiKey: String,
         @Query("page") page: Int = 1,
         @Query("language") language: String = "en-US",
-        @Query("region") region: String? = null,
     ): MovieListResponse
 }

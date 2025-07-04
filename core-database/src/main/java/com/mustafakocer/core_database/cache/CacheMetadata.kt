@@ -18,6 +18,9 @@ data class CacheMetadata(
 
     @ColumnInfo(name = "cache_version")
     val cacheVersion: Int = 1,
+
+    @ColumnInfo(name = "is_persistent")
+    val isPersistent: Boolean = false,
 ) {
     /**
      * Cache hala geçerli mi?
@@ -50,7 +53,8 @@ data class CacheMetadata(
             return CacheMetadata(
                 cachedAt = now,
                 expiresAt = now + durationMillis,
-                cacheVersion = 1
+                cacheVersion = 1,
+                isPersistent = false
             )
         }
 

@@ -70,12 +70,15 @@ android {
 }
 
 dependencies {
-    // ⭐ CORE DEPENDENCIES (Everything inherited through api)
+// ⭐ CORE DEPENDENCIES (Everything inherited through api)
     implementation(project(":core-ui"))        // → Compose, Material3, Coil, core-common
     implementation(project(":core-network"))   // → Retrofit, Serialization, core-common
     implementation(project(":core-database"))  // → Room, Paging, core-common
     implementation(project(":navigation-contracts"))  // → Room, Paging, core-common
     implementation(project(":database-contracts"))
+
+    // 📄 PAGING 3 COMPOSE - ✅ EKLENDİ
+    implementation(libs.paging.compose)
 
     // coil need this
     implementation(libs.coil.network.okhttp)
@@ -97,17 +100,6 @@ dependencies {
 
     // 🎨 APP-SPECIFIC UI
     implementation(libs.androidx.activity.compose)
-    // 🚫 REMOVED - Already inherited from core modules:
-    // ❌ androidx.compose.bom (from core-ui)
-    // ❌ androidx.ui.* (from core-ui)
-    // ❌ androidx.material3 (from core-ui)
-    // ❌ coil.compose (from core-ui)
-    // ❌ hilt.android (from core-common)
-    // ❌ kotlinx.coroutines.* (from core-common)
-    // ❌ kotlinx.serialization.* (from core-network)
-    // ❌ retrofit.* (from core-network)
-    // ❌ room.* (from core-database)
-    // ❌ paging.* (from core-database)
 
     // 📊 TESTING
     testImplementation(libs.junit)

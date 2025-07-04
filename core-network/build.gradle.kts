@@ -65,9 +65,10 @@ dependencies {
     // 💉 HILT KSP (Required for annotation processing)
     ksp(libs.hilt.compiler)  // ✅ Still needed for this module's @Inject
 
-    // 📊 TESTING
-    testImplementation("org.mockito:mockito-core:5.8.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    // ✅ Unit test için JUnit
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 
     // ❌ NO: hilt.android (inherited from core-common)
     // ❌ NO: kotlinx.coroutines.android (inherited)

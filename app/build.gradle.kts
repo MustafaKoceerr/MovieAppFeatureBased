@@ -114,6 +114,11 @@ dependencies {
     // implementation(project(":feature-profile"))
     // implementation(project(":feature-favorites"))
 
+    // 🗄️ ROOM DATABASE - ✅ EKLENDİ (App level'da KSP için gerekli)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler) // ✅ ÖNEMLİ: Room annotation processor
+
     // navigation
     implementation(libs.androidx.navigation.compose)
     implementation(libs.hilt.navigation.compose)

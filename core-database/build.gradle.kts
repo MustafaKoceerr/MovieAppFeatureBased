@@ -57,6 +57,8 @@ dependencies {
 
     // 📄 PAGING 3 - Pagination support
     api(libs.paging.runtime)
+    api(libs.paging.compose) // ✅ EKLENDİ - Compose için
+    api(libs.room.paging)
 
     // 📊 TESTING
     testImplementation(libs.junit)

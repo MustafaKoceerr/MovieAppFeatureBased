@@ -28,28 +28,60 @@ data class PaginationSettings(
 
     companion object {
         /**
+         * Use Case bazlı pagination ayarları
+         */
+        enum class PaginationUseCase {
+            CATALOG_BROWSE,    // Film listesi, kategori browse
+            SEARCH_RESULTS,    // Arama sonuçları
+            INFINITE_SCROLL,   // Sonsuz scroll
+            DETAILED_LIST      // Detaylı liste görünümü
+        }
+
+        /**
+         * Use case'e göre optimal ayarları döndür
+         */
+        fun forUseCase(useCase: PaginationUseCase): PaginationSettings {
+            return when (useCase) {
+                PaginationUseCase.CATALOG_BROWSE -> PaginationSettings(
+                    pageSize = 20,
+                    prefetchDistance = 5,
+                    initialLoadSize = 40,
+                    enablePlaceholders = false
+                )
+                PaginationUseCase.SEARCH_RESULTS -> PaginationSettings(
+                    pageSize = 10,
+                    prefetchDistance = 3,
+                    initialLoadSize = 20,
+                    enablePlaceholders = false
+                )
+                PaginationUseCase.INFINITE_SCROLL -> PaginationSettings(
+                    pageSize = 15,
+                    prefetchDistance = 8,
+                    initialLoadSize = 30,
+                    enablePlaceholders = true
+                )
+                PaginationUseCase.DETAILED_LIST -> PaginationSettings(
+                    pageSize = 25,
+                    prefetchDistance = 10,
+                    initialLoadSize = 50,
+                    enablePlaceholders = false
+                )
+            }
+        }
+
+        /**
          * Default ayarlar
          */
-        val default = PaginationSettings()
+        val default = forUseCase(PaginationUseCase.CATALOG_BROWSE)
 
         /**
          * Film listesi için optimal ayarlar
          */
-        val movieList = PaginationSettings(
-            pageSize = 20,
-            prefetchDistance = 5,
-            initialLoadSize = 40,
-            enablePlaceholders = false
-        )
+        val movieList = forUseCase(PaginationUseCase.CATALOG_BROWSE)
 
         /**
          * Arama için optimal ayarlar
          */
-        val search = PaginationSettings(
-            pageSize = 10,
-            prefetchDistance = 3,
-            initialLoadSize = 20,
-            enablePlaceholders = false
-        )
+        val search = forUseCase(PaginationUseCase.SEARCH_RESULTS)
     }
 }
