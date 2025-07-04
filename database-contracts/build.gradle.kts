@@ -2,9 +2,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
 
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -37,27 +34,21 @@ android {
 }
 
 dependencies {
-    // ⭐ CORE DEPENDENCY (Brings Hilt, Coroutines, Serialization)
-    api(project(":core-common"))
+    // ⭐ SADECE GEREKLI MINIMUMLAR
 
-    // 🔗 SERIALIZATION - For contracts only
-    implementation(libs.kotlinx.serialization.json)
+    // Room - PagingSource return type için
+    api(libs.room.runtime)
+    api(libs.paging.runtime)
 
-    // 🗄️ ROOM - For DAO contracts only (no implementation)
-    api(libs.room.runtime)  // For PagingSource return types
-    api(libs.paging.runtime) // For PagingSource contracts
+    // core-database - RemoteKeyDao reference için
+    api(project(":core-database"))
 
-    // 💉 HILT - For DI annotations
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-
-    // 📊 TESTING
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    // ⚠️ NO DEPENDENCIES ON OTHER PROJECT MODULES
-    // ❌ No core-database (to avoid circular deps)
-    // ❌ No feature modules
-    // ❌ No UI dependencies
+    // ❌ NO HILT - contracts'ta DI gerekmez
+    // ❌ NO SERIALIZATION - contracts'ta gerekmez
+    // ❌ NO OTHER MODULES
 }

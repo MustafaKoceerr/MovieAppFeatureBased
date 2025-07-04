@@ -4,7 +4,6 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.mustafakocer.core_database.pagination.RemoteKey
-import com.mustafakocer.core_database.pagination.dao.RemoteKeyDao
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListRemoteKeyDao
 import com.mustafakocer.feature_movies.list.data.local.entity.MovieListEntity

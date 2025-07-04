@@ -1,42 +1,14 @@
 package com.mustafakocer.database_contracts.dao
 
 /**
- * Base DAO contract for all database operations
- *
- * DATABASE CONTRACTS PATTERN:
- * ✅ Common CRUD operations
- * ✅ Type-safe operations
- * ✅ Reactive data access
+ * Temel CRUD operasyonları için sözleşme
+ * Tüm DAO'lar bu arayüzü implement eder
  */
-interface BaseDaoContract<T> {
-
-    /**
-     * Insert single entity
-     */
+interface BaseDaoContract<T : Any> {
     suspend fun insert(entity: T): Long
-
-    /**
-     * Insert Multiple entities
-     */
     suspend fun insertAll(entities: List<T>): List<Long>
-
-    /**
-     * Update entity
-     */
     suspend fun update(entity: T): Int
-
-    /**
-     * Delete entity
-     */
     suspend fun delete(entity: T): Int
-
-    /**
-     * Upsert entity
-     */
     suspend fun upsert(entity: T)
-
-    /**
-     * Upsert multiple entities
-     */
     suspend fun upsertAll(entities: List<T>)
 }

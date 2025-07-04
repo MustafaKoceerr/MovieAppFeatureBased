@@ -3,18 +3,13 @@ package com.mustafakocer.core_database.cache
 import androidx.room.ColumnInfo
 
 /**
- * Cache metadata for embedded cache information
+ * Basit cache metadata - sadece gerekli alanlar
  *
- * CLEAN ARCHITECTURE: Infrastructure Layer - Data Storage
- * RESPONSIBILITY: Store cache state data ONLY (no business logic)
- *
- * DESIGN PATTERN: Value Object
- * - Immutable data container
- * - Only computed properties (no side effects)
- * - No business logic methods
+ * Amaç: Entity'lerin ne zaman cache'lendiğini ve ne zaman expire olacağını saklamak
+ * Kullanım: @Embedded olarak entity'lere gömülür.
  */
 
- data class CacheMetadata(
+data class CacheMetadata(
     @ColumnInfo(name = "cached_at")
     val cachedAt: Long,
 
@@ -23,54 +18,50 @@ import androidx.room.ColumnInfo
 
     @ColumnInfo(name = "cache_version")
     val cacheVersion: Int = 1,
-
-    @ColumnInfo(name = "is_persistent")
-    val isPersistent: Boolean = false
 ) {
-    // ✅ ALLOWED: Pure computed properties (no side effects)
-
     /**
-     * Check if cache is still valid
+     * Cache hala geçerli mi?
      */
     val isValid: Boolean
-        get() = isPersistent || System.currentTimeMillis() < expiresAt
+        get() = System.currentTimeMillis() < expiresAt
 
     /**
-     * Check if cache is expired
+     * Cache expire olmuş mu?
      */
     val isExpired: Boolean
         get() = !isValid
 
     /**
-     * Get cache age in milliseconds
+     * Cache kaç dakika eski?
      */
-    val ageInMillis: Long
-        get() = System.currentTimeMillis() - cachedAt
+    val ageMinutes: Long
+        get() = (System.currentTimeMillis() - cachedAt) / (60 * 1000L)
 
-    /**
-     * Get cache age in minutes
-     */
-    val ageInMinutes: Long
-        get() = ageInMillis / (60 * 1000L)
+    companion object {
+        // Cache süreleri (milliseconds)
+        const val HOUR_1 = 60 * 60 * 1000L        // 1 saat
+        const val HOUR_24 = 24 * 60 * 60 * 1000L  // 24 saat
 
-    /**
-     * Get cache age in hours
-     */
-    val ageInHours: Long
-        get() = ageInMillis / (60*60*1000L)
+        /**
+         * Yeni cache metadata oluştur
+         */
+        fun create(durationMillis: Long = HOUR_1): CacheMetadata {
+            val now = System.currentTimeMillis()
+            return CacheMetadata(
+                cachedAt = now,
+                expiresAt = now + durationMillis,
+                cacheVersion = 1
+            )
+        }
 
-    /**
-     * Get cache age in days
-     */
-    val ageInDays: Long
-        get() = ageInMillis / (24*60*60*1000L)
+        /**
+         * 1 saatlik cache
+         */
+        fun oneHour(): CacheMetadata = create(HOUR_1)
 
-    companion object{
-        // Cache duration constants
-        const val DEFAULT_CACHE_DURATION = 60 * 60 * 1000L      // 1 hour
-        const val SHORT_CACHE_DURATION = 5 * 60 * 1000L         // 5 minutes
-        const val MEDIUM_CACHE_DURATION = 30 * 60 * 1000L       // 30 minutes
-        const val LONG_CACHE_DURATION = 24 * 60 * 60 * 1000L    // 24 hours
-        const val WEEK_CACHE_DURATION = 7 * 24 * 60 * 60 * 1000L // 7 days
+        /**
+         * 24 saatlik cache
+         */
+        fun oneDay(): CacheMetadata = create(HOUR_24)
     }
 }
