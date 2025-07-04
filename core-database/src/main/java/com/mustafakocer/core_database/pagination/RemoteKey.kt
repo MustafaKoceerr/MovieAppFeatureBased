@@ -19,8 +19,7 @@ import com.mustafakocer.core_database.cache.CacheMetadata
     indices = [
         Index(value = ["query"], unique = true),
         Index(value = ["entity_type"]),
-        Index(value = ["cached_at"]),
-
+        Index(value = ["remote_cache_cached_at"]),
     ]
 )
 data class RemoteKey(
@@ -45,7 +44,7 @@ data class RemoteKey(
     @ColumnInfo(name = "total_items")
     val totalItems: Int? = null,
 
-    @Embedded
+    @Embedded(prefix = "remote_cache_") // ✅ PREFIX ADDED - THIS WAS MISSING!
     val cache: CacheMetadata,
 ) {
     // ✅ ALLOWED: Pure computed properties (no side effects)

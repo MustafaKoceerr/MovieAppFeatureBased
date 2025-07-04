@@ -14,6 +14,7 @@ import com.mustafakocer.core_database.pagination.RemoteKey
  * - Type-safe queries
  * - Suspend functions for coroutines
  */
+
 @Dao
 interface RemoteKeyDao {
 
@@ -68,23 +69,24 @@ interface RemoteKeyDao {
     suspend fun clearAll(): Int
 
     // ==================== CACHE MANAGEMENT ====================
+    // ✅ FIXED: Updated column names with prefix
 
     /**
      * Get expired remote keys
      */
-    @Query("SELECT * FROM remote_keys WHERE expires_at < :currentTime AND is_persistent = 0")
+    @Query("SELECT * FROM remote_keys WHERE remote_cache_expires_at < :currentTime AND remote_cache_is_persistent = 0")
     suspend fun getExpiredKeys(currentTime: Long = System.currentTimeMillis()): List<RemoteKey>
 
     /**
      * Delete expired remote keys
      */
-    @Query("DELETE FROM remote_keys WHERE expires_at < :currentTime AND is_persistent = 0")
+    @Query("DELETE FROM remote_keys WHERE remote_cache_expires_at < :currentTime AND remote_cache_is_persistent = 0")
     suspend fun deleteExpiredKeys(currentTime: Long = System.currentTimeMillis()): Int
 
     /**
      * Get valid (non-expired) remote keys
      */
-    @Query("SELECT * FROM remote_keys WHERE (expires_at >= :currentTime OR is_persistent = 1)")
+    @Query("SELECT * FROM remote_keys WHERE (remote_cache_expires_at >= :currentTime OR remote_cache_is_persistent = 1)")
     suspend fun getValidKeys(currentTime: Long = System.currentTimeMillis()): List<RemoteKey>
 
     /**
@@ -92,8 +94,8 @@ interface RemoteKeyDao {
      */
     @Query("""
         SELECT * FROM remote_keys 
-        WHERE (cached_at + (expires_at - cached_at) * 0.8) <= :currentTime 
-        AND is_persistent = 0
+        WHERE (remote_cache_cached_at + (remote_cache_expires_at - remote_cache_cached_at) * 0.8) <= :currentTime 
+        AND remote_cache_is_persistent = 0
     """)
     suspend fun getKeysNeedingRefresh(currentTime: Long = System.currentTimeMillis()): List<RemoteKey>
 
@@ -162,25 +164,25 @@ interface RemoteKeyDao {
     /**
      * Get count of expired keys
      */
-    @Query("SELECT COUNT(*) FROM remote_keys WHERE expires_at < :currentTime AND is_persistent = 0")
+    @Query("SELECT COUNT(*) FROM remote_keys WHERE remote_cache_expires_at < :currentTime AND remote_cache_is_persistent = 0")
     suspend fun getExpiredKeyCount(currentTime: Long = System.currentTimeMillis()): Int
 
     /**
      * Get oldest cached key timestamp
      */
-    @Query("SELECT MIN(cached_at) FROM remote_keys")
+    @Query("SELECT MIN(remote_cache_cached_at) FROM remote_keys")
     suspend fun getOldestCacheTime(): Long?
 
     /**
      * Get newest cached key timestamp
      */
-    @Query("SELECT MAX(cached_at) FROM remote_keys")
+    @Query("SELECT MAX(remote_cache_cached_at) FROM remote_keys")
     suspend fun getNewestCacheTime(): Long?
 
     /**
      * Get average cache age in milliseconds
      */
-    @Query("SELECT AVG(:currentTime - cached_at) FROM remote_keys WHERE expires_at >= :currentTime")
+    @Query("SELECT AVG(:currentTime - remote_cache_cached_at) FROM remote_keys WHERE remote_cache_expires_at >= :currentTime")
     suspend fun getAverageCacheAge(currentTime: Long = System.currentTimeMillis()): Double?
 
     // ==================== DEBUGGING AND MAINTENANCE ====================
@@ -188,13 +190,13 @@ interface RemoteKeyDao {
     /**
      * Get recent remote keys (for debugging)
      */
-    @Query("SELECT * FROM remote_keys ORDER BY cached_at DESC LIMIT :limit")
+    @Query("SELECT * FROM remote_keys ORDER BY remote_cache_cached_at DESC LIMIT :limit")
     suspend fun getRecentKeys(limit: Int = 10): List<RemoteKey>
 
     /**
      * Get all remote keys ordered by cache time (for debugging)
      */
-    @Query("SELECT * FROM remote_keys ORDER BY cached_at DESC")
+    @Query("SELECT * FROM remote_keys ORDER BY remote_cache_cached_at DESC")
     suspend fun getAllKeysOrderedByCacheTime(): List<RemoteKey>
 
     /**
@@ -210,9 +212,9 @@ interface RemoteKeyDao {
         SELECT 
             entity_type,
             COUNT(*) as total_keys,
-            SUM(CASE WHEN expires_at < :currentTime AND is_persistent = 0 THEN 1 ELSE 0 END) as expired_keys,
-            MIN(cached_at) as oldest_cache,
-            MAX(cached_at) as newest_cache
+            SUM(CASE WHEN remote_cache_expires_at < :currentTime AND remote_cache_is_persistent = 0 THEN 1 ELSE 0 END) as expired_keys,
+            MIN(remote_cache_cached_at) as oldest_cache,
+            MAX(remote_cache_cached_at) as newest_cache
         FROM remote_keys 
         WHERE entity_type = :entityType
         GROUP BY entity_type
@@ -230,7 +232,7 @@ interface RemoteKeyDao {
         WHERE `query` NOT IN (
             SELECT `query` FROM remote_keys 
             WHERE entity_type = :entityType 
-            ORDER BY cached_at DESC 
+            ORDER BY remote_cache_cached_at DESC 
             LIMIT :keepCount
         ) AND entity_type = :entityType
     """)

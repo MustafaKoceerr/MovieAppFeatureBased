@@ -1,5 +1,6 @@
 package com.mustafakocer.feature_movies.home.di
 
+import com.mustafakocer.feature_movies.BuildConfig
 import com.mustafakocer.feature_movies.home.data.api.MovieApiService
 import dagger.Module
 import dagger.Provides
@@ -21,5 +22,5 @@ object ApiModule {
     @Provides
     @Named("tmdb_api_key")
     // TODO API KEY'I KALDIR
-    fun provideApiKey(): String = "60cdc972a61d74fa8a6d7e21cc4a968f"
+    fun provideApiKey(): String = BuildConfig.API_KEY
 }

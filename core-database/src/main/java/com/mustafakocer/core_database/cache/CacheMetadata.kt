@@ -13,7 +13,8 @@ import androidx.room.ColumnInfo
  * - Only computed properties (no side effects)
  * - No business logic methods
  */
-data class CacheMetadata(
+
+ data class CacheMetadata(
     @ColumnInfo(name = "cached_at")
     val cachedAt: Long,
 
