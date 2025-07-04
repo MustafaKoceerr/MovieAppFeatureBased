@@ -107,6 +107,7 @@ dependencies {
     implementation(project(":core-database"))  // → Room, Paging, core-common
     implementation(project(":feature-movies"))
     implementation(project(":navigation-contracts"))  // ✅ NEW
+    implementation(project(":database-contracts"))  // ✅ NEW
 
     // Future features:
     // implementation(project(":feature-auth"))

@@ -75,6 +75,7 @@ dependencies {
     implementation(project(":core-network"))   // → Retrofit, Serialization, core-common
     implementation(project(":core-database"))  // → Room, Paging, core-common
     implementation(project(":navigation-contracts"))  // → Room, Paging, core-common
+    implementation(project(":database-contracts"))
 
     // coil need this
     implementation(libs.coil.network.okhttp)
