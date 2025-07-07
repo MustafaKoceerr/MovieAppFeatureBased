@@ -21,15 +21,10 @@ sealed interface MovieDetailsEffect : BaseUiEffect {
     ) : MovieDetailsEffect
 
     /**
-     * Show toast message
-     */
-    data class ShowToast(val message: String) : MovieDetailsEffect
-
-    /**
      * Show snackbar message
      */
     data class ShowSnackbar(
         val message: String,
-        val actionLabel: String? = null,
+        val actionLabel: String? = null
     ) : MovieDetailsEffect
 }
