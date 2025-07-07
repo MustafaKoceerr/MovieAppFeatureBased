@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,6 +48,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
 import com.mustafakocer.core_common.presentation.UiContract
+import com.mustafakocer.core_ui.component.error.ErrorCard
 import com.mustafakocer.feature_movies.MovieConstants
 import com.mustafakocer.feature_movies.list.domain.model.MovieListItem
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEffect
@@ -241,8 +243,51 @@ private fun MovieListContent(
                 )
             }
         }
+        // ✅ PAGING3 BUILT-IN ERROR HANDLING
 
-        // Handle loading states
+        // Handle refresh state (initial load)
+        when (movies.loadState.refresh) {
+            is LoadState.Loading -> {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            CircularProgressIndicator()
+                            Text(
+                                text = "Loading movies...",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+
+            is LoadState.Error -> {
+                val error = movies.loadState.refresh as LoadState.Error
+                item {
+                    // ✅ FULL SCREEN ERROR WITH PAGING3 RETRY!
+                    ErrorCard(
+                        title = "Failed to Load Movies",
+                        message = error.error.localizedMessage
+                            ?: "An error occurred while loading movies",
+                        onRetry = { movies.retry() } // ✅ PAGING3 MAGIC!
+                    )
+                }
+            }
+
+            else -> { /* Success - show items */
+            }
+        }
+
+        // Handle append state (loading more pages)
         when (movies.loadState.append) {
             is LoadState.Loading -> {
                 item {
@@ -252,21 +297,67 @@ private fun MovieListContent(
                             .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp
+                            )
+                            Text(
+                                text = "Loading more movies...",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
             }
 
             is LoadState.Error -> {
+                val error = movies.loadState.append as LoadState.Error
                 item {
-                    RetryButton(
-                        onRetryClick = { movies.retry() },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    // ✅ PAGINATION ERROR WITH PAGING3 RETRY!
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        onClick = { movies.retry() } // ✅ PAGING3 MAGIC!
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = "Retry",
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                            Text(
+                                text = "Failed to load more",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                text = error.error.localizedMessage ?: "Tap to retry",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                text = "🔄 Tap to Retry",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                 }
             }
 
-            else -> {}
+            else -> { /* Success or NotLoading */
+            }
         }
     }
 }
