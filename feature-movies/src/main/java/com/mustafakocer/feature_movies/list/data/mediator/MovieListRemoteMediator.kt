@@ -6,14 +6,16 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.core_database.cache.CacheMetadata
 import com.mustafakocer.core_database.pagination.RemoteKey
+import com.mustafakocer.core_network.connectivity.NetworkConnectivityMonitor
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListRemoteKeyDao
 import com.mustafakocer.feature_movies.list.data.local.entity.MovieListEntity
 import com.mustafakocer.feature_movies.list.data.mapper.toEntity
-import com.mustafakocer.feature_movies.list.data.remote.MovieListApiService
 import com.mustafakocer.feature_movies.list.domain.model.MovieCategory
+import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
 import kotlinx.coroutines.delay
 
 
@@ -30,10 +32,11 @@ import kotlinx.coroutines.delay
  */
 @OptIn(ExperimentalPagingApi::class)
 class MovieListRemoteMediator(
-    private val apiService: MovieListApiService,
+    private val apiService: MovieApiService, // ← UPDATED: Single service
     private val movieListDao: MovieListDao,
     private val remoteKeyDao: MovieListRemoteKeyDao,
     private val database: androidx.room.RoomDatabase,
+    private val networkConnectivityMonitor: NetworkConnectivityMonitor, // ✅ ADDED!
     private val category: MovieCategory,
     private val apiKey: String,
 ) : RemoteMediator<Int, MovieListEntity>() {
@@ -51,12 +54,26 @@ class MovieListRemoteMediator(
         }
     }
 
+    /**
+     * RemoteMediator Gibi Özel Durumlar: Paging 3'ün RemoteMediator'ı gibi senaryolarda, "bağlantı yok" durumu bir hata değil,
+     * "cache'den devam et" anlamına gelebilir. Bu durumda, MediatorResult.Error döndürmek yerine
+     * MediatorResult.Success(endOfPaginationReached = true) döndürmek daha doğru bir davranıştır. Yani kontrolün sonucu,
+     * her zaman bir hata fırlatmak anlamına gelmez.
+     */
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, MovieListEntity>,
     ): MediatorResult {
 
         return try {
+
+            // ✅ CHECK CONNECTIVITY - RETURN ERROR FOR RETRY BUTTON!
+            val connectionState = networkConnectivityMonitor.getCurrentConnectionState()
+            if (!connectionState.isConnected) {
+                // Return ERROR so UI shows retry button
+                return MediatorResult.Error(AppException.NetworkException.NoInternetConnection())
+            }
+
             delay(NETWORK_DELAY_MS)
 
             val page = when (loadType) {

@@ -1,5 +1,6 @@
 package com.mustafakocer.feature_movies.details.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mustafakocer.core_common.presentation.UiContract
@@ -22,7 +23,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * Movie details ViewModel with share functionality
+ * Movie details ViewModel with SavedStateHandle
+ *
+ * PROCESS DEATH RESILIENCE:
+ * ✅ Uses SavedStateHandle to survive process death
+ * ✅ Automatically receives Navigation arguments via Hilt
+ * ✅ No manual argument passing required
+ * ✅ Robust against system-initiated termination
  *
  * CLEAN ARCHITECTURE: Presentation layer
  * RESPONSIBILITY: Handle movie details UI logic and share functionality
@@ -31,17 +38,27 @@ import javax.inject.Inject
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
+    private val savedStateHandle: SavedStateHandle, // ✅ CORRECT: Injected by Hilt
 ) : ViewModel(), UiContract<MovieDetailsUiState, MovieDetailsEvent, MovieDetailsEffect> {
-    private val _uiState = MutableStateFlow<MovieDetailsUiState>(MovieDetailsUiState.Loading)
+
+    private val _uiState = MutableStateFlow<MovieDetailsUiState>(MovieDetailsUiState.InitialLoading)
     override val uiState: StateFlow<MovieDetailsUiState> = _uiState.asStateFlow()
 
     private val _uiEffect = MutableSharedFlow<MovieDetailsEffect>()
     override val uiEffect: SharedFlow<MovieDetailsEffect> = _uiEffect.asSharedFlow()
 
+    // ✅ CORRECT: movieId recovered from process death via SavedStateHandle
+    private val movieId: Int = savedStateHandle.get<Int>("movieId")
+        ?: throw IllegalStateException("movieId is required in navigation arguments")
+
+    init {
+        // ✅ CORRECT: Auto-load details when ViewModel is created
+        loadMovieDetails()
+    }
+
     override fun onEvent(event: MovieDetailsEvent) {
         when (event) {
-            is MovieDetailsEvent.LoadMovieDetails -> loadMovieDetails(event.movieId)
-            is MovieDetailsEvent.RetryLoading -> retryLoading()
+            is MovieDetailsEvent.RetryLoading -> loadMovieDetails()
             is MovieDetailsEvent.DismissError -> dismissError()
         }
     }
@@ -69,9 +86,9 @@ class MovieDetailsViewModel @Inject constructor(
                             content = shareContent
                         )
                     )
-                    showToast("Sharing ${movieDetails.title}")
+                    showSnackbar("Sharing ${movieDetails.title}")
                 } catch (e: Exception) {
-                    showToast("Failed to share movie")
+                    showSnackbar("Failed to share movie")
                 } finally {
                     // Reset sharing state
                     _uiState.value = currentState.copy(isSharing = false)
@@ -88,9 +105,12 @@ class MovieDetailsViewModel @Inject constructor(
 
     // ==================== PRIVATE METHODS ====================
 
-    private fun loadMovieDetails(movieId: Int) {
+    /**
+     * Load movie details using the movieId from SavedStateHandle
+     */
+    private fun loadMovieDetails() {
         viewModelScope.launch {
-            _uiState.value = MovieDetailsUiState.Loading
+            _uiState.value = MovieDetailsUiState.InitialLoading
 
             getMovieDetailsUseCase(movieId).collect { uiState ->
                 uiState.onSuccess { movieDetails ->
@@ -103,27 +123,11 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun retryLoading() {
-        val currentState = _uiState.value
-        if (currentState is MovieDetailsUiState.Error) {
-            // We need to store the movie ID to retry
-            // For now, show a message that retry needs the movie ID
-            showToast("Please go back and try again")
-        }
-    }
-
     private fun dismissError() {
         val currentState = _uiState.value
         if (currentState is MovieDetailsUiState.Error) {
-            // Option 1: Clear error and return to loading state (if you have movieId stored)
-            // _uiState.value = MovieDetailsUiState.Loading
-            // loadMovieDetails(storedMovieId)
-
-            // Option 2: Clear error and navigate back (current approach)
+            // Navigate back on error dismiss
             navigateBack()
-
-            // Option 3: Clear error and show empty state
-            // _uiState.value = MovieDetailsUiState.Idle (if you have this state)
         }
     }
 
@@ -161,15 +165,9 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun showToast(message: String) {
+    private fun showSnackbar(message: String) {
         viewModelScope.launch {
-            _uiEffect.emit(MovieDetailsEffect.ShowToast(message))
-        }
-    }
-
-    private fun showSnackbar(message: String, actionLabel: String? = null) {
-        viewModelScope.launch {
-            _uiEffect.emit(MovieDetailsEffect.ShowSnackbar(message, actionLabel))
+            _uiEffect.emit(MovieDetailsEffect.ShowSnackbar(message))
         }
     }
 }

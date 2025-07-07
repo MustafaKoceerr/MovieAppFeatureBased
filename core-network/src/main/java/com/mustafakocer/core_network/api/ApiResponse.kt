@@ -2,21 +2,6 @@ package com.mustafakocer.core_network.api
 
 import kotlinx.serialization.Serializable
 
-// # Generic API response wrapper
-/**
- * TEACHING MOMENT: Generic API Response Wrapper
- *
- * Bu wrapper çoğu REST API'nin standard formatını karşılar
- * TMDB API için özellikle pagination response'ları
- */
-
-data class ApiResponse<T>(
-    val data: T? = null,
-    val message: String? = null,
-    val success: Boolean = true,
-    val code: String? = null,
-    val timestamp: Long = System.currentTimeMillis(),
-)
 
 /**
  * TMDB API için pagination response

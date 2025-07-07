@@ -31,82 +31,51 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import com.mustafakocer.core_common.presentation.UiContract
-import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEffect
-import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEvent
-import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsUiState
-import com.mustafakocer.feature_movies.details.presentation.viewmodel.MovieDetailsViewModel
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.mustafakocer.core_common.presentation.UiContract
 import com.mustafakocer.core_ui.component.error.ErrorScreen
+import com.mustafakocer.core_ui.component.error.GenericErrorMessageFactory
 import com.mustafakocer.core_ui.component.loading.LoadingScreen
 import com.mustafakocer.feature_movies.details.domain.model.MovieDetails
+import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEffect
+import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEvent
+import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsUiState
+import com.mustafakocer.feature_movies.details.presentation.viewmodel.MovieDetailsViewModel
 import com.mustafakocer.feature_movies.details.util.fullBackdropUrl
 import com.mustafakocer.feature_movies.details.util.fullPosterUrl
-
-
-/**
- * TEACHING MOMENT: Why Separate Route and Screen?
- *
- * ROUTE RESPONSIBILITIES:
- * ✅ Handle navigation effects
- * ✅ Handle side effects (sharing, toasts)
- * ✅ Manage system interactions
- * ✅ Load initial data
- *
- * SCREEN RESPONSIBILITIES:
- * ✅ Pure UI rendering
- * ✅ State-driven UI logic
- * ✅ User interaction handling
- * ✅ Layout and styling
- *
- * BENEFITS:
- * ✅ Separation of concerns
- * ✅ Easier testing (Screen can be tested in isolation)
- * ✅ Reusable Screen component
- * ✅ Clear responsibility boundaries
- */
-
-/**
- * TEACHING MOMENT: Movie Details Screen Implementation
- *
- * CLEAN ARCHITECTURE: Presentation Layer
- * RESPONSIBILITY: Display movie details with beautiful UI
- *
- * UI FEATURES:
- * ✅ Movie poster with backdrop
- * ✅ Movie info (title, rating, release date, runtime)
- * ✅ Genres as chips
- * ✅ Overview text
- * ✅ Share functionality
- * ✅ Loading and error states
- */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieDetailsScreen(
     contract: UiContract<MovieDetailsUiState, MovieDetailsEvent, MovieDetailsEffect>,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
-    val state by contract.uiState.collectAsState()
+    val state by contract.uiState.collectAsStateWithLifecycle()
     val viewModel = contract as MovieDetailsViewModel // cast to access navigation methods
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             TopAppBar(
                 title = {
@@ -160,7 +129,7 @@ fun MovieDetailsScreen(
                 .padding(paddingValues)
         ) {
             when (state) {
-                is MovieDetailsUiState.Loading -> {
+                is MovieDetailsUiState.InitialLoading -> {
                     LoadingScreen(message = "Loading movie details...")
                 }
 
@@ -175,6 +144,16 @@ fun MovieDetailsScreen(
                     ErrorScreen(
                         error = (state as MovieDetailsUiState.Error).errorInfo,
                         onRetry = { contract.onEvent(MovieDetailsEvent.RetryLoading) },
+                        onNavigateBack = { viewModel.navigateBack() }
+                    )
+                }
+
+                is MovieDetailsUiState.FullScreenError -> {
+                    ErrorScreen(
+                        error = GenericErrorMessageFactory.unknownError((state as MovieDetailsUiState.FullScreenError).message),
+                        onRetry = if ((state as MovieDetailsUiState.FullScreenError).canRetry) {
+                            { contract.onEvent(MovieDetailsEvent.RetryLoading) }
+                        } else null,
                         onNavigateBack = { viewModel.navigateBack() }
                     )
                 }
@@ -394,3 +373,41 @@ private fun MovieStatItem(
         }
     }
 }
+
+
+/**
+ * TEACHING MOMENT: Why Separate Route and Screen?
+ *
+ * ROUTE RESPONSIBILITIES:
+ * ✅ Handle navigation effects
+ * ✅ Handle side effects (sharing, toasts)
+ * ✅ Manage system interactions
+ * ✅ Load initial data
+ *
+ * SCREEN RESPONSIBILITIES:
+ * ✅ Pure UI rendering
+ * ✅ State-driven UI logic
+ * ✅ User interaction handling
+ * ✅ Layout and styling
+ *
+ * BENEFITS:
+ * ✅ Separation of concerns
+ * ✅ Easier testing (Screen can be tested in isolation)
+ * ✅ Reusable Screen component
+ * ✅ Clear responsibility boundaries
+ */
+
+/**
+ * TEACHING MOMENT: Movie Details Screen Implementation
+ *
+ * CLEAN ARCHITECTURE: Presentation Layer
+ * RESPONSIBILITY: Display movie details with beautiful UI
+ *
+ * UI FEATURES:
+ * ✅ Movie poster with backdrop
+ * ✅ Movie info (title, rating, release date, runtime)
+ * ✅ Genres as chips
+ * ✅ Overview text
+ * ✅ Share functionality
+ * ✅ Loading and error states
+ */
