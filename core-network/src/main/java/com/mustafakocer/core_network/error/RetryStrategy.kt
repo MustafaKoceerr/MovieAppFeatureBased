@@ -17,9 +17,11 @@ fun <T> Flow<UiState<T>>.applyRetryStrategy(): Flow<UiState<T>> {
         val shouldRetry = when {
             attempt >= NetworkConfig.MAX_RETRY_ATTEMPTS -> false
             cause is Exception -> {
-                val appException = cause as? AppException ?: AppException.UnknownException(originalCause = cause)
+                val appException =
+                    cause as? AppException ?: AppException.UnknownException(originalCause = cause)
                 appException.canRetry
             }
+
             else -> false
         }
 
@@ -31,12 +33,25 @@ fun <T> Flow<UiState<T>>.applyRetryStrategy(): Flow<UiState<T>> {
             false
         }
     }.catch { throwable ->
-        val appException = throwable as? AppException ?: AppException.UnknownException(originalCause = throwable)
+        val appException =
+            throwable as? AppException ?: AppException.UnknownException(originalCause = throwable)
         emit(UiState.Error(appException))
     }
 }
 
-private fun calculateRetryDelay(attempt: Int): Long {
+internal fun calculateRetryDelay(attempt: Int): Long {
     return (NetworkConfig.RETRY_DELAY_MS *
             NetworkConfig.BACKOFF_MULTIPLIER.pow(attempt.toDouble())).toLong()
+}
+
+/**
+ * Wrapper for UiState to make it retryable
+ */
+internal class UiStateWrapper<T>(private val state: UiState<T>) : RetryableState<T> {
+    override fun toErrorState(exception: AppException): RetryableState<T> {
+        return UiStateWrapper(UiState.Error(exception))
+    }
+
+    override val isRetryable: Boolean
+        get() = state is UiState.Error && state.exception.canRetry
 }
