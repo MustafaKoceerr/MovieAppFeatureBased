@@ -4,59 +4,100 @@ import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.core_ui.component.error.ErrorInfo
 import com.mustafakocer.feature_movies.details.domain.model.MovieDetails
 
-/**
- * BEST PRACTICE: Hybrid State Pattern (Sealed Interface + Data Class)
- *
- * Bu yaklaşım:
- * ✅ Ana durumları (Loading, Success, Error) net bir şekilde ayırır
- * ✅ Derleyici garantisiyle imkansız durumları önler
- * ✅ Veri koruma (data preservation) mantığını zarifçe çözer
- * ✅ State sınıfını basit ve odaklı tutar
- * ✅ KISS prensibine uygun
- */
-sealed interface MovieDetailsUiState {
+sealed class MovieDetailsUiState {
 
     /**
-     * Ekranın ilk kez yüklendiği veya tam ekran hatadan sonra yeniden denendiği durum.
-     * Sadece tam ekran bir yükleme göstergesi gösterilir.
+     * Initial loading state when fetching movie details for the first time
      */
-    object InitialLoading : MovieDetailsUiState
+    object InitialLoading : MovieDetailsUiState()
 
     /**
-     * Verinin başarıyla yüklendiği ve gösterildiği ana durum.
-     * Bu durum, arka planda olabilecek ikincil olayları da (refresh, snackbar mesajı) yönetir.
+     * Success state with movie details loaded
+     * @param movieDetails The loaded movie details
+     * @param isSharing Whether sharing is currently in progress
+     * @param isOffline Whether currently offline (for UI indicators)
      */
     data class Success(
         val movieDetails: MovieDetails,
-        val isRefreshing: Boolean = false,      // Arka planda yenileme var mı? (Pull-to-refresh vb.)
-        val isSharing: Boolean = false,         // Share işlemi devam ediyor mu?
-    ) : MovieDetailsUiState {
-        /**
-         * Check if sharing is in progress
-         */
-        fun isSharingProgress(): Boolean = isSharing
-    }
-
-    data class Error(
-        val exception: AppException,
-        val errorInfo: ErrorInfo,
-    ) : MovieDetailsUiState
+        val isSharing: Boolean = false,
+        val isOffline: Boolean = false
+    ) : MovieDetailsUiState()
 
     /**
-     * Hiçbir veri gösterilemediğinde ortaya çıkan ve tüm ekranı kaplayan hata durumu.
+     * Success state with data preserved but network issues
+     * Shows data but indicates connectivity problems via snackbar
+     * @param movieDetails The preserved movie details
+     * @param networkError The network-related error
+     * @param isSharing Whether sharing is currently in progress
+     * @param showNetworkSnackbar Whether to show network error snackbar
      */
-    data class FullScreenError(
-        val message: String,
-        val canRetry: Boolean = true
-    ) : MovieDetailsUiState
+    data class SuccessWithNetworkError(
+        val movieDetails: MovieDetails,
+        val networkError: AppException,
+        val isSharing: Boolean = false,
+        val showNetworkSnackbar: Boolean = true
+    ) : MovieDetailsUiState()
+
+    /**
+     * Refreshing state while updating existing data
+     * Shows current data while loading updated data in background
+     * @param movieDetails Current movie details being displayed
+     * @param isSharing Whether sharing is currently in progress
+     */
+    data class RefreshLoading(
+        val movieDetails: MovieDetails,
+        val isSharing: Boolean = false
+    ) : MovieDetailsUiState()
+
+    /**
+     * Error state when no data exists and loading failed
+     * @param exception The error that occurred
+     * @param errorInfo UI-friendly error information
+     */
+    data class Error(
+        val exception: AppException,
+        val errorInfo: ErrorInfo
+    ) : MovieDetailsUiState()
+
+    // UTILITY PROPERTIES FOR UI LOGIC
+
+    /**
+     * Check if currently loading (initial or refresh)
+     */
+    val isLoading: Boolean
+        get() = this is InitialLoading || this is RefreshLoading
+
+    /**
+     * Check if movie details are available
+     */
+    val hasMovieDetails: Boolean
+        get() = this is Success || this is SuccessWithNetworkError || this is RefreshLoading
+
+    /**
+     * Get movie details if available
+     */
+    val movieDetailsOrNull: MovieDetails?
+        get() = when (this) {
+            is Success -> movieDetails
+            is SuccessWithNetworkError -> movieDetails
+            is RefreshLoading -> movieDetails
+            else -> null
+        }
+
+    /**
+     * Check if should show network snackbar
+     */
+    val shouldShowNetworkSnackbar: Boolean
+        get() = this is SuccessWithNetworkError && showNetworkSnackbar
+
+    /**
+     * Check if sharing is in progress
+     */
+    val isSharingInProgress: Boolean
+        get() = when (this) {
+            is Success -> isSharing
+            is SuccessWithNetworkError -> isSharing
+            is RefreshLoading -> isSharing
+            else -> false
+        }
 }
-
-
-/**
- * Snackbar veya Dialog gibi geçici, eyleme dönük olmayan mesajları temsil eder.
- * ID, aynı mesajın yapılandırma değişikliklerinde tekrar gösterilmesini önler.
- */
-data class UserMessage(
-    val id: Long = System.currentTimeMillis(),
-    val message: String
-)

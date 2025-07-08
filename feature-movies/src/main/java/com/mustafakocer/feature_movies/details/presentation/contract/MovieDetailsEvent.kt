@@ -1,18 +1,66 @@
 package com.mustafakocer.feature_movies.details.presentation.contract
 
-import com.mustafakocer.core_common.presentation.BaseUiEvent
+// ==================== EVENTS (User Actions) ====================
 
-// ==================== EVENTS ====================
-
-sealed interface MovieDetailsEvent : BaseUiEvent {
+sealed class MovieDetailsEvent {
 
     /**
-     * Retry loading movie details
+     * ✅ EVENT: User physically tapped retry button
+     * - User action: Yes
+     * - State change: Yes (→ Loading)
+     * - Business logic: Yes (data fetching)
+     * - Repeatable: Yes
      */
-    object RetryLoading : MovieDetailsEvent
+    object RetryLoading : MovieDetailsEvent()
 
     /**
-     * Dismiss error
+     * ✅ EVENT: User physically tapped share button
+     * - User action: Yes
+     * - State change: Yes (isSharing = true)
+     * - Business logic: Yes (prepare content)
+     * - Repeatable: Yes
      */
-    object DismissError : MovieDetailsEvent
+    object ShareMovie : MovieDetailsEvent()
+
+    /**
+     * ✅ EVENT: User pulled to refresh or tapped refresh
+     * - User action: Yes
+     * - State change: Yes (→ RefreshLoading)
+     * - Business logic: Yes (data fetching)
+     * - Repeatable: Yes
+     */
+    object RefreshDetails : MovieDetailsEvent()
+
+    /**
+     * ✅ EVENT: User tapped dismiss on error dialog
+     * - User action: Yes
+     * - State change: Yes (Error → dismissed)
+     * - Business logic: Maybe (should we navigate back?)
+     * - Repeatable: Yes (in theory)
+     */
+    object DismissError : MovieDetailsEvent()
+
+    /**
+     * ✅ EVENT: User tapped X on network snackbar
+     * - User action: Yes
+     * - State change: Yes (showNetworkSnackbar = false)
+     * - Business logic: No (just hide)
+     * - Repeatable: Yes
+     *
+     * WHY NOT EFFECT? Because user actively dismisses it!
+     */
+    object DismissNetworkSnackbar : MovieDetailsEvent()
+
+    /**
+     * ✅ EVENT: User pressed back button
+     * - User action: Yes
+     * - State change: Maybe (could have conditions)
+     * - Business logic: Maybe (unsaved changes?)
+     * - Repeatable: Yes
+     *
+     * WHY NOT EFFECT? Because user decides to go back!
+     * ViewModel might have logic: "Should I allow navigation?"
+     */
+    object BackPressed : MovieDetailsEvent()
 }
+
