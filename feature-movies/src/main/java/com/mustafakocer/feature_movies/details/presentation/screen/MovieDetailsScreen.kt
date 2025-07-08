@@ -1,3 +1,4 @@
+// feature-movies/src/main/java/com/mustafakocer/feature_movies/details/presentation/screen/MovieDetailsScreen.kt
 package com.mustafakocer.feature_movies.details.presentation.screen
 
 import androidx.compose.foundation.background
@@ -17,10 +18,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -53,284 +57,439 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.mustafakocer.core_common.presentation.UiContract
 import com.mustafakocer.core_ui.component.error.ErrorScreen
-import com.mustafakocer.core_ui.component.error.GenericErrorMessageFactory
 import com.mustafakocer.core_ui.component.loading.LoadingScreen
 import com.mustafakocer.feature_movies.details.domain.model.MovieDetails
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEffect
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEvent
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsUiState
-import com.mustafakocer.feature_movies.details.presentation.viewmodel.MovieDetailsViewModel
 import com.mustafakocer.feature_movies.details.util.fullBackdropUrl
 import com.mustafakocer.feature_movies.details.util.fullPosterUrl
+
+/**
+ * TEACHING MOMENT: Network-Aware Movie Details Screen with Event-Driven Architecture
+ *
+ * CLEAN ARCHITECTURE PRINCIPLES:
+ * ✅ UI Layer - Pure presentation logic
+ * ✅ No business logic - delegates to ViewModel via events
+ * ✅ Reactive UI - responds to state changes
+ * ✅ Composable architecture - reusable components
+ *
+ * NETWORK-AWARE UX PATTERNS:
+ * ✅ Data preservation during connectivity issues
+ * ✅ Contextual error handling (snackbar vs full screen)
+ * ✅ Manual refresh via toolbar button
+ * ✅ Offline indicators in UI
+ * ✅ Graceful degradation of functionality
+ *
+ * EVENT-DRIVEN INTERACTIONS:
+ * ✅ All user interactions trigger events
+ * ✅ No direct ViewModel method calls
+ * ✅ Consistent interaction patterns
+ * ✅ Testable user interactions
+ */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieDetailsScreen(
     contract: UiContract<MovieDetailsUiState, MovieDetailsEvent, MovieDetailsEffect>,
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val state by contract.uiState.collectAsStateWithLifecycle()
-    val viewModel = contract as MovieDetailsViewModel // cast to access navigation methods
 
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         },
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = when (state) {
-                            is MovieDetailsUiState.Success -> (state as MovieDetailsUiState.Success).movieDetails.title
-                            else -> "Movie Details"
-                        },
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+            MovieDetailsTopBar(
+                title = state.movieDetailsOrNull?.title ?: "Movie Details",
+                isOffline = when (state) {
+                    is MovieDetailsUiState.Success -> (state as MovieDetailsUiState.Success).isOffline
+                    is MovieDetailsUiState.SuccessWithNetworkError -> true
+                    else -> false
                 },
-                navigationIcon = {
-                    IconButton(onClick = { viewModel.navigateBack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Navigate back"
-                        )
+                onNavigateBack = {
+                    // EVENT: User pressed back button
+                    contract.onEvent(MovieDetailsEvent.BackPressed)
+                },
+                onRefresh = if (state.hasMovieDetails) {
+                    {
+                        // EVENT: User tapped refresh button
+                        contract.onEvent(MovieDetailsEvent.RefreshDetails)
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent
-                )
+                } else null
             )
         },
         floatingActionButton = {
-            if (state is MovieDetailsUiState.Success) {
+            // Show share FAB only when data is available
+            if (state.hasMovieDetails) {
                 FloatingActionButton(
-                    onClick = { viewModel.shareMovie() },
-                    modifier = Modifier.padding(16.dp)
+                    onClick = {
+                        // EVENT: User tapped share button
+                        contract.onEvent(MovieDetailsEvent.ShareMovie)
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary
                 ) {
-                    if ((state as MovieDetailsUiState.Success).isSharing) {
+                    if (state.isSharingInProgress) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            strokeWidth = 2.dp
                         )
                     } else {
                         Icon(
                             imageVector = Icons.Default.Share,
-                            contentDescription = "Share movie"
+                            contentDescription = "Share movie",
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }
             }
         }
     ) { paddingValues ->
-        Box(
+
+        // Main content based on state
+        when (state) {
+            is MovieDetailsUiState.InitialLoading -> {
+                LoadingScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    message = "Loading movie details..."
+                )
+            }
+
+            is MovieDetailsUiState.Success -> {
+                MovieDetailsContent(
+                    movieDetails = (state as MovieDetailsUiState.Success).movieDetails,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    isRefreshLoading = false,
+                    isOffline = (state as MovieDetailsUiState.Success).isOffline
+                )
+            }
+
+            is MovieDetailsUiState.SuccessWithNetworkError -> {
+                // CORE PATTERN: Show data even with network errors
+                MovieDetailsContent(
+                    movieDetails = (state as MovieDetailsUiState.SuccessWithNetworkError).movieDetails,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    isRefreshLoading = false,
+                    isOffline = true
+                )
+            }
+
+            is MovieDetailsUiState.RefreshLoading -> {
+                MovieDetailsContent(
+                    movieDetails = (state as MovieDetailsUiState.RefreshLoading).movieDetails,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    isRefreshLoading = true,
+                    isOffline = false
+                )
+            }
+
+            is MovieDetailsUiState.Error -> {
+                // CORE PATTERN: Show error screen only when no data exists
+                ErrorScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    error = (state as MovieDetailsUiState.Error).errorInfo,
+                    onRetry = {
+                        // EVENT: User tapped retry button
+                        contract.onEvent(MovieDetailsEvent.RetryLoading)
+                    },
+                    onNavigateBack = {
+                        // EVENT: User dismissed error
+                        contract.onEvent(MovieDetailsEvent.DismissError)
+                    }
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Top app bar with network status indicator
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MovieDetailsTopBar(
+    title: String,
+    isOffline: Boolean,
+    onNavigateBack: () -> Unit,
+    onRefresh: (() -> Unit)? = null,
+) {
+    TopAppBar(
+        title = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+
+                // Network status indicator
+                if (isOffline) {
+                    Icon(
+                        imageVector = Icons.Default.WifiOff,
+                        contentDescription = "Offline",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+        },
+        navigationIcon = {
+            IconButton(onClick = onNavigateBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Navigate back"
+                )
+            }
+        },
+        actions = {
+            // Manual refresh button (only shown when data is available)
+            onRefresh?.let { refresh ->
+                IconButton(onClick = refresh) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refresh"
+                    )
+                }
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color.Transparent
+        )
+    )
+}
+
+/**
+ * Main movie details content with refresh loading overlay
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun MovieDetailsContent(
+    movieDetails: MovieDetails,
+    modifier: Modifier = Modifier,
+    isRefreshLoading: Boolean = false,
+    isOffline: Boolean = false,
+) {
+    Box(modifier = modifier) {
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            when (state) {
-                is MovieDetailsUiState.InitialLoading -> {
-                    LoadingScreen(message = "Loading movie details...")
-                }
+            // Hero section with backdrop and poster
+            MovieHeroSection(
+                movieDetails = movieDetails,
+                isOffline = isOffline
+            )
 
-                is MovieDetailsUiState.Success -> {
-                    MovieDetailsContent(
-                        movieDetails = (state as MovieDetailsUiState.Success).movieDetails,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
+            // Movie stats (rating, release date, runtime)
+            MovieStatsSection(movieDetails = movieDetails)
 
-                is MovieDetailsUiState.Error -> {
-                    ErrorScreen(
-                        error = (state as MovieDetailsUiState.Error).errorInfo,
-                        onRetry = { contract.onEvent(MovieDetailsEvent.RetryLoading) },
-                        onNavigateBack = { viewModel.navigateBack() }
-                    )
-                }
+            // Genres
+            if (movieDetails.genres.isNotEmpty()) {
+                MovieGenresSection(genres = movieDetails.genres)
+            }
 
-                is MovieDetailsUiState.FullScreenError -> {
-                    ErrorScreen(
-                        error = GenericErrorMessageFactory.unknownError((state as MovieDetailsUiState.FullScreenError).message),
-                        onRetry = if ((state as MovieDetailsUiState.FullScreenError).canRetry) {
-                            { contract.onEvent(MovieDetailsEvent.RetryLoading) }
-                        } else null,
-                        onNavigateBack = { viewModel.navigateBack() }
+            // Overview
+            MovieOverviewSection(overview = movieDetails.overview)
+
+            // Bottom spacer for FAB
+            Spacer(modifier = Modifier.height(80.dp))
+        }
+
+        // Refresh loading overlay
+        if (isRefreshLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
                     )
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp
+                        )
+                        Text(
+                            text = "Refreshing...",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+/**
+ * Hero section with backdrop image and poster
+ */
 @Composable
-private fun MovieDetailsContent(
+private fun MovieHeroSection(
     movieDetails: MovieDetails,
-    modifier: Modifier = Modifier,
+    isOffline: Boolean,
 ) {
-    Column(
-        modifier = modifier.verticalScroll(rememberScrollState())
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
     ) {
-        // Movie Backdrop with Poster
+        // Backdrop image
+        AsyncImage(
+            model = movieDetails.fullBackdropUrl(),
+            contentDescription = "${movieDetails.title} backdrop",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        // Gradient overlay
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Transparent,
+                            Color.Black.copy(alpha = 0.7f)
+                        )
+                    )
+                )
+        )
+
+        // Movie info overlay
+        Row(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Backdrop Image
+            // Poster
             AsyncImage(
-                model = movieDetails.fullBackdropUrl(),
-                contentDescription = "${movieDetails.title} backdrop",
-                modifier = Modifier.fillMaxSize(),
+                model = movieDetails.fullPosterUrl(),
+                contentDescription = "${movieDetails.title} poster",
+                modifier = Modifier.size(120.dp, 180.dp),
                 contentScale = ContentScale.Crop
             )
 
-            // Gradient Overlay
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Black.copy(alpha = 0.7f)
-                            )
-                        )
-                    )
-            )
-
-            // Movie Poster (Bottom Left)
-            Card(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(16.dp)
-                    .size(width = 120.dp, height = 180.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            // Movie basic info
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                AsyncImage(
-                    model = movieDetails.fullPosterUrl(),
-                    contentDescription = "${movieDetails.title} poster",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            }
-        }
-
-        // Movie Information
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Title and Tagline
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     text = movieDetails.title,
                     style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
                 )
 
                 if (movieDetails.hasTagline) {
                     Text(
                         text = "\"${movieDetails.tagline}\"",
                         style = MaterialTheme.typography.bodyLarge,
-                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = Color.White.copy(alpha = 0.9f),
+                        fontWeight = FontWeight.Medium
                     )
                 }
-            }
 
-            // Movie Stats Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                // Rating
-                MovieStatItem(
-                    icon = Icons.Default.Star,
-                    label = "Rating",
-                    value = String.format("%.1f", movieDetails.voteAverage),
-                    modifier = Modifier.weight(1f)
-                )
-
-                // Release Date
-                MovieStatItem(
-                    icon = Icons.Default.DateRange,
-                    label = "Release",
-                    value = movieDetails.releaseDate,
-                    modifier = Modifier.weight(1f)
-                )
-
-                // Runtime
-                if (movieDetails.runtime != null) {
-                    val hours = movieDetails.runtime / 60
-                    val minutes = movieDetails.runtime % 60
-                    val runtimeText = when {
-                        hours > 0 && minutes > 0 -> "${hours}h ${minutes}m"
-                        hours > 0 -> "${hours}h"
-                        else -> "${minutes}m"
-                    }
-
-                    MovieStatItem(
-                        icon = Icons.Default.Schedule,
-                        label = "Runtime",
-                        value = runtimeText,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-
-            // Genres
-            if (movieDetails.genres.isNotEmpty()) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = "Genres",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                // Offline indicator for content
+                if (isOffline) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        movieDetails.genres.forEach { genre ->
-                            AssistChip(
-                                onClick = { /* Could navigate to genre filter */ },
-                                label = { Text(genre.name) }
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Default.CloudOff,
+                            contentDescription = "Offline content",
+                            tint = Color.White.copy(alpha = 0.7f),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = "Offline content",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.White.copy(alpha = 0.7f)
+                        )
                     }
                 }
             }
-
-            // Overview
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = "Overview",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                    )
-                ) {
-                    Text(
-                        text = movieDetails.overview,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(16.dp),
-                        lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.4
-                    )
-                }
-            }
-
-            // Bottom Spacer for FAB
-            Spacer(modifier = Modifier.height(80.dp))
         }
     }
 }
 
+/**
+ * Movie statistics section (rating, date, runtime)
+ */
+@Composable
+private fun MovieStatsSection(movieDetails: MovieDetails) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // Rating
+        MovieStatItem(
+            icon = Icons.Default.Star,
+            label = "Rating",
+            value = String.format("%.1f", movieDetails.voteAverage),
+            modifier = Modifier.weight(1f)
+        )
+
+        // Release Date
+        MovieStatItem(
+            icon = Icons.Default.DateRange,
+            label = "Release",
+            value = movieDetails.releaseDate,
+            modifier = Modifier.weight(1f)
+        )
+
+        // Runtime (if available)
+        if (movieDetails.runtime != null) {
+            val hours = movieDetails.runtime / 60
+            val minutes = movieDetails.runtime % 60
+            val runtimeText = when {
+                hours > 0 && minutes > 0 -> "${hours}h ${minutes}m"
+                hours > 0 -> "${hours}h"
+                else -> "${minutes}m"
+            }
+
+            MovieStatItem(
+                icon = Icons.Default.Schedule,
+                label = "Runtime",
+                value = runtimeText,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+/**
+ * Individual movie stat item
+ */
 @Composable
 private fun MovieStatItem(
     icon: ImageVector,
@@ -364,6 +523,7 @@ private fun MovieStatItem(
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
+
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
@@ -374,40 +534,92 @@ private fun MovieStatItem(
     }
 }
 
+/**
+ * Movie genres section
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun MovieGenresSection(genres: List<com.mustafakocer.feature_movies.details.domain.model.Genre>) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            text = "Genres",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            genres.forEach { genre ->
+                AssistChip(
+                    onClick = { /* Could navigate to genre-based movies */ },
+                    label = {
+                        Text(
+                            text = genre.name,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                )
+            }
+        }
+    }
+}
 
 /**
- * TEACHING MOMENT: Why Separate Route and Screen?
+ * Movie overview section
+ */
+@Composable
+private fun MovieOverviewSection(overview: String) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            text = "Overview",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            )
+        ) {
+            Text(
+                text = overview,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(16.dp),
+                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.4
+            )
+        }
+    }
+}
+
+/**
+ * TEACHING MOMENT: Event-Driven UI Interactions
  *
- * ROUTE RESPONSIBILITIES:
- * ✅ Handle navigation effects
- * ✅ Handle side effects (sharing, toasts)
- * ✅ Manage system interactions
- * ✅ Load initial data
+ * PATTERN APPLIED:
+ * ✅ All user interactions trigger events via contract.onEvent()
+ * ✅ No direct ViewModel method calls
+ * ✅ Consistent interaction patterns throughout the screen
+ * ✅ Easy to test user interactions
  *
- * SCREEN RESPONSIBILITIES:
- * ✅ Pure UI rendering
- * ✅ State-driven UI logic
- * ✅ User interaction handling
- * ✅ Layout and styling
+ * EXAMPLES:
+ * - Back button: contract.onEvent(MovieDetailsEvent.BackPressed)
+ * - Share button: contract.onEvent(MovieDetailsEvent.ShareMovie)
+ * - Retry button: contract.onEvent(MovieDetailsEvent.RetryLoading)
+ * - Manual refresh: contract.onEvent(MovieDetailsEvent.RefreshDetails)
+ * - Dismiss error: contract.onEvent(MovieDetailsEvent.DismissError)
+ *
+ * REFRESH OPTIONS:
+ * - Manual refresh via toolbar button (when data exists)
+ * - Retry via error screen (when no data)
+ * - Network snackbar retry (when offline with data)
  *
  * BENEFITS:
- * ✅ Separation of concerns
- * ✅ Easier testing (Screen can be tested in isolation)
- * ✅ Reusable Screen component
- * ✅ Clear responsibility boundaries
- */
-
-/**
- * TEACHING MOMENT: Movie Details Screen Implementation
- *
- * CLEAN ARCHITECTURE: Presentation Layer
- * RESPONSIBILITY: Display movie details with beautiful UI
- *
- * UI FEATURES:
- * ✅ Movie poster with backdrop
- * ✅ Movie info (title, rating, release date, runtime)
- * ✅ Genres as chips
- * ✅ Overview text
- * ✅ Share functionality
- * ✅ Loading and error states
+ * 1. TESTABILITY: Easy to test user interactions
+ * 2. CONSISTENCY: Same pattern across all screens
+ * 3. MAINTAINABILITY: Clear user action boundaries
+ * 4. DEBUGGING: Easy to trace user actions
+ * 5. FLEXIBILITY: ViewModel can handle business logic
+ * 6. SIMPLICITY: No complex pull-to-refresh state management
  */
