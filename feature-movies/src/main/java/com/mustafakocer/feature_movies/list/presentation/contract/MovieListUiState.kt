@@ -21,6 +21,5 @@ data class MovieListUiState(
     override val error: String? = null,
     val categoryTitle: String = "",
     val categoryEndpoint: String = "",
-    val isRefreshing: Boolean = false,
     val movies: Flow<PagingData<MovieList>> = emptyFlow(),
 ) : BaseUiState
