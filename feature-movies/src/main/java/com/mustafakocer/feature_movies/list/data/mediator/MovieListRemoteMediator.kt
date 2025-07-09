@@ -13,7 +13,7 @@ import com.mustafakocer.core_network.connectivity.NetworkConnectivityMonitor
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListRemoteKeyDao
 import com.mustafakocer.feature_movies.list.data.local.entity.MovieListEntity
-import com.mustafakocer.feature_movies.list.data.mapper.toEntity
+import com.mustafakocer.feature_movies.shared.data.mapper.toEntity
 import com.mustafakocer.feature_movies.list.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
 import kotlinx.coroutines.delay
