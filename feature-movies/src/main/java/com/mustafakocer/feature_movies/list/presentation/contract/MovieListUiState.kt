@@ -2,8 +2,11 @@ package com.mustafakocer.feature_movies.list.presentation.contract
 
 import androidx.paging.PagingData
 import com.mustafakocer.core_common.presentation.BaseUiState
-import com.mustafakocer.feature_movies.list.domain.model.MovieListItem
+import com.mustafakocer.feature_movies.shared.domain.model.Movie
+import com.mustafakocer.feature_movies.shared.domain.model.MovieList
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+
 /**
  * Movie List UI Contract
  *
@@ -19,5 +22,5 @@ data class MovieListUiState(
     val categoryTitle: String = "",
     val categoryEndpoint: String = "",
     val isRefreshing: Boolean = false,
-    val movies: Flow<PagingData<MovieListItem>>? = null,
+    val movies: Flow<PagingData<MovieList>> = emptyFlow(),
 ) : BaseUiState
