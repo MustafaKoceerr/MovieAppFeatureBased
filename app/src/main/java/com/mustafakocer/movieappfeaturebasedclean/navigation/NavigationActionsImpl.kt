@@ -1,30 +1,16 @@
 package com.mustafakocer.movieappfeaturebasedclean.navigation
 
-
 import androidx.navigation.NavHostController
 import com.mustafakocer.navigation_contracts.*
 import com.mustafakocer.navigation_contracts.destinations.*
-
 /**
- * Implementation of navigation contracts in app module
- *
- * ARCHITECTURE:
- * ✅ Implements contracts from navigation-contracts module
- * ✅ Uses type-safe destinations
- * ✅ Handles backstack management
- * ✅ No circular dependencies
+ * Implementation of all navigation actions
  */
-class AppNavigationActionsImpl(
+class AppNavActionsImpl(
     private val navController: NavHostController,
-) : MoviesNavActions, AuthNavActions, SearchNavActions, SettingsNavActions {
+) : MoviesNavActions, AuthNavActions, CommonNavActions, SearchNavActions {
 
-    // ==================== BASE NAVIGATION ====================
-
-    override fun navigateBack() {
-        navController.navigateUp()
-    }
-
-    // ==================== MOVIES NAVIGATION ====================
+    // ==================== MOVIES ACTIONS ====================
 
     override fun navigateToMovieDetails(movieId: Int) {
         val destination = DestinationFactory.movieDetails(movieId)
@@ -44,29 +30,14 @@ class AppNavigationActionsImpl(
         navController.navigate(SettingsDestination)
     }
 
-    override fun navigateToHome() {
-        navController.navigate(HomeDestination) {
-            // Clear backstack to home
-            popUpTo(MoviesGraph) {
-                inclusive = false
-                saveState = false
-            }
-            launchSingleTop = true
-        }
-    }
-
     override fun navigateToAuth() {
         navController.navigate(AuthGraph) {
-            // Clear movies graph from backstack when logging out
-            popUpTo(MoviesGraph) {
-                inclusive = true
-                saveState = false
-            }
-            launchSingleTop = true
+            // Clear movies graph from backstack
+            popUpTo(MoviesGraph) { inclusive = true }
         }
     }
 
-    // ==================== AUTH NAVIGATION ====================
+    // ==================== AUTH ACTIONS ====================
 
     override fun navigateToRegister() {
         navController.navigate(RegisterDestination)
@@ -74,23 +45,21 @@ class AppNavigationActionsImpl(
 
     override fun navigateToMainApp() {
         navController.navigate(MoviesGraph) {
-            // Clear auth graph from backstack after successful login
-            popUpTo(AuthGraph) {
-                inclusive = true
-                saveState = false
-            }
-            launchSingleTop = true
+            // Clear auth graph from backstack
+            popUpTo(AuthGraph) { inclusive = true }
         }
     }
 
-    // ==================== SEARCH NAVIGATION ====================
-    // SearchNavActions extends MoviesNavActions, so it inherits:
-    // - navigateToMovieDetails()
-    // - navigateToHome()
-    // - navigateBack()
+    // ==================== COMMON ACTIONS ====================
 
-    // ==================== SETTINGS NAVIGATION ====================
-    // SettingsNavActions extends BaseNavActions, so it inherits:
-    // - navigateToAuth()
-    // - navigateBack()
+    override fun navigateBack() {
+        navController.navigateUp()
+    }
+
+    override fun navigateToHome() {
+        navController.navigate(HomeDestination) {
+            // Clear everything and start fresh
+            popUpTo(MoviesGraph) { inclusive = false }
+        }
+    }
 }

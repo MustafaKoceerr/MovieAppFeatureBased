@@ -83,8 +83,10 @@ fun AppNavHost(
             }
 
             composable<SearchDestination> {
-                // TODO: SearchScreen(navActions = navActions)
-                androidx.compose.material3.Text("Search Screen - TODO")
+                // Import actual SearchRoute from feature-movies
+                com.mustafakocer.feature_movies.search.presentation.screen.SearchRoute(
+                    navActions = navActions
+                )
             }
 
             composable<SettingsDestination> {
@@ -114,63 +116,3 @@ fun AppNavHost(
     }
 }
 
-/**
- * Implementation of all navigation actions
- */
-private class AppNavActionsImpl(
-    private val navController: NavHostController,
-) : MoviesNavActions, AuthNavActions, CommonNavActions {
-
-    // ==================== MOVIES ACTIONS ====================
-
-    override fun navigateToMovieDetails(movieId: Int) {
-        val destination = DestinationFactory.movieDetails(movieId)
-        navController.navigate(destination)
-    }
-
-    override fun navigateToMoreMovies(category: String, categoryTitle: String) {
-        val destination = DestinationFactory.moreMovies(category, categoryTitle)
-        navController.navigate(destination)
-    }
-
-    override fun navigateToSearch() {
-        navController.navigate(SearchDestination)
-    }
-
-    override fun navigateToSettings() {
-        navController.navigate(SettingsDestination)
-    }
-
-    override fun navigateToAuth() {
-        navController.navigate(AuthGraph) {
-            // Clear movies graph from backstack
-            popUpTo(MoviesGraph) { inclusive = true }
-        }
-    }
-
-    // ==================== AUTH ACTIONS ====================
-
-    override fun navigateToRegister() {
-        navController.navigate(RegisterDestination)
-    }
-
-    override fun navigateToMainApp() {
-        navController.navigate(MoviesGraph) {
-            // Clear auth graph from backstack
-            popUpTo(AuthGraph) { inclusive = true }
-        }
-    }
-
-    // ==================== COMMON ACTIONS ====================
-
-    override fun navigateBack() {
-        navController.navigateUp()
-    }
-
-    override fun navigateToHome() {
-        navController.navigate(HomeDestination) {
-            // Clear everything and start fresh
-            popUpTo(MoviesGraph) { inclusive = false }
-        }
-    }
-}
