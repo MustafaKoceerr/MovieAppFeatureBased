@@ -2,12 +2,10 @@ package com.mustafakocer.feature_movies.search.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import androidx.room.util.query
 import com.mustafakocer.core_common.exception.toAppException
-import com.mustafakocer.feature_movies.search.data.mapper.toDomain
-import com.mustafakocer.feature_movies.search.domain.model.SearchQuery
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
-import com.mustafakocer.feature_movies.shared.domain.model.Movie
+import com.mustafakocer.feature_movies.shared.data.mapper.toDomainMovieList
+import com.mustafakocer.feature_movies.shared.domain.model.MovieList
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -26,9 +24,9 @@ class SearchPagingSource(
     private val movieApiService: MovieApiService,
     private val apiKey: String,
     private val searchQuery: String,
-) : PagingSource<Int, Movie>() {
+) : PagingSource<Int, MovieList>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieList> {
         return try {
             // Determine which page to load (start from 1)
             val currentPage = params.key ?: 1
@@ -47,7 +45,7 @@ class SearchPagingSource(
                 ?: throw Exception("Empty response body")
 
             // Convert DTOs to domain models
-            val movies = searchResponse.results.map { it.toDomain() }
+            val movies = searchResponse.results.map { it.toDomainMovieList() }
 // Calculate pagination info
             val prevPage = if (currentPage == 1) null else currentPage - 1
             val nextPage = if (currentPage >= searchResponse.total_pages) null else currentPage + 1
@@ -67,13 +65,14 @@ class SearchPagingSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, Movie>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, MovieList>): Int? {
         // Return the page that was closest to the most recently accessed index
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
         }
     }
+
 }
 
 
