@@ -32,7 +32,7 @@ fun MoviesListRoute(
             when (effect) {
                 // ==================== NAVIGATION EFFECTS ====================
                 is MovieListEffect.NavigateToMovieDetail -> {
-                    // todo navigate to detail
+
                 }
 
                 is MovieListEffect.NavigateBack -> {
