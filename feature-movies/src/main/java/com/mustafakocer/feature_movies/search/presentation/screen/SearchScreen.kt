@@ -1,8 +1,5 @@
 package com.mustafakocer.feature_movies.search.presentation.screen
 
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import com.mustafakocer.feature_movies.search.presentation.viewmodel.SearchViewModel
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,20 +7,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.mustafakocer.core_common.presentation.UiContract
-import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEffect
-import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEvent
-import com.mustafakocer.feature_movies.list.presentation.contract.MovieListUiState
 import com.mustafakocer.feature_movies.search.presentation.components.SearchContent
 import com.mustafakocer.feature_movies.search.presentation.components.SearchTopBar
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchEffect
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchEvent
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchUiState
+import com.mustafakocer.feature_movies.search.presentation.viewmodel.SearchViewModel
 
 /**
  * SearchScreen - Pure UI presentation
