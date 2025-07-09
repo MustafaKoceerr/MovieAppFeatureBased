@@ -3,7 +3,7 @@ package com.mustafakocer.feature_movies.search.domain.usecase
 import androidx.paging.PagingData
 import com.mustafakocer.feature_movies.search.domain.model.SearchQuery
 import com.mustafakocer.feature_movies.search.domain.repository.SearchRepository
-import com.mustafakocer.feature_movies.shared.domain.model.Movie
+import com.mustafakocer.feature_movies.shared.domain.model.MovieList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import javax.inject.Inject
@@ -20,7 +20,7 @@ class SearchMoviesUseCase @Inject constructor(
     /**
      * Execute search with business logic validation
      */
-    operator fun invoke(query: String): Flow<PagingData<Movie>> {
+    operator fun invoke(query: String): Flow<PagingData<MovieList>> {
         val searchQuery = SearchQuery.create(query)
 
         // Business rule: Don't search if query is invalid
