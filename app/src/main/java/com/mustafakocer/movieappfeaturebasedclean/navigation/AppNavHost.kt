@@ -97,7 +97,6 @@ fun AppNavHost(
             composable<MovieDetailsDestination> { backStackEntry ->
                 val destination = backStackEntry.toRoute<MovieDetailsDestination>()
                 MovieDetailsRoute(
-                    movieId = destination.movieId, // ✅ movieId'yi destination'dan al
                     navController = navController
                 )
             }
