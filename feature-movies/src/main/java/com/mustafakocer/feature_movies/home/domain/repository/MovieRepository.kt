@@ -1,7 +1,7 @@
 package com.mustafakocer.feature_movies.home.domain.repository
 
 import com.mustafakocer.core_common.result.UiState
-import com.mustafakocer.feature_movies.home.domain.model.Movie
+import com.mustafakocer.feature_movies.shared.domain.model.Movie
 import kotlinx.coroutines.flow.Flow
 
 /**
