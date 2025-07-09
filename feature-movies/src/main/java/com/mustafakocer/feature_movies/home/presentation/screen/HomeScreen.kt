@@ -26,6 +26,7 @@ import com.mustafakocer.feature_movies.home.presentation.components.FakeSearchBa
 import com.mustafakocer.feature_movies.home.presentation.components.MovieCategorySection
 import com.mustafakocer.feature_movies.home.presentation.contract.*
 import com.mustafakocer.feature_movies.home.presentation.viewmodel.HomeViewModel
+import com.mustafakocer.feature_movies.shared.domain.model.Movie
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

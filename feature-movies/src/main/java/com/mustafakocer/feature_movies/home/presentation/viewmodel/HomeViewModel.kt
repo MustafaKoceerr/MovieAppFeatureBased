@@ -11,7 +11,7 @@ import com.mustafakocer.core_ui.component.error.GeneralErrorType
 import com.mustafakocer.core_ui.component.error.GenericErrorMessageFactory
 import com.mustafakocer.core_ui.component.error.toGeneralErrorTypeOrNull
 import com.mustafakocer.feature_movies.home.domain.model.HomeContent
-import com.mustafakocer.feature_movies.home.domain.model.Movie
+import com.mustafakocer.feature_movies.shared.domain.model.Movie
 import com.mustafakocer.feature_movies.home.domain.model.MovieCategoryType
 import com.mustafakocer.feature_movies.home.domain.usecase.GetMovieCategoryUseCase
 import com.mustafakocer.feature_movies.home.presentation.contract.*
@@ -266,7 +266,7 @@ class HomeViewModel @Inject constructor(
     private fun createContentWithSuccessfulCategory(
         baseContent: com.mustafakocer.feature_movies.home.domain.model.HomeContent,
         categoryType: MovieCategoryType,
-        movies: List<com.mustafakocer.feature_movies.home.domain.model.Movie>,
+        movies: List<Movie>,
     ): com.mustafakocer.feature_movies.home.domain.model.HomeContent {
         // ✅ BUSINESS LOGIC: Create successful section
         val successSection = com.mustafakocer.feature_movies.home.domain.model.MovieSection.success(
