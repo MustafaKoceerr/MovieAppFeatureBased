@@ -108,7 +108,7 @@ class MovieListRemoteMediator(
             )
 
             val movies = apiResponse.results
-            val endOfPaginationReached = movies.isEmpty() || page >= apiResponse.totalPages
+            val endOfPaginationReached = movies.isEmpty() || page >= apiResponse.total_pages
 
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
@@ -125,8 +125,8 @@ class MovieListRemoteMediator(
                     currentPage = page,
                     nextKey = nextKey,
                     prevKey = prevKey,
-                    totalPages = apiResponse.totalPages,
-                    totalItems = apiResponse.totalResults,
+                    totalPages = apiResponse.total_pages,
+                    totalItems = apiResponse.total_results,
                     cache = CacheMetadata(
                         cachedAt = System.currentTimeMillis(),
                         expiresAt = System.currentTimeMillis() + (24 * 60 * 60 * 1000L),
