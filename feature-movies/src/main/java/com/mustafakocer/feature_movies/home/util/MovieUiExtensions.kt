@@ -1,6 +1,6 @@
 package com.mustafakocer.feature_movies.home.util
 
-import com.mustafakocer.feature_movies.home.domain.model.Movie
+import com.mustafakocer.feature_movies.shared.domain.model.Movie
 
 /**
  * TEACHING MOMENT: Feature-Specific UI Extensions
