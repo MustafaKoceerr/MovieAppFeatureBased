@@ -20,7 +20,7 @@ sealed class MovieDetailsUiState {
     data class Success(
         val movieDetails: MovieDetails,
         val isSharing: Boolean = false,
-        val isOffline: Boolean = false
+        override val isOffline: Boolean = false
     ) : MovieDetailsUiState()
 
     /**
@@ -85,12 +85,6 @@ sealed class MovieDetailsUiState {
         }
 
     /**
-     * Check if should show network snackbar
-     */
-    val shouldShowNetworkSnackbar: Boolean
-        get() = this is SuccessWithNetworkError && showNetworkSnackbar
-
-    /**
      * Check if sharing is in progress
      */
     val isSharingInProgress: Boolean
@@ -100,4 +94,16 @@ sealed class MovieDetailsUiState {
             is RefreshLoading -> isSharing
             else -> false
         }
+
+    // MovieDetailsUiState.kt - sonuna ekle
+    open val isOffline: Boolean
+        get() = when (this) {
+            is Success -> isOffline
+            is SuccessWithNetworkError -> true
+            else -> false
+        }
+
+
+    val isRefreshLoading: Boolean
+        get() = this is RefreshLoading
 }
