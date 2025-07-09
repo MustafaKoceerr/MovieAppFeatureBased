@@ -1,5 +1,7 @@
 package com.mustafakocer.feature_movies.home.domain.model
 
+import com.mustafakocer.feature_movies.shared.domain.model.Movie
+
 data class MovieSection(
     val category: MovieCategoryType,
     val movies: List<Movie>,

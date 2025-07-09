@@ -2,8 +2,8 @@ package com.mustafakocer.feature_movies.list.domain.usecase
 
 import androidx.paging.PagingData
 import com.mustafakocer.feature_movies.list.domain.model.MovieCategory
-import com.mustafakocer.feature_movies.list.domain.model.MovieListItem
 import com.mustafakocer.feature_movies.list.domain.repository.MovieListRepository
+import com.mustafakocer.feature_movies.shared.domain.model.MovieList
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -27,7 +27,7 @@ class GetMovieListUseCase @Inject constructor(
      * @param category Movie category to fetch
      * @return Flow of PagingData for reactive pagination
      */
-    operator fun invoke(category: MovieCategory): Flow<PagingData<MovieListItem>> {
+    operator fun invoke(category: MovieCategory): Flow<PagingData<MovieList>> {
         return repository.getMoviesForCategory(category)
     }
 }

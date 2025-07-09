@@ -2,7 +2,7 @@ package com.mustafakocer.feature_movies.list.data.mapper
 
 import com.mustafakocer.feature_movies.list.data.local.entity.MovieListEntity
 import com.mustafakocer.feature_movies.list.data.remote.dto.MovieListDto
-import com.mustafakocer.feature_movies.list.domain.model.MovieListItem
+import com.mustafakocer.feature_movies.shared.domain.model.MovieList
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
@@ -20,8 +20,8 @@ import kotlinx.serialization.json.Json
  * Convert Entity to Domain model
  * Used by Repository to return business objects
  */
-fun MovieListEntity.toDomain(): MovieListItem {
-    return MovieListItem(
+fun MovieListEntity.toDomain(): MovieList {
+    return MovieList(
         id = id,
         title = title,
         overview = overview,
@@ -42,7 +42,7 @@ fun MovieListEntity.toDomain(): MovieListItem {
 /**
  * Convert list of entities to domain models
  */
-fun List<MovieListEntity>.toDomain(): List<MovieListItem> {
+fun List<MovieListEntity>.toDomain(): List<MovieList> {
     return map { it.toDomain() }
 }
 

@@ -50,11 +50,12 @@ import coil3.compose.AsyncImage
 import com.mustafakocer.core_common.presentation.UiContract
 import com.mustafakocer.core_ui.component.error.ErrorCard
 import com.mustafakocer.feature_movies.MovieConstants
-import com.mustafakocer.feature_movies.list.domain.model.MovieListItem
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEffect
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEvent
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListUiState
 import com.mustafakocer.feature_movies.list.presentation.viewmodel.MovieListViewModel
+import com.mustafakocer.feature_movies.shared.domain.model.Movie
+import com.mustafakocer.feature_movies.shared.domain.model.MovieList
 
 /**
  * Movie List Route
@@ -190,11 +191,11 @@ fun MovieListScreen(
 
                 MovieListContent(
                     movies = movies,
-                    onMovieClick = { movie ->
+                    onMovieClick = { movieListItem ->
                         contract.onEvent(
                             MovieListEvent.MovieClicked(
-                                movieId = movie.id,
-                                movieTitle = movie.title
+                                movieId = movieListItem.id,
+                                movieTitle = movieListItem.title
                             )
                         )
                     },
@@ -223,8 +224,8 @@ fun MovieListScreen(
  */
 @Composable
 private fun MovieListContent(
-    movies: LazyPagingItems<MovieListItem>,
-    onMovieClick: (MovieListItem) -> Unit,
+    movies: LazyPagingItems<MovieList>,
+    onMovieClick: (MovieList) -> Unit,
     onRetryClick: () -> Unit,
 ) {
     LazyColumn(
@@ -367,7 +368,7 @@ private fun MovieListContent(
  */
 @Composable
 private fun MovieListItem(
-    movie: MovieListItem,
+    movie: MovieList,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

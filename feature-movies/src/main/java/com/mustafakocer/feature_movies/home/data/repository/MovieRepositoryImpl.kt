@@ -8,7 +8,7 @@ import com.mustafakocer.core_network.connectivity.NetworkConnectivityMonitor
 import com.mustafakocer.core_network.error.applyRetryStrategy
 import com.mustafakocer.core_network.utils.ensureConnected
 import com.mustafakocer.feature_movies.home.data.mapper.toDomainModels
-import com.mustafakocer.feature_movies.home.domain.model.Movie
+import com.mustafakocer.feature_movies.shared.domain.model.Movie
 import com.mustafakocer.feature_movies.home.domain.repository.MovieRepository
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
 import kotlinx.coroutines.flow.Flow

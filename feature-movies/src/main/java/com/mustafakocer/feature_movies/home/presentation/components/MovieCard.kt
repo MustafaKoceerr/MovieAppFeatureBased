@@ -17,7 +17,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.mustafakocer.feature_movies.home.domain.model.Movie
+import com.mustafakocer.feature_movies.shared.domain.model.Movie
 import com.mustafakocer.feature_movies.home.util.formattedRating
 import com.mustafakocer.feature_movies.home.util.getPosterUrl
 

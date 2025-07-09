@@ -6,14 +6,13 @@ import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.mustafakocer.core_database.pagination.PaginationSettings
-import com.mustafakocer.core_network.connectivity.NetworkConnectivityMonitor
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListRemoteKeyDao
 import com.mustafakocer.feature_movies.list.data.mapper.toDomain
 import com.mustafakocer.feature_movies.list.data.mediator.MovieListRemoteMediatorFactory
 import com.mustafakocer.feature_movies.list.domain.model.MovieCategory
-import com.mustafakocer.feature_movies.list.domain.model.MovieListItem
 import com.mustafakocer.feature_movies.list.domain.repository.MovieListRepository
+import com.mustafakocer.feature_movies.shared.domain.model.MovieList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -39,7 +38,7 @@ class MovieListRepositoryImpl @Inject constructor(
 ) : MovieListRepository {
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun getMoviesForCategory(category: MovieCategory): Flow<PagingData<MovieListItem>> {
+    override fun getMoviesForCategory(category: MovieCategory): Flow<PagingData<MovieList>> {
 
         // Use simple pagination settings
         val paginationSettings = PaginationSettings.movieList

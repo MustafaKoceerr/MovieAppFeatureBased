@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_movies.home.domain.model
+package com.mustafakocer.feature_movies.shared.domain.model
 
 data class Movie(
     val id: Int,
@@ -9,4 +9,6 @@ data class Movie(
     val releaseDate: String,
     val voteAverage: Double,
     val genreIds: List<Int>,
+    val voteCount: Int = 0,           // ✅ UI'da kullanılıyor
+    val adult: Boolean = false,       // ✅ Filtreleme için yararlı
 )

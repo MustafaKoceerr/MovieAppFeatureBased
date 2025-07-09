@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_movies.home.data.dto
+package com.mustafakocer.feature_movies.shared.data.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -30,5 +30,11 @@ data class MovieDto(
     val voteAverage: Double? = null,
 
     @SerialName("genre_ids")
-    val genreIds: List<Int>? = null
+    val genreIds: List<Int>? = null,
+
+    @SerialName("vote_count")
+    val voteCount: Int? = null,
+
+    @SerialName("adult")
+    val adult: Boolean? = null
 )
