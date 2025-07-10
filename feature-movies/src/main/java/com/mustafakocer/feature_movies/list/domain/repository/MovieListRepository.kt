@@ -22,14 +22,4 @@ interface MovieListRepository {
      * Refresh cache for specific category
      */
     suspend fun refreshCategory(category: MovieCategory)
-
-    /**
-     * Clear cache for specific category
-     */
-    suspend fun clearCacheForCategory(category: MovieCategory)
-
-    /**
-     * Check if category has cached data
-     */
-    suspend fun hasCachedData(category: MovieCategory): Boolean
 }
