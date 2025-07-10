@@ -69,6 +69,7 @@ dependencies {
 
     // 🖼️ IMAGE LOADING
     api(libs.coil.compose)
+    implementation(project(":core-preferences"))
 //    api(libs.coil.network.okhttp) // gradle hata veriyor.
 
     // 📊 TESTING
