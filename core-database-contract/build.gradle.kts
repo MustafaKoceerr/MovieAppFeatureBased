@@ -35,4 +35,9 @@ android {
 // Bu modülün görevi sözleşme tanımlamaktır, başka bir kütüphaneye ihtiyacı yoktur.
 dependencies {
 
+    // Unit tests
+    testImplementation(libs.testng)
+    testImplementation(libs.junit)
+    // Android Instrumented tests
+    androidTestImplementation(libs.androidx.junit)
 }

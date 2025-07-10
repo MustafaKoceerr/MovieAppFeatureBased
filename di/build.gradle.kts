@@ -52,4 +52,5 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.android) // hilt pluginini eklediğimiz için plugin doğrudan iletişime geçiyor, burada olmak zorunda
 
+    testImplementation(libs.testng)
 }
