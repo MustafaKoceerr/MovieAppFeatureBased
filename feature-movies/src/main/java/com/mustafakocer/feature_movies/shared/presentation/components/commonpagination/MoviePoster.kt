@@ -18,13 +18,21 @@ fun MoviePoster(
     posterPath: String?,
     contentDescription: String,
     modifier: Modifier = Modifier,
+    size: PosterSize = PosterSize.Medium
 ) {
     AsyncImage(
-        model = "${MovieConstants.IMAGE_BASE_URL}${MovieConstants.POSTER_SIZE}${posterPath}",
+        model = "${MovieConstants.IMAGE_BASE_URL}${MovieConstants.POSTER_SIZE}$posterPath",
         contentDescription = contentDescription,
         modifier = modifier
-            .size(80.dp, 120.dp)
+            .size(width = size.width, height = size.height)
             .clip(RoundedCornerShape(8.dp)),
         contentScale = ContentScale.Crop
     )
+}
+
+// Poster boyutları için enum
+enum class PosterSize(val width: androidx.compose.ui.unit.Dp, val height: androidx.compose.ui.unit.Dp) {
+    Small(60.dp, 90.dp),    // Search ekranı için
+    Medium(80.dp, 120.dp),  // List ekranı için
+    Large(120.dp, 180.dp)   // Detail ekranı için
 }

@@ -7,10 +7,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEffect
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEvent
 import com.mustafakocer.feature_movies.list.presentation.viewmodel.MovieListViewModel
+import com.mustafakocer.navigation_contracts.MovieListNavActions
 
 /**
  * Movie List Route
@@ -22,7 +22,7 @@ import com.mustafakocer.feature_movies.list.presentation.viewmodel.MovieListView
 fun MovieListRoute(
     categoryEndpoint: String,
     categoryTitle: String,
-    navController: NavHostController,
+    navActions: MovieListNavActions,
     viewModel: MovieListViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -34,11 +34,13 @@ fun MovieListRoute(
             when (effect) {
                 // ==================== NAVIGATION EFFECTS ====================
                 is MovieListEffect.NavigateToMovieDetail -> {
-
+                    navActions.navigateToMovieDetails(
+                        movieId = effect.route.movieId
+                    )
                 }
 
                 is MovieListEffect.NavigateBack -> {
-                    navController.popBackStack()
+                    navActions.navigateBack()
                 }
 
                 // ==================== UI FEEDBACK EFFECTS ====================

@@ -121,11 +121,6 @@ class MovieDetailsViewModel @Inject constructor(
                     )
                 )
 
-                // Show success feedback
-                _uiEffect.emit(
-                    MovieDetailsEffect.ShowSnackbar("Sharing ${currentMovieDetails.title}")
-                )
-
             } catch (e: Exception) {
                 _uiEffect.emit(
                     MovieDetailsEffect.ShowSnackbar(

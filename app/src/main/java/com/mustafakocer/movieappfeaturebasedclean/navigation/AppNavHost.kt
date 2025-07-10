@@ -1,9 +1,6 @@
 package com.mustafakocer.movieappfeaturebasedclean.navigation
 
 import androidx.navigation.NavHostController
-import com.mustafakocer.navigation_contracts.*
-import com.mustafakocer.navigation_contracts.AuthNavActions
-import com.mustafakocer.navigation_contracts.MoviesNavActions
 import com.mustafakocer.navigation_contracts.destinations.*
 import com.mustafakocer.navigation_contracts.destinations.AuthGraph
 import com.mustafakocer.navigation_contracts.destinations.HomeDestination
@@ -95,9 +92,8 @@ fun AppNavHost(
             }
 
             composable<MovieDetailsDestination> { backStackEntry ->
-                val destination = backStackEntry.toRoute<MovieDetailsDestination>()
                 MovieDetailsRoute(
-                    navController = navController
+                    navActions = navActions
                 )
             }
 
@@ -108,7 +104,7 @@ fun AppNavHost(
                 MovieListRoute(
                     categoryEndpoint = destination.category,
                     categoryTitle = destination.categoryTitle,
-                    navController = navController
+                    navActions = navActions
                 )
             }
         }

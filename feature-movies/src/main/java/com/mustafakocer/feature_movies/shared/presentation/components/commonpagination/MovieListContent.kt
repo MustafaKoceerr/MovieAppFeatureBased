@@ -24,9 +24,14 @@ fun MovieListContent(
             key = movies.itemKey { it.id }
         ) { index ->
             movies[index]?.let { movie ->
+                // ✅ ŞU ŞEKİLDE:
                 MovieListItem(
                     movie = movie,
-                    onClick = { onMovieClick(movie) }
+                    onClick = { onMovieClick(movie) },
+                    posterSize = PosterSize.Medium,       // List için orta boy
+                    maxOverviewLines = 3,                 // Daha fazla satır
+                    showVoteCount = true,                 // Oy sayısını göster
+                    elevation = 4.dp                      // Normal gölge
                 )
             }
         }

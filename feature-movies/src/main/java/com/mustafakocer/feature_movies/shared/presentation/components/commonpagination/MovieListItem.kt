@@ -22,12 +22,16 @@ fun MovieListItem(
     movie: MovieList,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    posterSize: PosterSize = PosterSize.Medium,
+    maxOverviewLines: Int = 3,
+    showVoteCount: Boolean = true,
+    elevation: androidx.compose.ui.unit.Dp = 4.dp
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = elevation),
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(
@@ -37,15 +41,19 @@ fun MovieListItem(
         ) {
             MoviePoster(
                 posterPath = movie.posterPath,
-                contentDescription = movie.title
+                contentDescription = movie.title,
+                size = posterSize
             )
+
             MovieInfo(
                 title = movie.title,
                 releaseDate = movie.releaseDate,
                 overview = movie.overview,
                 voteAverage = movie.voteAverage,
                 voteCount = movie.voteCount,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                maxOverviewLines = maxOverviewLines,
+                showVoteCount = showVoteCount
             )
         }
     }

@@ -24,6 +24,8 @@ import com.mustafakocer.core_ui.component.loading.LoadingIndicator
 import com.mustafakocer.core_ui.component.loading.PageLoadingIndicator
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchUiState
 import com.mustafakocer.feature_movies.shared.domain.model.MovieList
+import com.mustafakocer.feature_movies.shared.presentation.components.commonpagination.MovieListItem
+import com.mustafakocer.feature_movies.shared.presentation.components.commonpagination.PosterSize
 
 /**
  * Main search content area
@@ -33,7 +35,6 @@ fun SearchContent(
     searchResults: LazyPagingItems<MovieList>,
     searchState: SearchUiState,
     onMovieClick: (Int) -> Unit,
-    onRetryClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when {
@@ -111,9 +112,13 @@ private fun SearchResultsList(
         ) { index ->
             val movie = searchResults[index]
             if (movie != null) {
-                SearchMovieItem(
+                MovieListItem(
                     movie = movie,
-                    onClick = { onMovieClick(movie.id) }
+                    onClick = { onMovieClick(movie.id) },
+                    posterSize = PosterSize.Small,        // Search için küçük poster
+                    maxOverviewLines = 2,                 // Daha az satır
+                    showVoteCount = false,                // Oy sayısını gizle
+                    elevation = 2.dp                      // Daha az gölge
                 )
             }
         }

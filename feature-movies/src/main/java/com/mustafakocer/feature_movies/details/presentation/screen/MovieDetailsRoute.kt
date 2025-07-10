@@ -10,14 +10,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEffect
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEvent
 import com.mustafakocer.feature_movies.details.presentation.viewmodel.MovieDetailsViewModel
+import com.mustafakocer.navigation_contracts.DetailNavActions
 
 @Composable
 fun MovieDetailsRoute(
-    navController: NavHostController,
+    navActions: DetailNavActions,
     viewModel: MovieDetailsViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -29,7 +29,7 @@ fun MovieDetailsRoute(
         viewModel.uiEffect.collect { effect ->
             when (effect) {
                 is MovieDetailsEffect.NavigateBack -> {
-                    navController.popBackStack()
+                    navActions.navigateBack()
                 }
 
                 is MovieDetailsEffect.ShareContent -> {

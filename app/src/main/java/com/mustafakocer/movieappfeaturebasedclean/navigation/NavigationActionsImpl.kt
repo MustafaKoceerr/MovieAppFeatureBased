@@ -3,12 +3,14 @@ package com.mustafakocer.movieappfeaturebasedclean.navigation
 import androidx.navigation.NavHostController
 import com.mustafakocer.navigation_contracts.*
 import com.mustafakocer.navigation_contracts.destinations.*
+
 /**
  * Implementation of all navigation actions
  */
 class AppNavActionsImpl(
     private val navController: NavHostController,
-) : MoviesNavActions, AuthNavActions, CommonNavActions, SearchNavActions {
+) : MoviesNavActions, AuthNavActions, CommonNavActions, SearchNavActions, MovieListNavActions,
+    DetailNavActions {
 
     // ==================== MOVIES ACTIONS ====================
 

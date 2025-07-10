@@ -87,9 +87,6 @@ fun SearchScreen(
                     searchState = state,
                     onMovieClick = { movieId ->
                         viewModel.navigateToMovieDetail(movieId)
-                    },
-                    onRetryClick = {
-                        viewModel.retrySearch()
                     }
                 )
             }
