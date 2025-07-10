@@ -74,7 +74,6 @@ class MovieDetailsViewModel @Inject constructor(
             is MovieDetailsEvent.RetryLoading -> handleRetryLoading()
             is MovieDetailsEvent.ShareMovie -> handleShareMovie()
             is MovieDetailsEvent.DismissError -> handleDismissError()
-            is MovieDetailsEvent.DismissNetworkSnackbar -> handleDismissNetworkSnackbar()
             is MovieDetailsEvent.BackPressed -> handleBackPressed()
         }
     }
@@ -97,7 +96,7 @@ class MovieDetailsViewModel @Inject constructor(
                 _uiEffect.emit(
                     MovieDetailsEffect.ShowSnackbar(
                         message = "Movie details not available for sharing",
-                        isError = true
+                        isError = true,
                     )
                 )
             }
@@ -125,7 +124,7 @@ class MovieDetailsViewModel @Inject constructor(
                 _uiEffect.emit(
                     MovieDetailsEffect.ShowSnackbar(
                         message = "Failed to share movie",
-                        isError = true
+                        isError = true,
                     )
                 )
             } finally {
@@ -181,7 +180,6 @@ class MovieDetailsViewModel @Inject constructor(
             getMovieDetailsUseCase(movieId).collect { networkAwareState ->
                 when (networkAwareState) {
                     is NetworkAwareUiState.Idle -> {
-                        // Should not happen in this flow, but handle gracefully
                         _uiState.value = MovieDetailsUiState.InitialLoading
                     }
 
@@ -197,10 +195,23 @@ class MovieDetailsViewModel @Inject constructor(
                     }
 
                     is NetworkAwareUiState.Success -> {
+                        val wasShowingNetworkError = _uiState.value is MovieDetailsUiState.SuccessWithNetworkError
+
                         _uiState.value = MovieDetailsUiState.Success(
                             movieDetails = networkAwareState.data,
                             isSharing = _uiState.value.isSharingInProgress,
+                            isOffline = networkAwareState.isOffline
                         )
+
+                        // ✅ SIMPLIFIED: Just show "Back online" message (short)
+                        if (wasShowingNetworkError) {
+                            _uiEffect.emit(
+                                MovieDetailsEffect.ShowSnackbar(
+                                    message = "📶 Back online",
+                                    isError = false
+                                )
+                            )
+                        }
                     }
 
                     is NetworkAwareUiState.SuccessWithNetworkError -> {
@@ -211,12 +222,12 @@ class MovieDetailsViewModel @Inject constructor(
                             showNetworkSnackbar = networkAwareState.showSnackbar
                         )
 
-                        // Emit network snackbar effect if needed
+                        // ✅ SIMPLIFIED: Show short network message (not persistent)
                         if (networkAwareState.showSnackbar) {
                             _uiEffect.emit(
-                                MovieDetailsEffect.ShowNetworkSnackbar(
-                                    message = networkAwareState.networkError.userMessage,
-                                    isOffline = true
+                                MovieDetailsEffect.ShowSnackbar(
+                                    message = "📱 No internet - showing cached content",
+                                    isError = false
                                 )
                             )
                         }
