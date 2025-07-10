@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_movies.settings.screen
+package com.mustafakocer.feature_movies.settings.presentation.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +20,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.core_common.presentation.UiContract
 import com.mustafakocer.core_preferences.models.ThemePreference
+import com.mustafakocer.feature_movies.settings.presentation.component.ComingSoonSection
+import com.mustafakocer.feature_movies.settings.presentation.component.SettingsHeader
+import com.mustafakocer.feature_movies.settings.presentation.component.SettingsTopBar
+import com.mustafakocer.feature_movies.settings.presentation.component.ThemeSelectionSection
 import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsEffect
 import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsEvent
 import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsUiState
