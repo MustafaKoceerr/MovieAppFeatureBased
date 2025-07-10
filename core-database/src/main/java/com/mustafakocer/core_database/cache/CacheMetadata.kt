@@ -41,14 +41,11 @@ data class CacheMetadata(
         get() = (System.currentTimeMillis() - cachedAt) / (60 * 1000L)
 
     companion object {
-        // Cache süreleri (milliseconds)
-        const val HOUR_1 = 60 * 60 * 1000L        // 1 saat
-        const val HOUR_24 = 24 * 60 * 60 * 1000L  // 24 saat
 
         /**
          * Yeni cache metadata oluştur
          */
-        fun create(durationMillis: Long = HOUR_1): CacheMetadata {
+        fun create(durationMillis: Long): CacheMetadata {
             val now = System.currentTimeMillis()
             return CacheMetadata(
                 cachedAt = now,
@@ -61,11 +58,11 @@ data class CacheMetadata(
         /**
          * 1 saatlik cache
          */
-        fun oneHour(): CacheMetadata = create(HOUR_1)
+        fun oneHour(): CacheMetadata = create(CacheDuration.HOURS_24)
 
         /**
          * 24 saatlik cache
          */
-        fun oneDay(): CacheMetadata = create(HOUR_24)
+        fun oneDay(): CacheMetadata = create(CacheDuration.HOURS_24)
     }
 }

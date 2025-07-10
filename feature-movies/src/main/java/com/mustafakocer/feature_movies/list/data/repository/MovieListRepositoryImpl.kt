@@ -5,9 +5,9 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.mustafakocer.core_database.dao.RemoteKeyDao
 import com.mustafakocer.core_database.pagination.PaginationSettings
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
-import com.mustafakocer.feature_movies.list.data.local.dao.MovieListRemoteKeyDao
 import com.mustafakocer.feature_movies.shared.data.mapper.toDomainMovieList
 import com.mustafakocer.feature_movies.list.data.mediator.MovieListRemoteMediatorFactory
 import com.mustafakocer.feature_movies.list.domain.model.MovieCategory
@@ -34,7 +34,7 @@ import javax.inject.Singleton
 class MovieListRepositoryImpl @Inject constructor(
     private val mediatorFactory: MovieListRemoteMediatorFactory,
     private val movieListDao: MovieListDao,
-    private val remoteKeyDao: MovieListRemoteKeyDao,
+    private val remoteKeyDao: RemoteKeyDao,
 ) : MovieListRepository {
 
     @OptIn(ExperimentalPagingApi::class)
@@ -56,15 +56,7 @@ class MovieListRepositoryImpl @Inject constructor(
 
     override suspend fun refreshCategory(category: MovieCategory) {
         movieListDao.deleteMoviesForCategory(category.apiEndpoint)
-        remoteKeyDao.deleteRemoteKeyForCategory(category.cacheKey)
+        remoteKeyDao.deleteRemoteKey(category.cacheKey)
     }
 
-    override suspend fun clearCacheForCategory(category: MovieCategory) {
-        movieListDao.deleteMoviesForCategory(category.apiEndpoint)
-        remoteKeyDao.deleteRemoteKeyForCategory(category.cacheKey)
-    }
-
-    override suspend fun hasCachedData(category: MovieCategory): Boolean {
-        return movieListDao.hasCachedDataForCategory(category.apiEndpoint)
-    }
 }

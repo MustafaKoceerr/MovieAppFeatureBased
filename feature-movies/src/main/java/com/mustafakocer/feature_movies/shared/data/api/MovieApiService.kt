@@ -9,19 +9,6 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-/**
- * CONSOLIDATED: Single API service for all movie operations
- *
- * * ✅ Uses core-network's shared Retrofit instance
- *  * ✅ All movie endpoints in one place
- *  *
- *  * ARCHITECTURE BENEFITS:
- *  * - Single source of truth for movie API
- *  * - Easier maintenance and testing
- *  * - Consistent error handling
- *  * - Shared connection pool and configurations
- */
-
 interface MovieApiService {
 
     // ==================== HOME SCREEN ENDPOINTS ====================

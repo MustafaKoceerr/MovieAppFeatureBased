@@ -75,9 +75,9 @@ dependencies {
     implementation(project(":core-network"))   // → Retrofit, Serialization, core-common
     implementation(project(":core-database"))  // → Room, Paging, core-common
     implementation(project(":navigation-contracts"))  // → Room, Paging, core-common
-    implementation(project(":database-contracts"))
     implementation(project(":core-preferences")) // ✅ NEW: Theme & Preferences
     implementation(project(":data-common"))       // ← NEW: Access to ThemeRepository
+    implementation(project(":core-database-contract")) // <-- YENİ SATIR
 
     // 📄 PAGING 3 COMPOSE - ✅ EKLENDİ
     implementation(libs.paging.compose)

@@ -1,24 +1,14 @@
-// core-database/build.gradle.kts
-
-/**
- * SADELEŞTIRILMIŞ CORE DATABASE MODULE
- *
- * AMAÇ: Minimal database infrastructure
- * ✅ Room entities ve basic DAO support
- * ✅ Paging 3 config
- * ✅ Cache metadata support
- * ✅ Sıfır business logic - sadece infrastructure
- */
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
 
+    alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "com.mustafakocer.core_database"
+    namespace = "com.mustafakocer.di"
     compileSdk = 35
 
     defaultConfig {
@@ -47,23 +37,23 @@ android {
 }
 
 dependencies {
-    // ⭐ CORE DEPENDENCY (Brings Hilt, Coroutines, Serialization)
-    api(project(":core-common"))
+// ⭐ FEATURE MODULES (All dependencies inherited through these)
+    implementation(project(":core-common"))
+    implementation(project(":core-database"))
+    implementation(project(":core-database-contract")) // Sözleşmeyi bilmeli
+    implementation(project(":feature-movies"))
 
-    // 🗄️ ROOM DATABASE - Core functionality
-    api(libs.room.runtime)
-    api(libs.room.ktx)
-    ksp(libs.room.compiler)
+    // 🗄️ ROOM DATABASE - ✅ EKLENDİ (App level'da KSP için gerekli)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler) // ✅ ÖNEMLİ: Room annotation processor
 
-    // 📄 PAGING 3 - Pagination support
-    api(libs.paging.runtime)
-    api(libs.paging.compose) // ✅ EKLENDİ - Compose için
-    api(libs.room.paging)
+    // 💉 HILT KSP (For app's @Inject annotations)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.android) // hilt pluginini eklediğimiz için plugin doğrudan iletişime geçiyor, burada olmak zorunda
 
-    // 📊 TESTING
-
-    testImplementation(libs.junit)
     testImplementation(libs.testng)
+    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

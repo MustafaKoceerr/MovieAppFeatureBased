@@ -1,6 +1,7 @@
 package com.mustafakocer.core_database.pagination
 
 import androidx.room.*
+import com.mustafakocer.core_database.cache.CacheDuration
 import com.mustafakocer.core_database.cache.CacheMetadata
 
 /**
@@ -58,29 +59,39 @@ data class RemoteKey(
 
     companion object {
         /**
-         * Yeni RemoteKey oluştur
+         * Yeni bir RemoteKey nesnesi oluşturur.
+         *
+         * @param query Benzersiz sorgu anahtarı. createCompositeKey ile oluşturulması önerilir.
+         * @param apiResponse API'den gelen sayfalama bilgisi.
+         * @param cacheDuration Cache süresi.
+         * @return Yapılandırılmış bir RemoteKey nesnesi.
          */
         fun create(
             query: String,
-            entityType: String = "movies",
-            page: Int = 1,
-            totalPages: Int? = null,
+            currentPage: Int,
+            totalPages: Int?,
+            totalItems: Int?,
+            cacheDuration: Long = CacheDuration.HOURS_24, // Varsayılan cache süresi
         ): RemoteKey {
+            val isEnd = totalPages?.let { currentPage >= it } ?: false
             return RemoteKey(
                 query = query,
-                entityType = entityType,
-                currentPage = page,
+                entityType = query.substringBefore('_'), // "movies_popular" -> "movies"
+                currentPage = currentPage,
+                nextKey = if (isEnd) null else (currentPage + 1).toString(),
+                prevKey = if (currentPage == 1) null else (currentPage - 1).toString(),
                 totalPages = totalPages,
-                cache = CacheMetadata.oneHour()
+                totalItems = totalItems,
+                cache = CacheMetadata.create(cacheDuration) // Core'daki diğer yardımcıyı kullanıyoruz!
             )
         }
 
         /**
-         * Query string oluştur
-         * Örnek: createQuery("movies", "popular") -> "movies_popular"
+         * Birden fazla parçadan oluşan birleşik bir anahtar oluşturur.
+         * Örnek: createCompositeKey("movies", "popular") -> "movies_popular"
          */
-        fun createQuery(entityType: String, category: String): String {
-            return "${entityType}_${category}".lowercase()
+        fun createCompositeKey(vararg parts: String): String {
+            return parts.joinToString("_").lowercase()
         }
     }
 }
