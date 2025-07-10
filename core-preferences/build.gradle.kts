@@ -37,12 +37,8 @@ android {
 
 dependencies {
     // ⭐ MINIMAL DEPENDENCIES - App agnostic!
-
     // 📱 CORE ANDROID
     api(libs.androidx.core.ktx)
-
-    // 📦 DATASTORE - Core infrastructure
-    api(libs.androidx.datastore.preferences)
 
     // 💉 HILT - For providing DataStore
     api(libs.hilt.android)
@@ -52,6 +48,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // Datastore
+    implementation(libs.androidx.datastore.preferences)
 
     // ❌ NO UI DEPENDENCIES
     // ❌ NO BUSINESS LOGIC DEPENDENCIES

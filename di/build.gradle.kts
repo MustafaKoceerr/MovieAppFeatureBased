@@ -39,9 +39,13 @@ android {
 dependencies {
 // ⭐ FEATURE MODULES (All dependencies inherited through these)
     implementation(project(":core-common"))
-    implementation(project(":core-database"))
-    implementation(project(":core-database-contract")) // Sözleşmeyi bilmeli
+    implementation(project(":core-ui"))
+    implementation(project(":core-network"))
     implementation(project(":feature-movies"))
+    implementation(project(":core-database"))
+    implementation(project(":core-preferences"))
+    implementation(project(":data-common"))
+    implementation(project(":core-database-contract"))
 
     // 🗄️ ROOM DATABASE - ✅ EKLENDİ (App level'da KSP için gerekli)
     implementation(libs.room.runtime)
@@ -51,6 +55,11 @@ dependencies {
     // 💉 HILT KSP (For app's @Inject annotations)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.android) // hilt pluginini eklediğimiz için plugin doğrudan iletişime geçiyor, burada olmak zorunda
+
+    // DataStore Preferences (YENİ)
+    api(libs.androidx.datastore.preferences)
+    // App modülünde kullanılacağı için api ile implement edildiği yere de açılmasını sağladım.
+    // Böylece bu modülü implement eden herhangi bir modül ayrıca preferences'ı implement etmek zorunda kalmayacak.
 
     testImplementation(libs.testng)
     testImplementation(libs.junit)

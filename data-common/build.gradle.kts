@@ -46,6 +46,9 @@ dependencies {
     // ⚡ COROUTINES - For reactive repositories
     api(libs.kotlinx.coroutines.android)
 
+    // Datastore
+    implementation(libs.androidx.datastore.preferences)
+
     // 📊 TESTING
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

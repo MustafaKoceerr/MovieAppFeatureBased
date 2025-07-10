@@ -106,11 +106,10 @@ dependencies {
     implementation(project(":navigation-contracts"))  // ✅ NEW
 
     implementation(project(":core-common"))
+    implementation(project(":feature-movies"))
     implementation(project(":core-ui"))
     implementation(project(":core-network"))
-    implementation(project(":feature-movies"))
     implementation(project(":core-database"))
-    implementation(project(":core-preferences"))
     implementation(project(":data-common"))
     implementation(project(":core-database-contract"))
     // 🗄️ ROOM DATABASE - ✅ EKLENDİ (App level'da KSP için gerekli)
@@ -125,6 +124,8 @@ dependencies {
 
     // 🎨 APP-SPECIFIC UI
     implementation(libs.androidx.activity.compose)
+
+
 
     // 💉 HILT KSP (For app's @Inject annotations)
     ksp(libs.hilt.compiler)
