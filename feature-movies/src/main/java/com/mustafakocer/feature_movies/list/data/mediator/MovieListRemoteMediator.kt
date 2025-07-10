@@ -8,10 +8,10 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.core_database.cache.CacheMetadata
+import com.mustafakocer.core_database.dao.RemoteKeyDao
 import com.mustafakocer.core_database.pagination.RemoteKey
 import com.mustafakocer.core_network.connectivity.NetworkConnectivityMonitor
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
-import com.mustafakocer.feature_movies.list.data.local.dao.MovieListRemoteKeyDao
 import com.mustafakocer.feature_movies.list.data.local.entity.MovieListEntity
 import com.mustafakocer.feature_movies.shared.data.mapper.toEntity
 import com.mustafakocer.feature_movies.list.domain.model.MovieCategory
@@ -34,7 +34,7 @@ import kotlinx.coroutines.delay
 class MovieListRemoteMediator(
     private val apiService: MovieApiService, // ← UPDATED: Single service
     private val movieListDao: MovieListDao,
-    private val remoteKeyDao: MovieListRemoteKeyDao,
+    private val remoteKeyDao: RemoteKeyDao,
     private val database: androidx.room.RoomDatabase,
     private val networkConnectivityMonitor: NetworkConnectivityMonitor, // ✅ ADDED!
     private val category: MovieCategory,
@@ -64,6 +64,8 @@ class MovieListRemoteMediator(
         loadType: LoadType,
         state: PagingState<Int, MovieListEntity>,
     ): MediatorResult {
+        // Silme ve ekleme işlemi için de aynı query'yi kullanıyoruz.
+        val queryKey = RemoteKey.createCompositeKey("movies", category.apiEndpoint)
 
         return try {
 
@@ -113,27 +115,17 @@ class MovieListRemoteMediator(
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     movieListDao.deleteMoviesForCategory(category.apiEndpoint)
-                    remoteKeyDao.deleteRemoteKeyForCategory(category.cacheKey)
+                    // 2. ADIM: Silme işlemi için oluşturduğumuz anahtarı kullan.
+                    remoteKeyDao.deleteRemoteKey(queryKey)
                 }
 
-                val prevKey = if (page == STARTING_PAGE) null else (page - 1).toString()
-                val nextKey = if (endOfPaginationReached) null else (page + 1).toString()
-
-                val remoteKey = RemoteKey(
-                    query = category.cacheKey,
-                    entityType = "movies",
+                val remoteKey = RemoteKey.create(
+                    query = queryKey,
                     currentPage = page,
-                    nextKey = nextKey,
-                    prevKey = prevKey,
                     totalPages = apiResponse.total_pages,
-                    totalItems = apiResponse.total_results,
-                    cache = CacheMetadata(
-                        cachedAt = System.currentTimeMillis(),
-                        expiresAt = System.currentTimeMillis() + (24 * 60 * 60 * 1000L),
-                        cacheVersion = 1,
-                        isPersistent = false
-                    )
+                    totalItems = apiResponse.total_results
                 )
+
                 remoteKeyDao.upsert(remoteKey)
 
                 val movieEntities = movies.toEntity(category.apiEndpoint, page)
@@ -141,7 +133,6 @@ class MovieListRemoteMediator(
             }
 
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
-
         } catch (exception: Exception) {
             MediatorResult.Error(exception)
         }
@@ -154,7 +145,7 @@ class MovieListRemoteMediator(
     ): RemoteKey? {
         return state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.let {
-                remoteKeyDao.getRemoteKeyForCategory(category.cacheKey)
+                remoteKeyDao.getRemoteKey(category.cacheKey)
             }
         }
     }
@@ -163,7 +154,7 @@ class MovieListRemoteMediator(
         state: PagingState<Int, MovieListEntity>,
     ): RemoteKey? {
         return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()?.let {
-            remoteKeyDao.getRemoteKeyForCategory(category.cacheKey)
+            remoteKeyDao.getRemoteKey(category.cacheKey)
         }
     }
 
@@ -171,7 +162,7 @@ class MovieListRemoteMediator(
         state: PagingState<Int, MovieListEntity>,
     ): RemoteKey? {
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()?.let {
-            remoteKeyDao.getRemoteKeyForCategory(category.cacheKey)
+            remoteKeyDao.getRemoteKey(category.cacheKey)
         }
     }
 }
