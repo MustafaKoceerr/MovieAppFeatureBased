@@ -47,8 +47,6 @@ fun HomeRoute(
                 }
 
                 is HomeEffect.NavigateToProfile -> {
-                    // TODO: Implement when profile feature is ready
-                    // For now, navigate to settings
                     navActions.navigateToSettings()
                 }
 

@@ -66,10 +66,10 @@ val DarkTertiaryContainer = androidx.compose.ui.graphics.Color(0xFFB37300)
 val DarkOnTertiaryContainer = androidx.compose.ui.graphics.Color(0xFFFFE0B2)
 
 // Error
-val DarkError = androidx.compose.ui.graphics.Color(0xFFFF8A80)
-val DarkOnError = androidx.compose.ui.graphics.Color(0xFF680000)
-val DarkErrorContainer = androidx.compose.ui.graphics.Color(0xFFB00020)
-val DarkOnErrorContainer = androidx.compose.ui.graphics.Color(0xFFFFCDD2)
+val DarkError = Color(0xFFFF8A80)
+val DarkOnError = Color(0xFF680000)
+val DarkErrorContainer = Color(0xFFB00020)
+val DarkOnErrorContainer = Color(0xFFFFCDD2)
 
 // Neutral
 val DarkBackground = androidx.compose.ui.graphics.Color(0xFF121212)
