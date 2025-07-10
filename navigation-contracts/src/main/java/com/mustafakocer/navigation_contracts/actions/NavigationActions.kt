@@ -106,3 +106,18 @@ interface SettingsNavigationActions : BaseNavigationActions {
      */
     fun navigateToAuth()
 }
+
+// ==================== MOVIE LIST FEATURE ACTIONS ====================
+
+interface MovieListNavigationActions : BaseNavigationActions {
+    /**
+     * Navigate to movie details screen
+     */
+    fun navigateToMovieDetails(movieId: Int)
+}
+
+interface DetailNavigationActions : BaseNavigationActions {
+    /**
+     * Sadece back işlemi var, o da Base navigation'dan geliyor.
+     */
+}

@@ -1,6 +1,6 @@
 package com.mustafakocer.feature_movies.details.util
 
-import com.mustafakocer.feature_movies.MovieConstants
+import com.mustafakocer.feature_movies.shared.util.MovieConstants
 import com.mustafakocer.feature_movies.details.domain.model.MovieDetails
 
 fun MovieDetails.fullPosterUrl(): String {

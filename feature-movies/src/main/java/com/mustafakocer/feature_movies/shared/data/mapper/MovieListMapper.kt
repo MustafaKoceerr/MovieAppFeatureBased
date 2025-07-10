@@ -1,26 +1,17 @@
-package com.mustafakocer.feature_movies.list.data.mapper
+package com.mustafakocer.feature_movies.shared.data.mapper
 
 import com.mustafakocer.feature_movies.list.data.local.entity.MovieListEntity
-import com.mustafakocer.feature_movies.list.data.remote.dto.MovieListDto
+import com.mustafakocer.feature_movies.shared.data.dto.MovieListDto
 import com.mustafakocer.feature_movies.shared.domain.model.MovieList
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 
 /**
- * Movie list mappers
- *
- * CLEAN ARCHITECTURE: Infrastructure Layer
- * RESPONSIBILITY: Convert between layers (DTO ↔ Entity ↔ Domain)
- */
-
-// ==================== DOMAIN MAPPING ====================
-
-/**
  * Convert Entity to Domain model
  * Used by Repository to return business objects
  */
-fun MovieListEntity.toDomain(): MovieList {
+fun MovieListEntity.toDomainMovieList(): MovieList {
     return MovieList(
         id = id,
         title = title,
@@ -42,11 +33,9 @@ fun MovieListEntity.toDomain(): MovieList {
 /**
  * Convert list of entities to domain models
  */
-fun List<MovieListEntity>.toDomain(): List<MovieList> {
-    return map { it.toDomain() }
+fun List<MovieListEntity>.toDomainMovieList(): List<MovieList> {
+    return map { it.toDomainMovieList() }
 }
-
-// ==================== ENTITY MAPPING ====================
 
 /**
  * Convert DTO to Entity
@@ -65,7 +54,10 @@ fun MovieListDto.toEntity(
         backdropPath = backdropPath,
         releaseDate = releaseDate,
         voteAverage = voteAverage,
-        genreIds = Json.encodeToString(ListSerializer(Int.serializer()), genreIds),
+        genreIds = Json.Default.encodeToString(
+            ListSerializer(Int.Companion.serializer()),
+            genreIds
+        ),
         adult = adult,
         originalLanguage = originalLanguage,
         originalTitle = originalTitle,
@@ -75,7 +67,7 @@ fun MovieListDto.toEntity(
         category = category,
         page = page,
         position = position,
-        cacheMetadata = MovieListEntity.createCacheMetadata(
+        cacheMetadata = MovieListEntity.Companion.createCacheMetadata(
             category = category,
             page = page,
             cacheTimeoutHours = 24
@@ -99,16 +91,38 @@ fun List<MovieListDto>.toEntity(
     }
 }
 
-// ==================== HELPER FUNCTIONS ====================
-
 /**
  * Parse genre IDs from JSON string
  * Handles parsing errors gracefully
  */
 private fun parseGenreIds(genreIdsJson: String): List<Int> {
     return try {
-        Json.decodeFromString(ListSerializer(Int.serializer()), genreIdsJson)
+        Json.Default.decodeFromString(ListSerializer(Int.serializer()), genreIdsJson)
     } catch (e: Exception) {
         emptyList()
     }
+}
+
+fun MovieListDto.toDomainMovieList(): MovieList {
+    return MovieList(
+        id = id,
+        title = title,
+        overview = overview,
+        posterPath = posterPath,
+        backdropPath = backdropPath,
+        releaseDate = releaseDate,
+        voteAverage = voteAverage,
+        genreIds = genreIds,
+        voteCount = voteCount,
+        adult = adult,
+        originalLanguage = originalLanguage,
+        originalTitle = originalTitle,
+        popularity = popularity,
+        video = video
+    )
+}
+
+// Bir listeyi domain modele dönüştürür
+fun List<MovieListDto>.toDomainMovies(): List<MovieList> {
+    return map { it.toDomainMovieList() }
 }

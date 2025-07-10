@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_movies.list.data.remote.dto
+package com.mustafakocer.feature_movies.shared.data.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

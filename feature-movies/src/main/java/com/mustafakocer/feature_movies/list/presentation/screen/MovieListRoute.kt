@@ -3,13 +3,14 @@ package com.mustafakocer.feature_movies.list.presentation.screen
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import com.mustafakocer.feature_movies.home.presentation.contract.MoviesListRoute
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEffect
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEvent
 import com.mustafakocer.feature_movies.list.presentation.viewmodel.MovieListViewModel
+import com.mustafakocer.navigation_contracts.MovieListNavActions
 
 /**
  * Movie List Route
@@ -18,13 +19,14 @@ import com.mustafakocer.feature_movies.list.presentation.viewmodel.MovieListView
  * PATTERN: Route handles effects, Screen handles pure UI
  * */
 @Composable
-fun MoviesListRoute(
+fun MovieListRoute(
     categoryEndpoint: String,
     categoryTitle: String,
-    navController: NavHostController,
+    navActions: MovieListNavActions,
     viewModel: MovieListViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     // Handle UI Effects
     LaunchedEffect(Unit) {
@@ -32,11 +34,13 @@ fun MoviesListRoute(
             when (effect) {
                 // ==================== NAVIGATION EFFECTS ====================
                 is MovieListEffect.NavigateToMovieDetail -> {
-                    // todo navigate to detail
+                    navActions.navigateToMovieDetails(
+                        movieId = effect.route.movieId
+                    )
                 }
 
                 is MovieListEffect.NavigateBack -> {
-                    navController.popBackStack()
+                    navActions.navigateBack()
                 }
 
                 // ==================== UI FEEDBACK EFFECTS ====================
@@ -70,5 +74,8 @@ fun MoviesListRoute(
     }
 
     // Render the screen
-    MovieListScreen(contract = viewModel)
+    MovieListScreen(
+        state = state,
+        onEvent = viewModel::onEvent // Event'leri doğrudan paslamak daha temiz
+    )
 }

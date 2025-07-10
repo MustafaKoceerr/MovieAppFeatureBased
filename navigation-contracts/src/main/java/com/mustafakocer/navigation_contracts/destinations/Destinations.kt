@@ -47,13 +47,12 @@ object SettingsDestination
 @Serializable
 data class MovieDetailsDestination(
     val movieId: Int,
-    val movieTitle: String? = null
 )
 
 @Serializable
 data class MoreMoviesDestination(
     val category: String,
-    val categoryTitle: String
+    val categoryTitle: String,
 )
 
 // ==================== HELPER FUNCTIONS ====================
@@ -70,8 +69,8 @@ object DestinationFactory {
     /**
      * Create MovieDetailsDestination with parameters
      */
-    fun movieDetails(movieId: Int, title: String? = null) =
-        MovieDetailsDestination(movieId = movieId, movieTitle = title)
+    fun movieDetails(movieId: Int) =
+        MovieDetailsDestination(movieId = movieId)
 
     /**
      * Create MoreMoviesDestination with parameters

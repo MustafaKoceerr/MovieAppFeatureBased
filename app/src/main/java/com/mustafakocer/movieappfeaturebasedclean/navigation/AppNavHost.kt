@@ -1,9 +1,6 @@
 package com.mustafakocer.movieappfeaturebasedclean.navigation
 
 import androidx.navigation.NavHostController
-import com.mustafakocer.navigation_contracts.*
-import com.mustafakocer.navigation_contracts.AuthNavActions
-import com.mustafakocer.navigation_contracts.MoviesNavActions
 import com.mustafakocer.navigation_contracts.destinations.*
 import com.mustafakocer.navigation_contracts.destinations.AuthGraph
 import com.mustafakocer.navigation_contracts.destinations.HomeDestination
@@ -83,8 +80,10 @@ fun AppNavHost(
             }
 
             composable<SearchDestination> {
-                // TODO: SearchScreen(navActions = navActions)
-                androidx.compose.material3.Text("Search Screen - TODO")
+                // Import actual SearchRoute from feature-movies
+                com.mustafakocer.feature_movies.search.presentation.screen.SearchRoute(
+                    navActions = navActions
+                )
             }
 
             composable<SettingsDestination> {
@@ -93,10 +92,8 @@ fun AppNavHost(
             }
 
             composable<MovieDetailsDestination> { backStackEntry ->
-                val destination = backStackEntry.toRoute<MovieDetailsDestination>()
                 MovieDetailsRoute(
-                    movieId = destination.movieId, // ✅ movieId'yi destination'dan al
-                    navController = navController
+                    navActions = navActions
                 )
             }
 
@@ -107,70 +104,10 @@ fun AppNavHost(
                 MovieListRoute(
                     categoryEndpoint = destination.category,
                     categoryTitle = destination.categoryTitle,
-                    navController = navController
+                    navActions = navActions
                 )
             }
         }
     }
 }
 
-/**
- * Implementation of all navigation actions
- */
-private class AppNavActionsImpl(
-    private val navController: NavHostController,
-) : MoviesNavActions, AuthNavActions, CommonNavActions {
-
-    // ==================== MOVIES ACTIONS ====================
-
-    override fun navigateToMovieDetails(movieId: Int) {
-        val destination = DestinationFactory.movieDetails(movieId)
-        navController.navigate(destination)
-    }
-
-    override fun navigateToMoreMovies(category: String, categoryTitle: String) {
-        val destination = DestinationFactory.moreMovies(category, categoryTitle)
-        navController.navigate(destination)
-    }
-
-    override fun navigateToSearch() {
-        navController.navigate(SearchDestination)
-    }
-
-    override fun navigateToSettings() {
-        navController.navigate(SettingsDestination)
-    }
-
-    override fun navigateToAuth() {
-        navController.navigate(AuthGraph) {
-            // Clear movies graph from backstack
-            popUpTo(MoviesGraph) { inclusive = true }
-        }
-    }
-
-    // ==================== AUTH ACTIONS ====================
-
-    override fun navigateToRegister() {
-        navController.navigate(RegisterDestination)
-    }
-
-    override fun navigateToMainApp() {
-        navController.navigate(MoviesGraph) {
-            // Clear auth graph from backstack
-            popUpTo(AuthGraph) { inclusive = true }
-        }
-    }
-
-    // ==================== COMMON ACTIONS ====================
-
-    override fun navigateBack() {
-        navController.navigateUp()
-    }
-
-    override fun navigateToHome() {
-        navController.navigate(HomeDestination) {
-            // Clear everything and start fresh
-            popUpTo(MoviesGraph) { inclusive = false }
-        }
-    }
-}

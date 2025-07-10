@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_movies
+package com.mustafakocer.feature_movies.shared.util
 
 object MovieConstants {
     const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/"

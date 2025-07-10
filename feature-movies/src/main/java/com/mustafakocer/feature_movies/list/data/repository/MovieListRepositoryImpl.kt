@@ -8,7 +8,7 @@ import androidx.paging.map
 import com.mustafakocer.core_database.pagination.PaginationSettings
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListRemoteKeyDao
-import com.mustafakocer.feature_movies.list.data.mapper.toDomain
+import com.mustafakocer.feature_movies.shared.data.mapper.toDomainMovieList
 import com.mustafakocer.feature_movies.list.data.mediator.MovieListRemoteMediatorFactory
 import com.mustafakocer.feature_movies.list.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.list.domain.repository.MovieListRepository
@@ -50,7 +50,7 @@ class MovieListRepositoryImpl @Inject constructor(
                 movieListDao.getMoviesPagingSource(category.apiEndpoint)
             }
         ).flow.map { pagingData ->
-            pagingData.map { entity -> entity.toDomain() }
+            pagingData.map { entity -> entity.toDomainMovieList() }
         }
     }
 

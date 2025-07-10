@@ -54,9 +54,8 @@ class MovieListViewModel @Inject constructor(
                 event.categoryTitle
             )
 
-            is MovieListEvent.RefreshMovies -> refreshMovies()
-            is MovieListEvent.RetryClicked -> retryLoadData()
-            is MovieListEvent.MovieClicked -> navigateToMovieDetail(event.movieId, event.movieTitle)
+            is MovieListEvent.MovieClicked -> navigateToMovieDetail(event.movieId)
+            is MovieListEvent.NavigateBackClicked -> navigateBack()
         }
     }
 
@@ -64,11 +63,11 @@ class MovieListViewModel @Inject constructor(
     /**
      * Navigate to movie detail screen
      */
-    fun navigateToMovieDetail(movieId: Int, movieTitle: String) {
+    fun navigateToMovieDetail(movieId: Int) {
         viewModelScope.launch {
             _uiEffect.emit(
                 MovieListEffect.NavigateToMovieDetail(
-                    MovieDetailRoute(movieId = movieId, movieTitle = movieTitle)
+                    MovieDetailRoute(movieId = movieId)
                 )
             )
         }
@@ -119,25 +118,6 @@ class MovieListViewModel @Inject constructor(
             isLoading = false,
             error = null
         )
-    }
-
-    /**
-     * Refresh movies for current category
-     */
-    private fun refreshMovies() {
-        val category = currentCategory ?: return
-
-        viewModelScope.launch {
-            try {
-                _uiState.value = _uiState.value.copy(isRefreshing = true)
-                refreshMovieListUseCase(category)
-                _uiEffect.emit(MovieListEffect.ShowToast("Movies refreshed"))
-            } catch (exception: Exception) {
-                _uiEffect.emit(MovieListEffect.ShowError("Failed to refresh: ${exception.message}"))
-            } finally {
-                _uiState.value = _uiState.value.copy(isRefreshing = false)
-            }
-        }
     }
 
     /**

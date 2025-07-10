@@ -3,7 +3,7 @@ package com.mustafakocer.feature_movies.shared.data.api
 import com.mustafakocer.core_network.api.PaginatedResponse
 import com.mustafakocer.feature_movies.shared.data.dto.MovieDto
 import com.mustafakocer.feature_movies.details.data.remote.dto.MovieDetailsDto
-import com.mustafakocer.feature_movies.list.data.remote.dto.MovieListDto
+import com.mustafakocer.feature_movies.shared.data.dto.MovieListDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -104,7 +104,7 @@ interface MovieApiService {
         @Query("query") query: String,
         @Query("page") page: Int = 1,
         @Query("language") language: String = "en-US",
-    ): Response<PaginatedResponse<MovieDto>>
+    ): Response<PaginatedResponse<MovieListDto>>
 
     // ==================== FUTURE ENDPOINTS ====================
     // When needed, add:

@@ -73,7 +73,6 @@ class MovieDetailsViewModel @Inject constructor(
         when (event) {
             is MovieDetailsEvent.RetryLoading -> handleRetryLoading()
             is MovieDetailsEvent.ShareMovie -> handleShareMovie()
-            is MovieDetailsEvent.RefreshDetails -> handleRefreshDetails()
             is MovieDetailsEvent.DismissError -> handleDismissError()
             is MovieDetailsEvent.DismissNetworkSnackbar -> handleDismissNetworkSnackbar()
             is MovieDetailsEvent.BackPressed -> handleBackPressed()
@@ -122,11 +121,6 @@ class MovieDetailsViewModel @Inject constructor(
                     )
                 )
 
-                // Show success feedback
-                _uiEffect.emit(
-                    MovieDetailsEffect.ShowSnackbar("Sharing ${currentMovieDetails.title}")
-                )
-
             } catch (e: Exception) {
                 _uiEffect.emit(
                     MovieDetailsEffect.ShowSnackbar(
@@ -139,15 +133,6 @@ class MovieDetailsViewModel @Inject constructor(
                 updateSharingState(false)
             }
         }
-    }
-
-    /**
-     * Handle refresh details - user pulled to refresh or tapped refresh button
-     */
-    private fun handleRefreshDetails() {
-        // For details screen, refresh is same as load
-        // In future, could implement different strategy
-        loadMovieDetails()
     }
 
     /**
@@ -215,7 +200,6 @@ class MovieDetailsViewModel @Inject constructor(
                         _uiState.value = MovieDetailsUiState.Success(
                             movieDetails = networkAwareState.data,
                             isSharing = _uiState.value.isSharingInProgress,
-                            isOffline = networkAwareState.isOffline
                         )
                     }
 
@@ -299,56 +283,3 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
 }
-
-
-/**
- * TEACHING MOMENT: Why This ViewModel Design is Robust
- *
- * 1. EVENT-DRIVEN ARCHITECTURE:
- *    - All user interactions go through onEvent()
- *    - Clear separation between user actions and business logic
- *    - Testable event handling
- *    - Consistent interaction patterns
- *
- * 2. STATE CONSISTENCY:
- *    - Immutable state objects prevent accidental mutations
- *    - State transitions are explicit and traceable
- *    - Sharing state is preserved across network state changes
- *    - Error states are handled gracefully
- *
- * 3. SIDE EFFECT MANAGEMENT:
- *    - Effects are separate from state (MVI pattern)
- *    - One-time events don't interfere with state
- *    - Multiple effects can be emitted without state corruption
- *    - Effects are testable independently
- *
- * 4. NETWORK AWARENESS:
- *    - Automatically handles connectivity changes
- *    - Preserves data during network issues
- *    - Provides appropriate feedback to users
- *    - Distinguishes between "no data" and "offline" scenarios
- *
- * 5. ERROR HANDLING:
- *    - Network errors don't crash the app
- *    - Graceful degradation when data is unavailable
- *    - User-friendly error messages
- *    - Recovery mechanisms (retry, refresh)
- *
- * 6. BUSINESS LOGIC SEPARATION:
- *    - UI logic → ViewModel
- *    - Business logic → Use case
- *    - Data fetching → Repository
- *    - Network handling → NetworkAwareUiState
- *
- * 7. TESTABILITY:
- *    - Pure functions for event handling
- *    - Mockable dependencies
- *    - Predictable state transitions
- *    - Isolated side effects
- *
- * 8. MAINTAINABILITY:
- *    - Clear event → state → effect flow
- *    - Easy to add new events/effects
- *    - Backward compatibility with deprecated methods
- *    - Self-documenting code structure
- */

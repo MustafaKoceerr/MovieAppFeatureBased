@@ -23,15 +23,6 @@ sealed class MovieDetailsEvent {
     object ShareMovie : MovieDetailsEvent()
 
     /**
-     * ✅ EVENT: User pulled to refresh or tapped refresh
-     * - User action: Yes
-     * - State change: Yes (→ RefreshLoading)
-     * - Business logic: Yes (data fetching)
-     * - Repeatable: Yes
-     */
-    object RefreshDetails : MovieDetailsEvent()
-
-    /**
      * ✅ EVENT: User tapped dismiss on error dialog
      * - User action: Yes
      * - State change: Yes (Error → dismissed)

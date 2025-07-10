@@ -14,8 +14,8 @@ data class MovieList(
     val genreIds: List<Int>,
     val voteCount: Int = 0,           // ✅ UI'da kullanılıyor
     val adult: Boolean = false,       // ✅ Filtreleme için yararlı
-    val originalLanguage: String? = null,     // ✅ Yeni eklendi
-    val originalTitle: String? = null,        // ✅ Yeni eklendi
-    val popularity: Double? = null,           // ✅ Yeni eklendi
-    val video: Boolean? = null,                // ✅ Yeni eklendi
+    val originalLanguage: String,     // ✅ Yeni eklendi
+    val originalTitle: String,        // ✅ Yeni eklendi
+    val popularity: Double,           // ✅ Yeni eklendi
+    val video: Boolean,                // ✅ Yeni eklendi
 )
