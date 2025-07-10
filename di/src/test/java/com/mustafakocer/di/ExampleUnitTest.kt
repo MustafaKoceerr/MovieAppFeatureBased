@@ -1,4 +1,4 @@
-package com.mustafakocer.database_contracts
+package com.mustafakocer.di
 
 import org.junit.Test
 
