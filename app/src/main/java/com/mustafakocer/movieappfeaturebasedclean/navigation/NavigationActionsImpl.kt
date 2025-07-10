@@ -10,7 +10,7 @@ import com.mustafakocer.navigation_contracts.destinations.*
 class AppNavActionsImpl(
     private val navController: NavHostController,
 ) : MoviesNavActions, AuthNavActions, CommonNavActions, SearchNavActions, MovieListNavActions,
-    DetailNavActions {
+    DetailNavActions, SettingsNavActions {
 
     // ==================== MOVIES ACTIONS ====================
 
