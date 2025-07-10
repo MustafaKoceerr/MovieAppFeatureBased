@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_movies.settings
+package com.mustafakocer.feature_movies.settings.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
