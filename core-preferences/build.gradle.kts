@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -33,11 +36,25 @@ android {
 }
 
 dependencies {
+    // ⭐ MINIMAL DEPENDENCIES - App agnostic!
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    // 📱 CORE ANDROID
+    api(libs.androidx.core.ktx)
+
+    // 📦 DATASTORE - Core infrastructure
+    api(libs.androidx.datastore.preferences)
+
+    // 💉 HILT - For providing DataStore
+    api(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
+    // 📊 TESTING
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // ❌ NO UI DEPENDENCIES
+    // ❌ NO BUSINESS LOGIC DEPENDENCIES
+    // ❌ NO FEATURE DEPENDENCIES
+    // ✅ Pure infrastructure only!
 }
