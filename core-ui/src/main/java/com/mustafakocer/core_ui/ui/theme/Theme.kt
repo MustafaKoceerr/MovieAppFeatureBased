@@ -9,6 +9,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import com.mustafakocer.core_preferences.models.ThemePreference
 
 
 private val LightColorScheme = lightColorScheme(
@@ -65,21 +66,26 @@ private val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun MovieDiscoveryTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    theme: ThemePreference = ThemePreference.SYSTEM, // ESKİ: darkTheme: Boolean
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false, // Geçici olarak false
     content: @Composable () -> Unit
 ) {
+    // Theme preference'a göre dark mode belirleme
+    val darkTheme = when (theme) {
+        ThemePreference.LIGHT -> false
+        ThemePreference.DARK -> true
+        ThemePreference.SYSTEM -> isSystemInDarkTheme()
+    }
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-
 
     MaterialTheme(
         colorScheme = colorScheme,
