@@ -32,17 +32,6 @@ sealed class MovieDetailsEvent {
     object DismissError : MovieDetailsEvent()
 
     /**
-     * ✅ EVENT: User tapped X on network snackbar
-     * - User action: Yes
-     * - State change: Yes (showNetworkSnackbar = false)
-     * - Business logic: No (just hide)
-     * - Repeatable: Yes
-     *
-     * WHY NOT EFFECT? Because user actively dismisses it!
-     */
-    object DismissNetworkSnackbar : MovieDetailsEvent()
-
-    /**
      * ✅ EVENT: User pressed back button
      * - User action: Yes
      * - State change: Maybe (could have conditions)
