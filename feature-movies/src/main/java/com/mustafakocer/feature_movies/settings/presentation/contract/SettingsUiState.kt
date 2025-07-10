@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_movies.settings.contract
+package com.mustafakocer.feature_movies.settings.presentation.contract
 
 import com.mustafakocer.core_common.presentation.BaseUiState
 import com.mustafakocer.core_preferences.models.ThemePreference
