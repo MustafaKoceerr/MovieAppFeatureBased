@@ -1,5 +1,7 @@
 package com.mustafakocer.feature_movies.shared.data.mapper
 
+import com.mustafakocer.core_database.cache.CacheDuration
+import com.mustafakocer.core_database.cache.CacheMetadata
 import com.mustafakocer.feature_movies.list.data.local.entity.MovieListEntity
 import com.mustafakocer.feature_movies.shared.data.dto.MovieListDto
 import com.mustafakocer.feature_movies.shared.domain.model.MovieList
@@ -67,11 +69,7 @@ fun MovieListDto.toEntity(
         category = category,
         page = page,
         position = position,
-        cacheMetadata = MovieListEntity.Companion.createCacheMetadata(
-            category = category,
-            page = page,
-            cacheTimeoutHours = 24
-        )
+        cacheMetadata = CacheMetadata.create(CacheDuration.HOURS_24)
     )
 }
 

@@ -42,32 +42,4 @@ data class MovieListEntity(
     // Cache metadata via composition
     @Embedded(prefix = "movie_cache_")
     val cacheMetadata: CacheMetadata,
-) {
-
-    // Implement CacheAwareEntityContract via delegation
-    val cachedAt: Long get() = cacheMetadata.cachedAt
-    val expiresAt: Long get() = cacheMetadata.expiresAt
-    val cacheVersion: Int get() = cacheMetadata.cacheVersion
-    val isPersistent: Boolean get() = cacheMetadata.isPersistent
-
-    companion object {
-        /**
-         * Create cache metadata for movie list item
-         */
-        fun createCacheMetadata(
-            category: String,
-            page: Int,
-            cacheTimeoutHours: Long = 24,
-            isPersistent: Boolean = false,
-            cacheVersion: Int = 1,
-        ): CacheMetadata {
-            val cacheTimeoutMs = cacheTimeoutHours * 60 * 60 * 1000L
-            return CacheMetadata(
-                cachedAt = System.currentTimeMillis(),
-                expiresAt = System.currentTimeMillis() + cacheTimeoutMs,
-                cacheVersion = cacheVersion,
-                isPersistent = isPersistent
-            )
-        }
-    }
-}
+)
