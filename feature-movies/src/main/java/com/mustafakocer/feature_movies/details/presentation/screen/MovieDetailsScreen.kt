@@ -9,7 +9,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_ui.component.error.ErrorScreen
 import com.mustafakocer.core_ui.component.loading.LoadingScreen
 import com.mustafakocer.feature_movies.details.presentation.components.MovieDetailsContent
@@ -27,7 +29,17 @@ fun MovieDetailsScreen(
     snackbarHostState: SnackbarHostState,
 ) {
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .padding(
+                        top = 56.dp, // Account for TopAppBar height
+                        start = 16.dp,
+                        end = 16.dp
+                    )
+            )
+        },
         topBar = {
             MovieDetailsTopBar(
                 title = state.movieDetailsOrNull?.title ?: "Movie Details",
@@ -54,8 +66,6 @@ fun MovieDetailsScreen(
             if (state is MovieDetailsUiState.Error) {
                 ErrorScreen(
                     error = state.errorInfo,
-                    onRetry = { onEvent(MovieDetailsEvent.RetryLoading) },
-                    onNavigateBack = { onEvent(MovieDetailsEvent.DismissError) }
                 )
             } else if (state is MovieDetailsUiState.InitialLoading) {
                 LoadingScreen(message = "Loading movie details...")

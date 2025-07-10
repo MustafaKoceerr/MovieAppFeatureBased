@@ -11,7 +11,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEffect
-import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEvent
 import com.mustafakocer.feature_movies.details.presentation.viewmodel.MovieDetailsViewModel
 import com.mustafakocer.navigation_contracts.DetailNavActions
 
@@ -53,20 +52,14 @@ fun MovieDetailsRoute(
                 }
 
                 is MovieDetailsEffect.ShowSnackbar -> {
+                    // ✅ SIMPLIFIED: All snackbars are short/long, no persistence
+                    val duration =
+                        if (effect.isError) SnackbarDuration.Long else SnackbarDuration.Short
+
                     snackbarHostState.showSnackbar(
                         message = effect.message,
-                        duration = if (effect.isError) SnackbarDuration.Long else SnackbarDuration.Short
+                        duration = duration
                     )
-                }
-
-                is MovieDetailsEffect.ShowNetworkSnackbar -> {
-                    val result = snackbarHostState.showSnackbar(
-                        message = if (effect.isOffline) "📱 ${effect.message}" else "📶 ${effect.message}",
-                        actionLabel = if (effect.isOffline) "Retry" else null,
-                        duration = SnackbarDuration.Long
-                    )
-
-                    viewModel.onEvent(MovieDetailsEvent.DismissNetworkSnackbar)
                 }
             }
         }

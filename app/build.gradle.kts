@@ -105,9 +105,11 @@ dependencies {
     implementation(project(":core-ui"))        // → Compose, Material3, Coil, core-common
     implementation(project(":core-network"))   // → Retrofit, Serialization, core-common
     implementation(project(":core-database"))  // → Room, Paging, core-common
+    implementation(project(":core-preferences")) // ✅ NEW: Theme & Preferences
     implementation(project(":feature-movies"))
     implementation(project(":navigation-contracts"))  // ✅ NEW
     implementation(project(":database-contracts"))  // ✅ NEW
+    implementation(project(":data-common"))       // ← NEW: Access to ThemeRepository
 
     // Future features:
     // implementation(project(":feature-auth"))
@@ -143,4 +145,9 @@ dependencies {
     // 🛠️ DEBUG
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // 🌀 COROUTINES
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

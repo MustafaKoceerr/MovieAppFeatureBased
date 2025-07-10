@@ -37,6 +37,9 @@ espressoCore = "3.6.1"
 compose-material = "1.7.8"
 materialVersion = "1.12.0"
 
+# Preferences
+datastore = "1.1.7"
+
 [libraries]
 # Core Android
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -82,8 +85,9 @@ coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 
 # Coroutines
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
-
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 # UI Tests
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
@@ -98,6 +102,8 @@ androidx-material-icons-core = { module = "androidx.compose.material:material-ic
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose-material" }
 material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 
+# Preferences
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
