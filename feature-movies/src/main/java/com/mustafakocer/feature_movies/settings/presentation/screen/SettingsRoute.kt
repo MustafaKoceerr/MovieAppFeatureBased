@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_movies.settings.screen
+package com.mustafakocer.feature_movies.settings.presentation.screen
 
 
 import androidx.compose.material3.SnackbarDuration
@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.mustafakocer.feature_movies.settings.SettingsViewModel
+import com.mustafakocer.feature_movies.settings.presentation.viewmodel.SettingsViewModel
 import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsEffect
 import com.mustafakocer.navigation_contracts.SettingsNavActions
 
