@@ -17,6 +17,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.mustafakocer.feature_movies.details.presentation.screen.MovieDetailsRoute
 import com.mustafakocer.feature_movies.list.presentation.screen.MovieListRoute
+import com.mustafakocer.feature_movies.settings.presentation.screen.SettingsRoute
 
 /**
  * Main navigation host for the entire application
@@ -86,9 +87,11 @@ fun AppNavHost(
                 )
             }
 
+            // ✅ NEW: Settings Screen Implementation
             composable<SettingsDestination> {
-                // TODO: SettingsScreen(navActions = navActions)
-                androidx.compose.material3.Text("Settings Screen - TODO")
+                SettingsRoute(
+                    navActions = navActions
+                )
             }
 
             composable<MovieDetailsDestination> { backStackEntry ->
