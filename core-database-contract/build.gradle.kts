@@ -1,11 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-
 }
 
 android {
-    namespace = "com.mustafakocer.database_contracts"
+    namespace = "com.mustafakocer.core_database_contract"
     compileSdk = 35
 
     defaultConfig {
@@ -33,22 +32,7 @@ android {
     }
 }
 
+// Bu modülün görevi sözleşme tanımlamaktır, başka bir kütüphaneye ihtiyacı yoktur.
 dependencies {
-    // ⭐ SADECE GEREKLI MINIMUMLAR
 
-    // Room - PagingSource return type için
-    api(libs.room.runtime)
-    api(libs.paging.runtime)
-
-    // core-database - RemoteKeyDao reference için
-    api(project(":core-database"))
-
-    // Testing
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-
-    // ❌ NO HILT - contracts'ta DI gerekmez
-    // ❌ NO SERIALIZATION - contracts'ta gerekmez
-    // ❌ NO OTHER MODULES
 }

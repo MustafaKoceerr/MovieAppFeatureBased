@@ -102,20 +102,17 @@ android {
 
 dependencies {
 // ⭐ FEATURE MODULES (All dependencies inherited through these)
-    implementation(project(":core-ui"))        // → Compose, Material3, Coil, core-common
-    implementation(project(":core-network"))   // → Retrofit, Serialization, core-common
-    implementation(project(":core-database"))  // → Room, Paging, core-common
-    implementation(project(":core-preferences")) // ✅ NEW: Theme & Preferences
-    implementation(project(":feature-movies"))
+    implementation(project(":di"))
     implementation(project(":navigation-contracts"))  // ✅ NEW
-    implementation(project(":database-contracts"))  // ✅ NEW
-    implementation(project(":data-common"))       // ← NEW: Access to ThemeRepository
 
-    // Future features:
-    // implementation(project(":feature-auth"))
-    // implementation(project(":feature-profile"))
-    // implementation(project(":feature-favorites"))
-
+    implementation(project(":core-common"))
+    implementation(project(":core-ui"))
+    implementation(project(":core-network"))
+    implementation(project(":feature-movies"))
+    implementation(project(":core-database"))
+    implementation(project(":core-preferences"))
+    implementation(project(":data-common"))
+    implementation(project(":core-database-contract"))
     // 🗄️ ROOM DATABASE - ✅ EKLENDİ (App level'da KSP için gerekli)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
