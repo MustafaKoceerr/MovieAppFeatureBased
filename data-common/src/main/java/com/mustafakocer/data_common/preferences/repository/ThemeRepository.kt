@@ -13,6 +13,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
+ * NEDEN DI package'ini sildim?
+ * Aksiyon: Bu dosyayı tamamen sil. data-common modülünün görevi ThemeRepository'nin kendisini (iş mantığını) barındırmaktır, onu Hilt'e nasıl "sağlayacağını" söylemek değil.
+ */
+
+/**
  * Theme Repository - Shared Business Logic
  *
  * CLEAN ARCHITECTURE: Data Layer (Shared)

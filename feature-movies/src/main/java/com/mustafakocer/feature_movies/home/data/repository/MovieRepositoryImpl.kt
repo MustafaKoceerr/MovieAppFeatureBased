@@ -3,10 +3,10 @@ package com.mustafakocer.feature_movies.home.data.repository
 import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.core_common.result.UiState
 import com.mustafakocer.core_common.result.map
-import com.mustafakocer.core_network.api.safeApiCall
 import com.mustafakocer.core_network.connectivity.NetworkConnectivityMonitor
-import com.mustafakocer.core_network.error.applyRetryStrategy
-import com.mustafakocer.core_network.utils.ensureConnected
+import com.mustafakocer.core_network.extensions.applyRetryStrategy
+import com.mustafakocer.core_network.util.ensureConnected
+import com.mustafakocer.core_network.util.safeApiCall
 import com.mustafakocer.feature_movies.home.data.mapper.toDomainModels
 import com.mustafakocer.feature_movies.shared.domain.model.Movie
 import com.mustafakocer.feature_movies.home.domain.repository.MovieRepository

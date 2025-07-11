@@ -2,6 +2,11 @@ package com.mustafakocer.core_preferences.datastore
 
 import androidx.datastore.preferences.core.stringPreferencesKey
 
+/**
+ * DI package'ı için yorum:
+ * Aksiyon: Bu dosyayı tamamen sil. core modülünün görevi DataStore'u sağlamak değil, sadece PreferenceKeys gibi tanımları barındırmaktır.
+ *
+ */
 object PreferenceKeys {
     /**
      * Theme preference key
