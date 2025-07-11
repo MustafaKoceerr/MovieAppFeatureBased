@@ -61,6 +61,12 @@ dependencies {
     // App modülünde kullanılacağı için api ile implement edildiği yere de açılmasını sağladım.
     // Böylece bu modülü implement eden herhangi bir modül ayrıca preferences'ı implement etmek zorunda kalmayacak.
 
+    // Retrofit
+    implementation(libs.retrofit.core)
+    implementation(libs.okhttp.logging)
+    implementation(libs.retrofit.kotlinx.serialization.converter)
+    implementation(libs.kotlinx.serialization.json)
+
     testImplementation(libs.testng)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
