@@ -1,81 +1,46 @@
 package com.mustafakocer.feature_movies.list.presentation.screen
 
-import android.widget.Toast
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEffect
-import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEvent
 import com.mustafakocer.feature_movies.list.presentation.viewmodel.MovieListViewModel
-import com.mustafakocer.navigation_contracts.MovieListNavActions
+import com.mustafakocer.navigation_contracts.actions.FeatureMoviesNavActions
+import kotlinx.coroutines.flow.collectLatest
 
-/**
- * Movie List Route
- *
- * RESPONSIBILITY: Handle navigation effects and side effects
- * PATTERN: Route handles effects, Screen handles pure UI
- * */
 @Composable
 fun MovieListRoute(
-    categoryEndpoint: String,
-    categoryTitle: String,
-    navActions: MovieListNavActions,
+    navActions: FeatureMoviesNavActions,
     viewModel: MovieListViewModel = hiltViewModel(),
 ) {
-    val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    // Handle UI Effects
-    LaunchedEffect(Unit) {
-        viewModel.uiEffect.collect { effect ->
+    // Yan etkileri (Effect'leri) dinleyip yöneten bölüm.
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEffect.collectLatest { effect ->
             when (effect) {
-                // ==================== NAVIGATION EFFECTS ====================
                 is MovieListEffect.NavigateToMovieDetail -> {
-                    navActions.navigateToMovieDetails(
-                        movieId = effect.route.movieId
-                    )
+                    navActions.navigateToMovieDetails(effect.movieId)
                 }
-
                 is MovieListEffect.NavigateBack -> {
-                    navActions.navigateBack()
+                    navActions.navigateUp()
                 }
-
-                // ==================== UI FEEDBACK EFFECTS ====================
-                is MovieListEffect.ShowToast -> {
-                    Toast.makeText(
-                        context,
-                        effect.message,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                is MovieListEffect.ShowError -> {
-                    Toast.makeText(
-                        context,
-                        effect.message,
-                        Toast.LENGTH_LONG
-                    ).show()
+                is MovieListEffect.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(message = effect.message)
                 }
             }
         }
     }
 
-    // Initialize screen with parameters
-    LaunchedEffect(categoryEndpoint, categoryTitle) {
-        viewModel.onEvent(
-            MovieListEvent.InitializeScreen(
-                categoryEndpoint = categoryEndpoint,
-                categoryTitle = categoryTitle
-            )
-        )
-    }
-
-    // Render the screen
+    // Saf UI bileşenini çağırıyoruz.
     MovieListScreen(
         state = state,
-        onEvent = viewModel::onEvent // Event'leri doğrudan paslamak daha temiz
+        onEvent = viewModel::onEvent,
+        snackbarHostState = snackbarHostState
     )
 }
