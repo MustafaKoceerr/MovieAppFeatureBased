@@ -1,218 +1,103 @@
 package com.mustafakocer.feature_movies.search.presentation.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.mustafakocer.core_common.presentation.UiContract
-import com.mustafakocer.feature_movies.search.domain.model.SearchQuery
+import com.mustafakocer.core_common.exception.AppException
+import com.mustafakocer.core_common.presentation.BaseViewModel
+import com.mustafakocer.core_common.presentation.LoadingType
 import com.mustafakocer.feature_movies.search.domain.usecase.SearchMoviesUseCase
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchEffect
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchEvent
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchMoviesUseCase: SearchMoviesUseCase,
-) : ViewModel(), UiContract<SearchUiState, SearchEvent, SearchEffect> {
-    // MVI STATE MANAGEMENT
-    private val _uiState = MutableStateFlow(SearchUiState())
-    override val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
+) : BaseViewModel<SearchUiState, SearchEvent, SearchEffect>(SearchUiState()) {
 
-    private val _uiEffect = MutableSharedFlow<SearchEffect>()
-    override val uiEffect: SharedFlow<SearchEffect> = _uiEffect.asSharedFlow()
+    // Kullanıcının girdiği arama sorgusunu reaktif olarak işlemek için.
+    private val searchQueryFlow = MutableStateFlow("")
 
-    // ==================== AUTO SEARCH PROPERTIES ====================
-    private var searchJob: Job? = null
-    private val searchDebounceDelayMs = 600L // 600ms delay
-    private val minAutoSearchLength = 3 // Start auto search after 3 characters
-    // ==================== EVENT HANDLING ====================
+    init {
+        observeSearchQuery()
+    }
 
     override fun onEvent(event: SearchEvent) {
         when (event) {
-            is SearchEvent.QueryChanged -> handleQueryChanged(event.query)
-            is SearchEvent.SearchTriggered -> handleSearchTriggered()
-            is SearchEvent.ClearSearch -> handleClearSearch()
+            is SearchEvent.QueryChanged -> {
+                // UI'ı anında güncelle ve reaktif akışı tetikle.
+                setState { copy(searchQuery = event.query) }
+                searchQueryFlow.value = event.query
+            }
+
+            is SearchEvent.ClearSearch -> {
+                // Arama kutusunu ve sonuçları temizle.
+                setState { copy(searchQuery = "", searchResults = emptyFlow()) }
+                searchQueryFlow.value = ""
+            }
+
+            is SearchEvent.MovieClicked -> {
+                sendEffect(SearchEffect.NavigateToMovieDetail(event.movieId))
+            }
+
+            is SearchEvent.BackClicked -> {
+                sendEffect(SearchEffect.NavigateBack)
+            }
         }
     }
 
-    // ==================== PRIVATE EVENT HANDLERS ====================
-// ==================== PUBLIC NAVIGATION METHODS ====================
-
     /**
-     * Navigate to movie details screen
+     * Arama sorgusu akışını dinler ve debounce/filter mantığını uygular.
      */
-    fun navigateToMovieDetail(movieId: Int) {
+    @OptIn(FlowPreview::class)
+    private fun observeSearchQuery() {
         viewModelScope.launch {
-            _uiEffect.emit(SearchEffect.NavigateToMovieDetail(movieId))
+            searchQueryFlow
+                .debounce(500L) // Kullanıcı yazmayı bıraktıktan sonra 500ms bekle
+                .distinctUntilChanged() // Aynı sorguyu tekrar işleme
+                .collectLatest { query ->
+                    // Arama yapmak için yeterli uzunlukta mı diye kontrol et
+                    if (query.trim().length >= 3) {
+                        performSearch(query)
+                    } else {
+                        // Yeterli uzunlukta değilse, mevcut sonuçları temizle
+                        setState { copy(searchResults = emptyFlow()) }
+                    }
+                }
         }
     }
 
     /**
-     * Navigate back to previous screen
-     */
-    fun navigateBack() {
-        viewModelScope.launch {
-            _uiEffect.emit(SearchEffect.NavigateBack)
-        }
-    }
-
-    /**
-     * Show snackbar message
-     */
-    fun showSnackbar(message: String) {
-        viewModelScope.launch {
-            _uiEffect.emit(SearchEffect.ShowSnackbar(message))
-        }
-    }
-
-    /**
-     * Hide keyboard
-     */
-    fun hideKeyboard() {
-        viewModelScope.launch {
-            _uiEffect.emit(SearchEffect.HideKeyboard)
-        }
-    }
-
-    /**
-     * ✅ SOLUTION: Update query immediately, handle search separately
-     */
-    private fun handleQueryChanged(newQuery: String) {
-        // 1. Update query immediately for UI responsiveness
-        _uiState.value = _uiState.value.copy(searchQuery = newQuery)
-
-        // 2. Handle search logic separately
-        searchWithDebounce()
-    }
-
-    /**
-     * Handle search trigger (user pressed search button or enter)
-     */
-    private fun handleSearchTriggered() {
-        val currentQuery = _uiState.value.searchQuery
-
-        // Validate query
-        if (!_uiState.value.canSearch) {
-            showSnackbar("Please enter at least 2 characters")
-            return
-        }
-
-        // Cancel any pending auto search and search immediately
-        searchJob?.cancel()
-
-        // Hide keyboard and start search
-        hideKeyboard()
-
-        performSearch(currentQuery)
-    }
-
-    /**
-     * Auto search with debouncing - triggers after user stops typing
-     */
-    private fun searchWithDebounce() {
-        // Cancel previous search job
-        searchJob?.cancel()
-
-        val currentQuery = _uiState.value.searchQuery.trim()
-
-        // Only auto search if query has minimum length
-        if (currentQuery.length < minAutoSearchLength) {
-            clearResultsOnly() // ✅ Clear results but keep query
-            return
-        }
-
-        // Start new debounced search
-        searchJob = viewModelScope.launch {
-            delay(searchDebounceDelayMs)
-            performSearch(currentQuery)
-        }
-    }
-
-    /**
-     * ✅ UPDATED: Clear results but preserve query
-     */
-    private fun clearResultsOnly() {
-        _uiState.value = _uiState.value.copy(
-            searchResults = emptyFlow(),
-            hasSearched = false,
-            isSearchActive = false,
-            isLoading = false,
-            error = null
-        )
-    }
-    /**
-     * Handle clear search
-     */
-    private fun handleClearSearch() {
-        _uiState.value = SearchUiState() // Reset to initial state
-    }
-
-    // ==================== PRIVATE BUSINESS LOGIC ====================
-
-    /**
-     * Perform actual search using use case
+     * Asıl arama işlemini gerçekleştirir ve Paging Flow'unu state'e koyar.
      */
     private fun performSearch(query: String) {
-        _uiState.value = _uiState.value.copy(
-            isLoading = true,
-            isSearchActive = true,
-            hasSearched = true,
-            error = null
-        )
+        // Paging'in kendi yükleme durumu olduğu için, executeSafeOnce'a gerek yok.
+        // Paging Flow'unu oluşturup doğrudan state'e koyuyoruz.
+        val searchResultsFlow = searchMoviesUseCase(query).cachedIn(viewModelScope)
 
-        try {
-            val searchResults = searchMoviesUseCase(query)
-                .cachedIn(viewModelScope) // Important for Paging3 configuration changes
+        setState { copy(searchResults = searchResultsFlow) }
 
-            _uiState.value = _uiState.value.copy(
-                isLoading = false,
-                searchResults = searchResults,
-                isSearchActive = true
-            )
-        } catch (exception: Exception) {
-            _uiState.value = _uiState.value.copy(
-                isLoading = false,
-                error = "Search failed: ${exception.message}",
-                searchResults = emptyFlow()
-            )
-
-            showSnackbar("Search failed. Please try again.")
-
-        }
+        // Arama yapıldıktan sonra klavyeyi gizlemek iyi bir kullanıcı deneyimidir.
+        sendEffect(SearchEffect.HideKeyboard)
     }
 
-    // ==================== PUBLIC HELPER METHODS ====================
-    /**
-     * Retry search (for error states)
-     */
-    fun retrySearch() {
-        val currentQuery = _uiState.value.searchQuery
-        if (currentQuery.isNotEmpty()) {
-            performSearch(currentQuery)
-        }
+
+    // Paging kendi durumlarını yönettiği için şimdilik basit kalabilirler.
+    override fun handleError(error: AppException): SearchUiState {
+        sendEffect(SearchEffect.ShowSnackbar(error.userMessage))
+        return currentState.copy(error = error)
     }
 
-    /**
-     * Check if currently searching
-     */
-    val isSearching: Boolean
-        get() = _uiState.value.isSearchActive && _uiState.value.isLoading
-
-    override fun onCleared() {
-        super.onCleared()
-        // Cancel search job when ViewModel is cleared
-        searchJob?.cancel()
+    override fun setLoading(loadingType: LoadingType, isLoading: Boolean): SearchUiState {
+        return currentState.copy(isLoading = isLoading)
     }
 }
