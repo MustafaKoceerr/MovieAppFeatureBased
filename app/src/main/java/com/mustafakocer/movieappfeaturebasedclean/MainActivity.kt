@@ -1,6 +1,8 @@
 package com.mustafakocer.movieappfeaturebasedclean
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -18,28 +20,58 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
+import com.mustafakocer.core_ui.util.updateLocale
+import com.mustafakocer.data_common.preferences.repository.LanguageRepository
 import com.mustafakocer.movieappfeaturebasedclean.navigation.AppNavHost
 import com.mustafakocer.movieappfeaturebasedclean.presentation.viewmodel.MainViewModel
 import com.mustafakocer.navigation_contracts.navigation.MoviesFeatureGraph
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import java.util.Locale
+import javax.inject.Inject
 
-/**
- * Main Activity with integrated navigation
- *
- * RESPONSIBILITIES:
- * ✅ Setup navigation controller
- * ✅ Determine start destination (auth vs main app)
- * ✅ Apply app theme
- * ✅ Handle system UI (edge-to-edge)
- */
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+interface LanguageRepositoryEntryPoint {
+    fun languageRepository(): LanguageRepository
+}
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    /**
+     * Bu metod, Activity'nin Context'i oluşturulurken çağrılır.
+     * Dil ayarını, herhangi bir UI bileşeni çizilmeden önce yapmak için
+     * en doğru yer burasıdır.
+     */
+    override fun attachBaseContext(newBase: Context) {
+        // EntryPoint'i kullanarak Hilt grafiğinden LanguageRepository'yi alıyoruz.
+        val entryPoint = EntryPointAccessors.fromApplication(
+            newBase.applicationContext,
+            LanguageRepositoryEntryPoint::class.java
+        )
+        val repo = entryPoint.languageRepository()
 
+        // runBlocking burada kaçınılmazdır çünkü bu metodun senkron olması gerekir.
+        val languageCode = runBlocking{
+            repo.languageFlow.first().code
+        }
+
+        val locale = Locale(languageCode)
+
+        // Yeni dil ayarıyla güncellenmiş Context'i Activity'e ata.
+        super.attachBaseContext(newBase.updateLocale(locale))
+    }
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        Log.d("MainActivity", "OnCreate'e girdi: ")
         setContent {
             // 1. ViewModel'i ve NavController'ı en dış katmanda, bir kez oluştur.
             // Bunlar artık tema değişikliğinden etkilenmeyecek.
@@ -47,15 +79,18 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val startDestination = determineStartDestination()
 
-            // 2. Tema state'ini topla. Bu değiştiğinde, sadece AnimatedContent yeniden çalışacak.
             val currentTheme by viewModel.themeState.collectAsStateWithLifecycle()
 
-            // 3. AnimatedContent, sadece tema ile ilgili olan kısmı sarmalasın.
             AnimatedContent(
                 targetState = currentTheme,
                 transitionSpec = {
                     (fadeIn(animationSpec = tween(400, easing = FastOutSlowInEasing)) +
-                            slideInVertically(animationSpec = tween(400, easing = FastOutSlowInEasing)) { it / 20 })
+                            slideInVertically(
+                                animationSpec = tween(
+                                    400,
+                                    easing = FastOutSlowInEasing
+                                )
+                            ) { it / 20 })
                         .togetherWith(
                             fadeOut(animationSpec = tween(200)) +
                                     slideOutVertically(animationSpec = tween(200)) { -it / 20 }
@@ -63,11 +98,7 @@ class MainActivity : ComponentActivity() {
                 },
                 label = "ThemeTransition"
             ) { theme ->
-                // 4. MovieDiscoveryTheme, her animasyon karesi için doğru temayı uygular.
                 MovieDiscoveryTheme(theme = theme) {
-                    // 5. AppContent adında yeni bir Composable oluşturduk.
-                    // Bu, NavHost'u ve Scaffold'u içerir ve tema değişikliğinden etkilenmez.
-                    // Sadece temanın kendisi değiştiği için yeniden çizilir.
                     AppNavHost(
                         navController = navController,
                         startDestination = startDestination
@@ -101,3 +132,6 @@ class MainActivity : ComponentActivity() {
 //     // Check auth state from repository/datastore
 //     return false
 // }
+
+
+
