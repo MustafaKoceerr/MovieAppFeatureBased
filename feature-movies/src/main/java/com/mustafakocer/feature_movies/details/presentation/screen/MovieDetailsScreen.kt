@@ -9,10 +9,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_ui.component.error.ErrorScreen
+import com.mustafakocer.core_ui.component.error.toErrorInfoOrFallback
 import com.mustafakocer.core_ui.component.loading.LoadingScreen
 import com.mustafakocer.feature_movies.details.presentation.components.MovieDetailsContent
 import com.mustafakocer.feature_movies.details.presentation.components.MovieDetailsTopBar
@@ -23,35 +22,24 @@ import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetail
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieDetailsScreen(
-    // DEĞİŞİKLİK: İmza artık MovieListScreen ile tutarlı.
     state: MovieDetailsUiState,
     onEvent: (MovieDetailsEvent) -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     Scaffold(
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .padding(
-                        top = 56.dp, // Account for TopAppBar height
-                        start = 16.dp,
-                        end = 16.dp
-                    )
-            )
-        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             MovieDetailsTopBar(
-                title = state.movieDetailsOrNull?.title ?: "Movie Details",
-                isOffline = state.isOffline,
-                // DEĞİŞİKLİK: Event'ler doğrudan 'onEvent' lambdası ile gönderiliyor.
+                title = state.movie?.title ?: "Movie Details",
+                // isOffline durumunu şimdilik kaldırdık, daha sonra eklenebilir.
                 onNavigateBack = { onEvent(MovieDetailsEvent.BackPressed) },
             )
         },
         floatingActionButton = {
-            if (state.hasMovieDetails) {
+            // Sadece film detayı varsa paylaşma butonu görünsün.
+            if (state.movie != null) {
                 ShareFloatingActionButton(
-                    isSharing = state.isSharingInProgress,
+                    isSharing = state.isSharing,
                     onClick = { onEvent(MovieDetailsEvent.ShareMovie) }
                 )
             }
@@ -62,18 +50,21 @@ fun MovieDetailsScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // State yönetimi mantığı aynı kalıyor, çünkü zaten temizdi.
-            if (state is MovieDetailsUiState.Error) {
-                ErrorScreen(
-                    error = state.errorInfo,
-                )
-            } else if (state is MovieDetailsUiState.InitialLoading) {
+            // Sealed class yerine basit if/else kontrolleri
+            if (state.isLoading) {
                 LoadingScreen(message = "Loading movie details...")
-            } else if (state.hasMovieDetails) {
+            } else if (state.error != null) {
+                // Hata durumunda ErrorScreen gösterilir.
+                // ErrorInfo'yu anlık olarak oluşturabiliriz veya state'e ekleyebiliriz.
+                ErrorScreen(
+                    error = state.error.toErrorInfoOrFallback(),
+                    onRetry = { onEvent(MovieDetailsEvent.Refresh) }
+                )
+            } else if (state.movie != null) {
+                // Başarılı durumda içerik gösterilir.
                 MovieDetailsContent(
-                    movieDetails = state.movieDetailsOrNull!!,
-                    isRefreshLoading = state.isRefreshLoading,
-                    isOffline = state.isOffline
+                    movie = state.movie,
+                    isRefreshLoading = state.isRefreshing,
                 )
             }
         }
