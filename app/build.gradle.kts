@@ -125,6 +125,9 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler) // ✅ ÖNEMLİ: Room annotation processor
 
+    // Appcompact
+    implementation(libs.androidx.appcompat)
+
     // navigation
     implementation(libs.androidx.navigation.compose)
     implementation(libs.hilt.navigation.compose)
