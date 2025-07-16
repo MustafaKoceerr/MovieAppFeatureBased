@@ -5,30 +5,28 @@ import com.mustafakocer.core_common.presentation.BaseUiEffect
 import com.mustafakocer.core_common.presentation.BaseUiEvent
 import com.mustafakocer.core_common.presentation.BaseUiState
 import com.mustafakocer.core_preferences.models.ThemePreference
+import com.mustafakocer.core_preferences.models.LanguagePreference
 
 // ==================== STATE ====================
 data class SettingsUiState(
-    // DataStore'dan gelen ve o an seçili olan tema.
     val currentTheme: ThemePreference = ThemePreference.SYSTEM, // Varsayılan olarak Sistem Teması
+    val currentLanguage: LanguagePreference = LanguagePreference.ENGLISH, // Varsayılan olarak Sistem Teması
 
-    // isLoading, tema değiştirme işlemi sırasında kullanılacak.
     override val isLoading: Boolean = false,
     override val isRefreshing: Boolean = false, // Bu ekranda kullanılmıyor ama tutarlılık için kalabilir.
-    override val error: AppException? = null
+    override val error: AppException? = null,
 ) : BaseUiState
 
 // ==================== EVENT ====================
 sealed interface SettingsEvent : BaseUiEvent {
-    // Kullanıcı yeni bir tema seçtiğinde tetiklenir.
     data class ThemeSelected(val theme: ThemePreference) : SettingsEvent
-
-    // Geri butonuna basıldığında tetiklenir.
+    data class LanguageSelected(val language: LanguagePreference) : SettingsEvent
     object BackClicked : SettingsEvent
 }
 
 // ==================== EFFECT ====================
 sealed interface SettingsEffect : BaseUiEffect {
     object NavigateBack : SettingsEffect
-    // Başarı veya hata durumları için tek bir Snackbar effect'i yeterli.
     data class ShowSnackbar(val message: String) : SettingsEffect
+    object RestartActivity : SettingsEffect
 }
