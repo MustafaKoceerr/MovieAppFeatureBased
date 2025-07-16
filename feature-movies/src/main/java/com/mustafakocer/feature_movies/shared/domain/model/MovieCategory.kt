@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_movies.list.domain.model
+package com.mustafakocer.feature_movies.shared.domain.model
 
 /**
  * Movie category types for API endpoints
@@ -8,7 +8,7 @@ package com.mustafakocer.feature_movies.list.domain.model
 
 enum class MovieCategory(
     val apiEndpoint: String,
-    val displayName: String,
+    val title: String,
     val cacheKey: String
 ) {
     NOW_PLAYING("now_playing", "Now Playing", "movies_now_playing"),
@@ -22,7 +22,7 @@ enum class MovieCategory(
          * Useful for navigation parameter mapping
          */
         fun fromApiEndpoint(endpoint: String): MovieCategory? {
-            return values().find { it.apiEndpoint == endpoint }
+            return entries.find { it.apiEndpoint == endpoint }
         }
 
         /**
@@ -30,7 +30,7 @@ enum class MovieCategory(
          * Useful for UI iteration
          */
         fun getAllCategories(): List<MovieCategory> {
-            return values().toList()
+            return entries
         }
     }
 }

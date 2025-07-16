@@ -1,6 +1,6 @@
-package com.mustafakocer.feature_movies.home.util
+package com.mustafakocer.feature_movies.shared.util
 
-import com.mustafakocer.feature_movies.shared.domain.model.Movie
+import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 
 /**
  * TEACHING MOMENT: Feature-Specific UI Extensions
@@ -20,11 +20,11 @@ import com.mustafakocer.feature_movies.shared.domain.model.Movie
  * @param size Image size (w92, w154, w185, w342, w500, w780, original)
  * @return Full poster URL or null if posterPath is null
  */
-fun Movie.getPosterUrl(size: String = "w342"): String? {
-     val url = posterPath?.let { path ->
+fun MovieListItem.getPosterUrl(size: String = "w342"): String? {
+    val url = posterUrl?.let { path ->
         "https://image.tmdb.org/t/p/$size$path"
     }
-        println(url)
+    println(url)
     return url
 }
 
@@ -34,8 +34,8 @@ fun Movie.getPosterUrl(size: String = "w342"): String? {
  * @param size Image size (w300, w780, w1280, original)
  * @return Full backdrop URL or null if backdropPath is null
  */
-fun Movie.getBackdropUrl(size: String = "w780"): String? {
-    return backdropPath?.let {
+fun MovieListItem.getBackdropUrl(size: String = "w780"): String? {
+    return getBackdropUrl()?.let {
         "https://image.tmdb.org/t/p/$size$it"
     }
 }
@@ -43,28 +43,19 @@ fun Movie.getBackdropUrl(size: String = "w780"): String? {
 /**
  * Format rating for UI display
  */
-val Movie.formattedRating: String
+val MovieListItem.formattedRating: String
     get() = String.format("%.1f", voteAverage)
 
 /**
  * Check if movie has high rating
  */
-val Movie.isHighRated: Boolean
+val MovieListItem.isHighRated: Boolean
     get() = voteAverage >= 7.0
 
-/**
- * Extract release year from date
- */
-val Movie.releaseYear: String
-    get() = if (releaseDate.length >= 4) {
-        releaseDate.substring(0, 4)
-    } else {
-        "Unknown"
-    }
 
 /**
  * Check if poster is available
  */
-val Movie.hasValidPoster: Boolean
-    get() = !posterPath.isNullOrBlank()
+val MovieListItem.hasValidPoster: Boolean
+    get() = !posterUrl.isNullOrBlank()
 
