@@ -77,7 +77,7 @@ class MovieListViewModel @Inject constructor(
             setState {
                 copy(
                     movies = moviesPagingFlow,
-                    categoryTitle = category.title
+                    category = category
                 )
             }
         } catch (e: Exception) {

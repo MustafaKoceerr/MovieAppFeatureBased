@@ -10,6 +10,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.mustafakocer.feature_movies.home.presentation.screen.toLocalizedTitle
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEvent
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListUiState
 import com.mustafakocer.feature_movies.shared.presentation.components.commonpagination.MovieListContent
@@ -26,7 +27,7 @@ fun MovieListScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             MovieListTopAppBar(
-                title = state.categoryTitle,
+                title = state.category?.toLocalizedTitle() ?: "",
                 onNavigateBack = { onEvent(MovieListEvent.BackClicked) },
             )
         }

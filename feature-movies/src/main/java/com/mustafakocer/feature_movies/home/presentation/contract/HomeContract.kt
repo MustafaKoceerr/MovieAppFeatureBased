@@ -36,7 +36,7 @@ sealed interface HomeEvent : BaseUiEvent {
 // ==================== EFFECT ====================
 sealed interface HomeEffect : BaseUiEffect {
     data class NavigateToMovieDetails(val movieId: Int) : HomeEffect
-    data class NavigateToMovieList(val categoryTitle: String, val categoryEndpoint: String) : HomeEffect
+    data class NavigateToMovieList(val categoryEndpoint: String) : HomeEffect
     object NavigateToSettings : HomeEffect
     object NavigateToSearch : HomeEffect
     data class ShowSnackbar(val message: String) : HomeEffect

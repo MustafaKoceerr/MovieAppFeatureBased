@@ -31,7 +31,7 @@ import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
  */
 @Composable
 fun MovieCategorySection(
-    category: MovieCategory,
+    categoryTitle: String,
     movies: List<MovieListItem>,
     onMovieClick: (movieId: Int) -> Unit,
     onViewAllClick: () -> Unit,
@@ -49,7 +49,7 @@ fun MovieCategorySection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = category.title, // MovieCategory enum'unun bir 'title' alanı olduğunu varsayıyoruz.
+                text = categoryTitle, // MovieCategory enum'unun bir 'title' alanı olduğunu varsayıyoruz.
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.weight(1f)
             )
