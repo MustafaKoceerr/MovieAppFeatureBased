@@ -7,7 +7,6 @@ import com.mustafakocer.core_preferences.datastore.PreferenceKeys
 import com.mustafakocer.core_preferences.models.ThemePreference
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
