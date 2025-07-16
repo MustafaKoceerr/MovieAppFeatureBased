@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun MovieInfo(
     title: String,
-    releaseDate: String,
+    releaseYear: String,
     overview: String,
     voteAverage: Double,
     voteCount: Int,
@@ -41,7 +41,7 @@ fun MovieInfo(
 
         // Çıkış tarihi
         Text(
-            text = releaseDate,
+            text = releaseYear,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

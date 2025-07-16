@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 fun MovieStatsSection(
     voteAverage: Double,
     releaseDate: String,
-    runtime: Int?, // Süre bilgisi her zaman gelmeyebilir, bu yüzden nullable.
+    runtime: String?, // Süre bilgisi her zaman gelmeyebilir, bu yüzden nullable.
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -52,11 +52,10 @@ fun MovieStatsSection(
 
         // Süre Kartı (sadece süre bilgisi varsa gösterilir)
         runtime?.let {
-            val runtimeText = formatRuntime(it)
             MovieStatItem(
                 icon = Icons.Default.Schedule,
                 label = "Runtime",
-                value = runtimeText,
+                value = it,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -108,15 +107,3 @@ private fun MovieStatItem(
     }
 }
 
-/**
- * Süreyi (dakika olarak) "1h 35m" formatına çeviren yardımcı fonksiyon.
- */
-private fun formatRuntime(minutes: Int): String {
-    val hours = minutes / 60
-    val remainingMinutes = minutes % 60
-    return when {
-        hours > 0 && remainingMinutes > 0 -> "${hours}h ${remainingMinutes}m"
-        hours > 0 -> "${hours}h"
-        else -> "${remainingMinutes}m"
-    }
-}

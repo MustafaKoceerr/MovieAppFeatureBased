@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CloudOff
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +35,6 @@ fun MovieHeroSection(
     posterUrl: String,
     title: String,
     tagline: String?, // Nullable, çünkü her filmin tagline'ı olmayabilir
-    isOffline: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -65,7 +61,6 @@ fun MovieHeroSection(
             posterUrl = posterUrl,
             title = title,
             tagline = tagline,
-            isOffline = isOffline,
             modifier = Modifier.align(Alignment.BottomStart)
         )
     }
@@ -100,7 +95,6 @@ private fun MovieInfoOverlay(
     posterUrl: String,
     title: String,
     tagline: String?,
-    isOffline: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -145,35 +139,6 @@ private fun MovieInfoOverlay(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-
-            // Sadece offline ise gösterilir
-            if (isOffline) {
-                OfflineIndicator(modifier = Modifier.padding(top = 4.dp))
-            }
         }
-    }
-}
-
-/**
- * İçeriğin çevrimdışı olduğunu belirten küçük bir gösterge.
- */
-@Composable
-private fun OfflineIndicator(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Default.CloudOff,
-            contentDescription = "Offline content",
-            tint = Color.White.copy(alpha = 0.7f),
-            modifier = Modifier.size(16.dp)
-        )
-        Text(
-            text = "Offline content",
-            style = MaterialTheme.typography.labelMedium, // Daha uygun bir stil
-            color = Color.White.copy(alpha = 0.7f)
-        )
     }
 }
