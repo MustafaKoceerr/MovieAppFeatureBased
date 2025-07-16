@@ -2,7 +2,9 @@ package com.mustafakocer.movieappfeaturebasedclean.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mustafakocer.core_preferences.models.LanguagePreference
 import com.mustafakocer.core_preferences.models.ThemePreference
+import com.mustafakocer.data_common.preferences.repository.LanguageRepository
 import com.mustafakocer.data_common.preferences.repository.ThemeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,6 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val themeRepository: ThemeRepository,
+    private val languageRepository: LanguageRepository,
 ) : ViewModel() {
 
     // Future: User session, app state, etc. buraya eklenebilir
@@ -23,5 +26,11 @@ class MainViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = ThemePreference.SYSTEM // Bu sadece geçici bir fallback değeri.
+    )
+
+    val languageState: StateFlow<LanguagePreference> = languageRepository.languageFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = LanguagePreference.DEFAULT
     )
 }
