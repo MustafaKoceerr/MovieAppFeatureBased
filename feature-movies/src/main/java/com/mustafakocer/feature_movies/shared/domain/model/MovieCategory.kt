@@ -8,13 +8,12 @@ package com.mustafakocer.feature_movies.shared.domain.model
 
 enum class MovieCategory(
     val apiEndpoint: String,
-    val title: String,
-    val cacheKey: String
+    val cacheKey: String,
 ) {
-    NOW_PLAYING("now_playing", "Now Playing", "movies_now_playing"),
-    POPULAR("popular", "Popular", "movies_popular"),
-    TOP_RATED("top_rated", "Top Rated", "movies_top_rated"),
-    UPCOMING("upcoming", "Upcoming", "movies_upcoming");
+    NOW_PLAYING("now_playing", "movies_now_playing"),
+    POPULAR("popular", "movies_popular"),
+    TOP_RATED("top_rated", "movies_top_rated"),
+    UPCOMING("upcoming", "movies_upcoming");
 
     companion object {
         /**
