@@ -22,10 +22,9 @@ fun NavGraphBuilder.moviesNavGraph(
             navController.navigate(MovieDetailsScreen(movieId = movieId))
         }
 
-        override fun navigateToMovieList(categoryTitle: String, categoryEndpoint: String) {
+        override fun navigateToMovieList( categoryEndpoint: String) {
             navController.navigate(
                 MovieListScreen(
-                    categoryTitle = categoryTitle,
                     categoryEndpoint = categoryEndpoint
                 )
             )
