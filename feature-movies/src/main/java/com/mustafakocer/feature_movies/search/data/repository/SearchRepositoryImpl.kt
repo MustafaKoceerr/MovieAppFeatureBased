@@ -10,7 +10,6 @@ import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 
 /**

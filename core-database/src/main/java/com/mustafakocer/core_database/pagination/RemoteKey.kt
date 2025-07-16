@@ -39,32 +39,9 @@ data class RemoteKey(
     @Embedded(prefix = "cache_")
     val cache: CacheMetadata,
 ) {
-    /**
-     * Daha sayfa var mı?
-     */
-    val hasMorePages: Boolean
-        get() = totalPages?.let { currentPage < it } ?: true
-
-    /**
-     * İlk sayfa mı?
-     */
-    val isFirstPage: Boolean
-        get() = currentPage == 1
-
-    /**
-     * Son sayfa mı?
-     */
-    val isLastPage: Boolean
-        get() = totalPages?.let { currentPage >= it } ?: false
-
     companion object {
         /**
          * Yeni bir RemoteKey nesnesi oluşturur.
-         *
-         * @param query Benzersiz sorgu anahtarı. createCompositeKey ile oluşturulması önerilir.
-         * @param apiResponse API'den gelen sayfalama bilgisi.
-         * @param cacheDuration Cache süresi.
-         * @return Yapılandırılmış bir RemoteKey nesnesi.
          */
         fun create(
             query: String,
@@ -73,7 +50,7 @@ data class RemoteKey(
             totalItems: Int?,
             cacheDuration: Long = CacheDuration.HOURS_24, // Varsayılan cache süresi
         ): RemoteKey {
-            val isEnd = totalPages?.let { currentPage >= it } ?: false
+            val isEnd = totalPages?.let { currentPage >= it } == true
             return RemoteKey(
                 query = query,
                 entityType = query.substringBefore('_'), // "movies_popular" -> "movies"

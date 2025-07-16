@@ -29,7 +29,7 @@ fun MovieListContent(
     onMovieClick: (MovieListItem) -> Unit,
 ) {
     // Paging'in ana yükleme durumunu (ilk yükleme veya tam ekran yenileme) kontrol ediyoruz.
-    when (val refreshState = lazyMovieItems.loadState.refresh) {
+    when (lazyMovieItems.loadState.refresh) {
         // 1. TAM EKRAN YÜKLEME DURUMU
         is LoadState.Loading -> {
             LoadingScreen(message = "Filmler yükleniyor...")
@@ -70,7 +70,7 @@ fun MovieListContent(
                     }
 
                     // SAYFA SONU YÜKLEME VE HATA DURUMLARI
-                    when (val appendState = lazyMovieItems.loadState.append) {
+                    when (lazyMovieItems.loadState.append) {
                         is LoadState.Loading -> {
                             // Sayfa sonunda dönen küçük spinner
                             item { PagingAppendIndicator() }

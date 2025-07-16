@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Movie Categories -->
+    <string name="popular_movies">Popular Movies</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="upcoming">Upcoming</string>
+
+    <!-- Search -->
+    <string name="search_placeholder">Search movies, series or actors…</string>
+    <string name="search_initial_title">Start Searching</string>
+    <string name="search_initial_description">Discover movies, series and your favorite actors by searching.</string>
+
+    <!-- Movie Details -->
+    <string name="genres">Genres</string>
+    <string name="overview">Overview</string>
+    <string name="refreshing">Refreshing…</string>
+
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="theme">Theme</string>
+    <string name="light_theme">Light</string>
+    <string name="dark_theme">Dark</string>
+    <string name="system_theme">System</string>
+
+    <!-- Common Actions -->
+    <string name="back">Back</string>
+    <string name="clear">Clear</string>
+    <string name="try_again">Try Again</string>
+    <string name="retry">Retry</string>
+
+    <!-- Error Messages -->
+    <string name="error_occurred">An error occurred</string>
+    <string name="loading_more_error">An error occurred while loading more content.</string>
+    <string name="no_internet">No internet connection</string>
+
+    <!-- Rating -->
+    <string name="votes_format">(%d votes)</string>
+
+    <!-- Loading -->
+    <string name="loading">Loading…</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="more_to_come">More to Come</string>
+    <string name="language_region"><![CDATA[Language & Region]]></string>
+    <string name="choose_your_preferred_language">Choose your preferred language</string>
+    <string name="account_sync"><![CDATA[Account & Sync]]></string>
+    <string name="manage_your_account_preferences">Manage your account preferences</string>
+</resources>

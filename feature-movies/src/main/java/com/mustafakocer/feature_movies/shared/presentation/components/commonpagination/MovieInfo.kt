@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.mustafakocer.feature_movies.shared.util.formattedRating
 
 @Composable
 fun MovieInfo(
@@ -61,7 +62,7 @@ fun MovieInfo(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "⭐ ${String.format("%.1f", voteAverage)}",
+                text = "⭐ ${voteAverage.formattedRating}",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.primary
             )

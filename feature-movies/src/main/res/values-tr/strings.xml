@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Movie Categories -->
+    <string name="popular_movies">Popüler Filmler</string>
+    <string name="now_playing">Vizyondakiler</string>
+    <string name="top_rated">En Yüksek Puanlı</string>
+    <string name="upcoming">Yakında</string>
+
+    <!-- Search -->
+    <string name="search_placeholder">Film, dizi veya oyuncu ara…</string>
+    <string name="search_initial_title">Aramaya Başla</string>
+    <string name="search_initial_description">İzlemek istediğin filmleri, dizileri veya favori oyuncularını bularak keşfet.</string>
+
+    <!-- Movie Details -->
+    <string name="genres">Türler</string>
+    <string name="overview">Özet</string>
+    <string name="refreshing">Yenileniyor…</string>
+
+    <!-- Settings -->
+    <string name="settings">Ayarlar</string>
+    <string name="theme">Tema</string>
+    <string name="light_theme">Açık</string>
+    <string name="dark_theme">Koyu</string>
+    <string name="system_theme">Sistem</string>
+
+    <!-- Common Actions -->
+    <string name="back">Geri</string>
+    <string name="clear">Temizle</string>
+    <string name="try_again">Tekrar Dene</string>
+    <string name="retry">Yeniden Dene</string>
+
+    <!-- Error Messages -->
+    <string name="error_occurred">Bir hata oluştu</string>
+    <string name="loading_more_error">Daha fazla içerik yüklenirken bir hata oluştu.</string>
+    <string name="no_internet">İnternet bağlantısı yok</string>
+
+    <!-- Rating -->
+    <string name="votes_format">(%d oy)</string>
+
+    <!-- Loading -->
+    <string name="loading">Yükleniyor…</string>
+    <string name="please_wait">Lütfen bekleyin…</string>
+    <string name="more_to_come">More to Come</string>
+    <string name="language_region"><![CDATA[Language & Region]]></string>
+    <string name="choose_your_preferred_language">Choose your preferred language</string>
+    <string name="account_sync"><![CDATA[Account & Sync]]></string>
+    <string name="manage_your_account_preferences">Manage your account preferences</string>
+</resources>

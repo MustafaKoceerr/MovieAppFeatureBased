@@ -65,7 +65,7 @@ fun MovieCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "⭐ ${movie.formattedRating}", // ✅ Extension kullanıyor
+                    text = "⭐ ${movie.voteAverage.formattedRating}", // ✅ Extension kullanıyor
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

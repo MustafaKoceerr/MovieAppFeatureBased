@@ -9,6 +9,7 @@ import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetail
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEvent
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsUiState
 import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails
+import com.mustafakocer.feature_movies.shared.util.formattedRating
 import com.mustafakocer.navigation_contracts.navigation.MovieDetailsScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
@@ -88,7 +89,7 @@ class MovieDetailsViewModel @Inject constructor(
                 append("\"${movie.tagline}\"\n\n")
             }
 
-            append("⭐ Rating: ${String.format("%.1f", movie.voteAverage)}/10\n")
+            append("⭐ Rating: ${movie.voteAverage.formattedRating}/10\n")
             append("📅 Release: ${movie.releaseDate}\n")
 
             movie.runtime?.let {

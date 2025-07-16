@@ -61,15 +61,4 @@ class ThemeRepository @Inject constructor(
         }
     }
 
-    /**
-     * Get current theme synchronously
-     * For initial setup and non-reactive contexts
-     */
-    suspend fun getCurrentTheme(): ThemePreference {
-        return try {
-            themeFlow.first()
-        } catch (e: Exception) {
-            ThemePreference.DEFAULT
-        }
-    }
 }

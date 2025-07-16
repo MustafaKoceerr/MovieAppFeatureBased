@@ -4,7 +4,6 @@ import com.mustafakocer.core_database.cache.CacheDuration
 import com.mustafakocer.core_database.cache.CacheMetadata
 import com.mustafakocer.feature_movies.shared.data.local.entity.MovieListEntity
 import com.mustafakocer.feature_movies.shared.data.model.MovieDto
-import kotlinx.serialization.json.Json
 
 // ============================================
 // 3. DTO -> ENTITY MAPPERS

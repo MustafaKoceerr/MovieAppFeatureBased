@@ -124,7 +124,8 @@ class MovieListRemoteMediator(
 
             // 4. ADIM: Artık mektubun içindeki alanlara güvenle erişebiliriz.
             val movies = body.results ?: emptyList()
-            val endOfPaginationReached = movies.isEmpty() || page >= (body.totalPages ?: page)
+            val endOfPaginationReached = movies.isEmpty() ||
+                    (page >= body.totalPages)
             // Database transaction öncesi
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {

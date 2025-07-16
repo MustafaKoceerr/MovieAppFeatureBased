@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mustafakocer.feature_movies.shared.util.formattedRating
 
 @Composable
 fun MovieStatsSection(
@@ -38,7 +39,7 @@ fun MovieStatsSection(
         MovieStatItem(
             icon = Icons.Default.Star,
             label = "Rating",
-            value = String.format("%.1f", voteAverage),
+            value = voteAverage.formattedRating,
             modifier = Modifier.weight(1f)
         )
 

@@ -1,6 +1,5 @@
 package com.mustafakocer.feature_movies.home.presentation.viewmodel
 
-import androidx.lifecycle.viewModelScope
 import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.core_common.presentation.BaseViewModel
 import com.mustafakocer.core_common.presentation.LoadingType
@@ -9,7 +8,6 @@ import com.mustafakocer.feature_movies.home.presentation.contract.*
 import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
