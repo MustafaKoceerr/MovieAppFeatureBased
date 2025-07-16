@@ -15,11 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mustafakocer.feature_movies.shared.domain.model.MovieList
+import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 
 @Composable
 fun MovieListItem(
-    movie: MovieList,
+    movie: MovieListItem,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     posterSize: PosterSize = PosterSize.Medium,
@@ -40,14 +40,14 @@ fun MovieListItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             MoviePoster(
-                posterPath = movie.posterPath,
+                posterPath = movie.posterUrl,
                 contentDescription = movie.title,
                 size = posterSize
             )
 
             MovieInfo(
                 title = movie.title,
-                releaseDate = movie.releaseDate,
+                releaseYear = movie.releaseYear,
                 overview = movie.overview,
                 voteAverage = movie.voteAverage,
                 voteCount = movie.voteCount,
