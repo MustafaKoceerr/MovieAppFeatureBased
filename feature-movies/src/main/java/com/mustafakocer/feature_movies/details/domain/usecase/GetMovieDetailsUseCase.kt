@@ -1,8 +1,7 @@
 package com.mustafakocer.feature_movies.details.domain.usecase
 
-import com.mustafakocer.core_common.result.NetworkAwareUiState
-import com.mustafakocer.feature_movies.details.domain.model.MovieDetails
 import com.mustafakocer.feature_movies.details.domain.repository.MovieDetailsRepository
+import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -16,7 +15,7 @@ import javax.inject.Inject
 class GetMovieDetailsUseCase @Inject constructor(
     private val repository: MovieDetailsRepository,
 ) {
-    operator fun invoke(movieId: Int): Flow<NetworkAwareUiState<MovieDetails>> {
+    operator fun invoke(movieId: Int): Flow<MovieDetails> {
         // BUSINESS RULE: Movie ID must be positive
         require(movieId > 0) { "Movie ID must be positive, but was: $movieId" }
 
