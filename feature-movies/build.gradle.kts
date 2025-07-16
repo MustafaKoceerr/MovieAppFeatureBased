@@ -12,14 +12,14 @@
  * ❌ Core modules NEVER depend on features
  */
 
-// En üste ekle
-import java.util.Properties
-
-// build.gradle.kts (module-level)'in en üstüne ekle:
-val localProperties = File(rootDir, "local.properties")
-val apiKey = Properties().apply {
-    load(localProperties.inputStream())
-}.getProperty("API_KEY") ?: throw GradleException("API_KEY not found in local.properties")
+//// En üste ekle
+//import java.util.Properties
+//
+//// build.gradle.kts (module-level)'in en üstüne ekle:
+//val localProperties = File(rootDir, "local.properties")
+//val apiKey = Properties().apply {
+//    load(localProperties.inputStream())
+//}.getProperty("API_KEY") ?: throw GradleException("API_KEY not found in local.properties")
 
 plugins {
     alias(libs.plugins.android.library)
@@ -29,6 +29,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -44,7 +45,7 @@ android {
 
 
         // API key'i BuildConfig'e ekliyoruz
-        buildConfigField("String", "API_KEY", apiKey)
+//        buildConfigField("String", "API_KEY", apiKey)
     }
 
     buildTypes {
@@ -74,10 +75,14 @@ dependencies {
     implementation(project(":core-ui"))        // → Compose, Material3, Coil, core-common
     implementation(project(":core-network"))   // → Retrofit, Serialization, core-common
     implementation(project(":core-database"))  // → Room, Paging, core-common
-    implementation(project(":navigation-contracts"))  // → Room, Paging, core-common
     implementation(project(":core-preferences")) // ✅ NEW: Theme & Preferences
     implementation(project(":data-common"))       // ← NEW: Access to ThemeRepository
     implementation(project(":core-database-contract")) // <-- YENİ SATIR
+    implementation(project(":navigation-contracts")) // <-- SÖZLEŞMELERİ BİLMELİ
+
+    // Navigation modülü
+    implementation(libs.androidx.navigation.compose) // <-- NavGraphBuilder İÇİN GEREKLİ
+    implementation(libs.hilt.navigation.compose) // <-- Tip-güvenli rotalar için
 
     // 📄 PAGING 3 COMPOSE - ✅ EKLENDİ
     implementation(libs.paging.compose)
@@ -87,10 +92,6 @@ dependencies {
 
     // 📱 COMPOSE LIFECYCLE (Feature-specific)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-
-    // 🧭 NAVIGATION (Feature-specific)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.hilt.navigation.compose)
 
     // 💉 HILT PROCESSING (Required for this module's @Inject annotations)
     ksp(libs.hilt.compiler)
@@ -102,6 +103,9 @@ dependencies {
 
     // 🎨 APP-SPECIFIC UI
     implementation(libs.androidx.activity.compose)
+
+    // GSON
+    api(libs.gson)
 
     // 📊 TESTING
     testImplementation(libs.junit)

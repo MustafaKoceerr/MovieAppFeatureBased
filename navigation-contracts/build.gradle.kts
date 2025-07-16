@@ -57,6 +57,7 @@ dependencies {
     // 🔗 SERIALIZATION - For type-safe navigation
     implementation(libs.kotlinx.serialization.json)
 
+
     // 📊 TESTING
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

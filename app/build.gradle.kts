@@ -1,3 +1,14 @@
+import java.util.Properties
+
+// Dosyanın en üstüne bu bloğu ekliyoruz.
+// Bu blok, projenin kök dizinindeki local.properties dosyasını bulur.
+val localPropertiesFile = rootProject.file("local.properties")
+val localProperties = Properties()
+localProperties.load(localPropertiesFile.inputStream())
+
+// local.properties'den API_KEY değerini okur.
+val apiKey = localProperties.getProperty("API_KEY")
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -35,7 +46,7 @@ android {
 
             // ✅ EKSİK FIELD'LAR EKLENDI
             buildConfigField("String", "API_URL", "\"https://api.themoviedb.org/3/\"")
-            buildConfigField("String", "API_KEY", "\"your_production_api_key_here\"")
+            buildConfigField("String", "API_KEY", "$apiKey")
             buildConfigField("String", "APP_NAME", "\"Movie App\"")
             buildConfigField("Boolean", "ENABLE_LOGGING", "false")
         }
@@ -48,7 +59,7 @@ android {
 
             // ✅ EKSİK FIELD'LAR EKLENDI
             buildConfigField("String", "API_URL", "\"https://api.themoviedb.org/3/\"")
-            buildConfigField("String", "API_KEY", "\"your_debug_api_key_here\"")
+            buildConfigField("String", "API_KEY", "$apiKey")
             buildConfigField("String", "APP_NAME", "\"Movie App Debug\"")
             buildConfigField("Boolean", "ENABLE_LOGGING", "true")
         }
@@ -122,6 +133,8 @@ dependencies {
     // 🎨 APP-SPECIFIC UI
     implementation(libs.androidx.activity.compose)
 
+    // Navigation modülü
+    implementation(libs.androidx.navigation.compose)
 
     // 💉 HILT KSP (For app's @Inject annotations)
     ksp(libs.hilt.compiler)
