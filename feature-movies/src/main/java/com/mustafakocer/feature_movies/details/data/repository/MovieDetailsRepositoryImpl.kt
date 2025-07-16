@@ -1,40 +1,45 @@
 package com.mustafakocer.feature_movies.details.data.repository
 
-import com.mustafakocer.core_common.result.NetworkAwareUiState
 import com.mustafakocer.core_network.connectivity.NetworkConnectivityMonitor
-import com.mustafakocer.core_network.util.createInitializeOnceNetworkAwareFlow
-import com.mustafakocer.feature_movies.details.data.mapper.toDomain
-import com.mustafakocer.feature_movies.details.domain.model.MovieDetails
 import com.mustafakocer.feature_movies.details.domain.repository.MovieDetailsRepository
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
+import com.mustafakocer.feature_movies.shared.data.mapper.toDomain
+import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class MovieDetailsRepositoryImpl @Inject constructor(
     private val movieApiService: MovieApiService, // ← UPDATED: Single service
     private val networkConnectivityMonitor: NetworkConnectivityMonitor, // ✅ ADDED!
-    @Named("tmdb_api_key") private val apiKey: String,
 ) : MovieDetailsRepository {
 
-    override fun getMovieDetails(movieId: Int): Flow<NetworkAwareUiState<MovieDetails>> {
-        // ✅ CLEAN: Framework-agnostic fonksiyonu çağırıyoruz
-        return createInitializeOnceNetworkAwareFlow(
-            networkMonitor = networkConnectivityMonitor
-        ) {
-            // ✅ REPOSITORY RESPONSIBILITY: Retrofit detayları burada!
-            val response = movieApiService.getMovieDetails(movieId, apiKey)
+    /**
+     * Get movie details by ID from API.
+     *
+     * This implementation now has a single responsibility: fetch data from the network,
+     * map it to a domain model, or throw an exception if something goes wrong.
+     *
+     * @param movieId The movie ID
+     * @return A COLD Flow that emits the MovieDetails object once.
+     */
+    override fun getMovieDetails(movieId: Int): Flow<MovieDetails> = flow {
+        // `flow { ... }` builder'ı, tek seferlik bir suspend işlemini
+        // reaktif bir Flow'a dönüştürmenin en basit yoludur.
 
-            // Başarı ve hata kontrolü Repository'nin sorumluluğu
-            if (response.isSuccessful && response.body() != null) {
-                // DTO'yu domain'e çevir ve döndür
-                response.body()!!.toDomain()
-            } else {
-                // HTTP hatası fırlat, createNetworkFlow yakalayacak
-                throw retrofit2.HttpException(response)
-            }
+        // 1. API'ı çağır.
+        val response = movieApiService.getMovieDetails(movieId)
+
+        // 2. Başarı durumunu kontrol et.
+        if (response.isSuccessful && response.body() != null) {
+            // 3. Başarılıysa, DTO'yu Domain modeline çevir ve FLow'a 'emit' et.
+            emit(response.body()!!.toDomain())
+        } else {
+            // 4. Başarısızsa, HttpException fırlat. Bu hata, ViewModel'deki
+            // `executeSafeOnce` tarafından otomatik olarak yakalanacak.
+            throw retrofit2.HttpException(response)
         }
     }
 
