@@ -1,5 +1,4 @@
 package com.mustafakocer.feature_movies.list.data.mediator
-// feature-movies/src/main/java/com/mustafakocer/feature_movies/list/data/mediator/MovieListRemoteMediator.kt
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
@@ -7,17 +6,17 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.mustafakocer.core_common.exception.AppException
-import com.mustafakocer.core_database.cache.CacheMetadata
 import com.mustafakocer.core_database.dao.RemoteKeyDao
 import com.mustafakocer.core_database.pagination.RemoteKey
 import com.mustafakocer.core_network.connectivity.NetworkConnectivityMonitor
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
-import com.mustafakocer.feature_movies.list.data.local.entity.MovieListEntity
-import com.mustafakocer.feature_movies.shared.data.mapper.toEntity
-import com.mustafakocer.feature_movies.list.domain.model.MovieCategory
+import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
+import com.mustafakocer.feature_movies.shared.data.local.entity.MovieListEntity
+import com.mustafakocer.feature_movies.shared.data.mapper.toEntityList
 import kotlinx.coroutines.delay
-
+import retrofit2.HttpException
+import android.util.Log
 
 /**
  * Remote Mediator for Movie List pagination
@@ -38,7 +37,6 @@ class MovieListRemoteMediator(
     private val database: androidx.room.RoomDatabase,
     private val networkConnectivityMonitor: NetworkConnectivityMonitor, // ✅ ADDED!
     private val category: MovieCategory,
-    private val apiKey: String,
 ) : RemoteMediator<Int, MovieListEntity>() {
 
     companion object {
@@ -47,9 +45,15 @@ class MovieListRemoteMediator(
     }
 
     override suspend fun initialize(): InitializeAction {
-        return if (movieListDao.hasCachedDataForCategory(category.apiEndpoint)) {
-            InitializeAction.SKIP_INITIAL_REFRESH
+        Log.d("RemoteMediator", "🔧 Initialize called")
+        val hasCachedData = movieListDao.hasCachedDataForCategory(category.apiEndpoint)
+        Log.d("RemoteMediator", "🔧 Has cached data: $hasCachedData")
+
+        return if (hasCachedData) {
+            Log.d("RemoteMediator", "🔧 SKIP_INITIAL_REFRESH - Cache var")
+            InitializeAction.SKIP_INITIAL_REFRESH // ❌ Bu Page 1'i atlıyor!
         } else {
+            Log.d("RemoteMediator", "🔧 LAUNCH_INITIAL_REFRESH - Cache yok")
             InitializeAction.LAUNCH_INITIAL_REFRESH
         }
     }
@@ -67,15 +71,14 @@ class MovieListRemoteMediator(
         // Silme ve ekleme işlemi için de aynı query'yi kullanıyoruz.
         val queryKey = RemoteKey.createCompositeKey("movies", category.apiEndpoint)
 
+        // ✅ CHECK CONNECTIVITY - RETURN ERROR FOR RETRY BUTTON!
+        val connectionState = networkConnectivityMonitor.getCurrentConnectionState()
+        if (!connectionState.isConnected) {
+            // Return ERROR so UI shows retry button
+            return MediatorResult.Error(AppException.NetworkException.NoInternetConnection())
+        }
+
         return try {
-
-            // ✅ CHECK CONNECTIVITY - RETURN ERROR FOR RETRY BUTTON!
-            val connectionState = networkConnectivityMonitor.getCurrentConnectionState()
-            if (!connectionState.isConnected) {
-                // Return ERROR so UI shows retry button
-                return MediatorResult.Error(AppException.NetworkException.NoInternetConnection())
-            }
-
             delay(NETWORK_DELAY_MS)
 
             val page = when (loadType) {
@@ -105,13 +108,24 @@ class MovieListRemoteMediator(
 
             val apiResponse = apiService.getMoviesByCategory(
                 category = category.apiEndpoint,
-                apiKey = apiKey,
                 page = page
             )
+            // 2. ADIM: Zarfın sağlam geldiğinden emin oluyoruz.
+            if (!apiResponse.isSuccessful) {
+                throw HttpException(apiResponse)
+            }
 
-            val movies = apiResponse.results
-            val endOfPaginationReached = movies.isEmpty() || page >= apiResponse.total_pages
+            // 3. ADIM: Zarfı açıp içinden "mektubu" (body) alıyoruz.
+            val body = apiResponse.body()
+            if (body == null) {
+                // Başarılı ama boş bir yanıt geldiyse, bu sayfanın sonu demektir.
+                return MediatorResult.Success(endOfPaginationReached = true)
+            }
 
+            // 4. ADIM: Artık mektubun içindeki alanlara güvenle erişebiliriz.
+            val movies = body.results ?: emptyList()
+            val endOfPaginationReached = movies.isEmpty() || page >= (body.totalPages ?: page)
+            // Database transaction öncesi
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     movieListDao.deleteMoviesForCategory(category.apiEndpoint)
@@ -122,14 +136,18 @@ class MovieListRemoteMediator(
                 val remoteKey = RemoteKey.create(
                     query = queryKey,
                     currentPage = page,
-                    totalPages = apiResponse.total_pages,
-                    totalItems = apiResponse.total_results
+                    totalPages = body.totalPages,
+                    totalItems = body.totalResults
                 )
-
                 remoteKeyDao.upsert(remoteKey)
 
-                val movieEntities = movies.toEntity(category.apiEndpoint, page)
-                movieListDao.upsertAll(movieEntities)
+                // 5. ADIM: DTO listesini Entity listesine çeviriyoruz.
+                val movieEntities = movies.toEntityList(
+                    category = category.apiEndpoint,
+                    page = page,
+                    pageSize = state.config.pageSize
+                )
+                movieListDao.upsertAll(movieEntities) // upsertAll, bir List bekler.
             }
 
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)

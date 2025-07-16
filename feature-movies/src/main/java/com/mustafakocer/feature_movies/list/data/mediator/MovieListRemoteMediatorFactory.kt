@@ -4,10 +4,9 @@ import androidx.room.RoomDatabase
 import com.mustafakocer.core_database.dao.RemoteKeyDao
 import com.mustafakocer.core_network.connectivity.NetworkConnectivityMonitor
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
-import com.mustafakocer.feature_movies.list.domain.model.MovieCategory
+import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -28,7 +27,6 @@ class MovieListRemoteMediatorFactory @Inject constructor(
     private val remoteKeyDao: RemoteKeyDao,
     private val database: RoomDatabase,
     private val networkConnectivityMonitor: NetworkConnectivityMonitor, // ✅ ADDED!
-    @Named("tmdb_api_key") private val apiKey: String,
 ) {
     /**
      * Create RemoteMediator for specific category
@@ -44,7 +42,6 @@ class MovieListRemoteMediatorFactory @Inject constructor(
             database = database,
             networkConnectivityMonitor = networkConnectivityMonitor, // ✅ INJECT!
             category = category,
-            apiKey = apiKey
         )
     }
 }
