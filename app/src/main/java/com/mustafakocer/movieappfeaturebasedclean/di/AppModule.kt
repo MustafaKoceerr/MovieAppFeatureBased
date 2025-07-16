@@ -19,7 +19,7 @@ abstract class AppModule {
      * @Binds, bir interface'i somut bir implementasyonuna bağlamanın en verimli yoludur.
      */
     @Binds
-    @Singleton // MovieNetworkConfigProvider @Singleton olduğu için bu da @Singleton olmalı
+    @Singleton
     abstract fun bindNetworkConfigProvider(
         provider: MovieNetworkConfigProvider
     ): NetworkConfigProvider
