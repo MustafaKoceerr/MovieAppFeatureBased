@@ -3,6 +3,7 @@ package com.mustafakocer.di.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.mustafakocer.data_common.preferences.repository.LanguageRepository
 import com.mustafakocer.data_common.preferences.repository.ThemeRepository
 import dagger.Module
 import dagger.Provides
@@ -24,5 +25,10 @@ object RepositoryModule {
         return ThemeRepository(dataStore)
     }
 
+    @Provides
+    @Singleton
+    fun provideLanguageRepository(dataStore: DataStore<Preferences>): LanguageRepository {
+        return LanguageRepository(dataStore)
+    }
     // Gelecekte eklenecek diğer ortak repository'ler de buraya gelecek...
 }
