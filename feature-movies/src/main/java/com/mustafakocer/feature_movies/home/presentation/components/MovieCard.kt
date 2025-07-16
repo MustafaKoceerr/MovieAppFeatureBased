@@ -17,9 +17,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.mustafakocer.feature_movies.shared.domain.model.Movie
-import com.mustafakocer.feature_movies.home.util.formattedRating
-import com.mustafakocer.feature_movies.home.util.getPosterUrl
+import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
+import com.mustafakocer.feature_movies.shared.util.formattedRating
+import com.mustafakocer.feature_movies.shared.util.getPosterUrl
 
 /**
  * TEACHING MOMENT: Clean MovieCard with Utils
@@ -33,7 +33,7 @@ import com.mustafakocer.feature_movies.home.util.getPosterUrl
  */
 @Composable
 fun MovieCard(
-    movie: Movie,
+    movie: MovieListItem,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

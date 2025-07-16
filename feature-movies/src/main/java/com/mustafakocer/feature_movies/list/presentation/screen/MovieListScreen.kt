@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -18,12 +20,14 @@ import com.mustafakocer.feature_movies.shared.presentation.components.commonpagi
 fun MovieListScreen(
     state: MovieListUiState,
     onEvent: (MovieListEvent) -> Unit,
+    snackbarHostState: SnackbarHostState,
 ) {
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             MovieListTopAppBar(
                 title = state.categoryTitle,
-                onNavigateBack = { onEvent(MovieListEvent.NavigateBackClicked) },
+                onNavigateBack = { onEvent(MovieListEvent.BackClicked) },
             )
         }
     ) { paddingValues ->
@@ -32,14 +36,18 @@ fun MovieListScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            val movies = state.movies.collectAsLazyPagingItems()
+            // 1. ViewModel'den gelen Flow'u, UI'ın kullanabileceği LazyPagingItems'e dönüştürüyoruz.
+            //    Asıl veri toplama ve sayfa yükleme işini bu yapar.
+            val lazyMovieItems = state.movies.collectAsLazyPagingItems()
+
+            // 2. MovieListContent, Paging'in kendi durumlarını yönetir.
+            //    (Yükleme, Hata, Boş Liste vb.)
             MovieListContent(
-                movies = movies,
+                lazyMovieItems = lazyMovieItems,
                 onMovieClick = { movie ->
                     onEvent(MovieListEvent.MovieClicked(movie.id))
                 }
             )
-
         }
     }
 }

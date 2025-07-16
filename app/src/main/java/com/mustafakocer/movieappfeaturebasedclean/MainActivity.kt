@@ -13,20 +13,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.animation.with
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
 import com.mustafakocer.movieappfeaturebasedclean.navigation.AppNavHost
-import com.mustafakocer.navigation_contracts.destinations.MoviesGraph
-import dagger.hilt.android.AndroidEntryPoint
-import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.movieappfeaturebasedclean.presentation.viewmodel.MainViewModel
+import com.mustafakocer.navigation_contracts.navigation.MoviesFeatureGraph
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Main Activity with integrated navigation
@@ -94,7 +89,7 @@ class MainActivity : ComponentActivity() {
         // For now, always start with Movies since auth is not implemented
         // Later: Check user auth state and return AuthGraph or MoviesGraph
 
-        return MoviesGraph
+        return MoviesFeatureGraph
 
         // Future implementation:
         // return if (isUserLoggedIn()) MoviesGraph else AuthGraph

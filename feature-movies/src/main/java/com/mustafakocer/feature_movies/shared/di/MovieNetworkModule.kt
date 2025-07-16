@@ -34,14 +34,4 @@ object MovieNetworkModule {
         return retrofit.create(MovieApiService::class.java)
     }
 
-    /**
-     * Provide API key for movie requests
-     *
-     * TODO: This should come from a more secure source in production
-     */
-    @Provides
-    @Named("tmdb_api_key")
-    fun provideApiKey(): String {
-        return com.mustafakocer.feature_movies.BuildConfig.API_KEY
-    }
 }

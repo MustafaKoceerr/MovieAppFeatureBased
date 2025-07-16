@@ -12,11 +12,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEffect
 import com.mustafakocer.feature_movies.details.presentation.viewmodel.MovieDetailsViewModel
-import com.mustafakocer.navigation_contracts.DetailNavActions
+import com.mustafakocer.navigation_contracts.actions.FeatureMoviesNavActions
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun MovieDetailsRoute(
-    navActions: DetailNavActions,
+    navActions: FeatureMoviesNavActions,
     viewModel: MovieDetailsViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -25,10 +26,10 @@ fun MovieDetailsRoute(
 
     // Handle UI Effects (side effects)
     LaunchedEffect(Unit) {
-        viewModel.uiEffect.collect { effect ->
+        viewModel.uiEffect.collectLatest { effect ->
             when (effect) {
                 is MovieDetailsEffect.NavigateBack -> {
-                    navActions.navigateBack()
+                    navActions.navigateUp()
                 }
 
                 is MovieDetailsEffect.ShareContent -> {

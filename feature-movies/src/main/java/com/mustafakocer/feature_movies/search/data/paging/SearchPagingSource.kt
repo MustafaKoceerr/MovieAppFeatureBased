@@ -4,8 +4,8 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.mustafakocer.core_common.exception.toAppException
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
-import com.mustafakocer.feature_movies.shared.data.mapper.toDomainMovieList
-import com.mustafakocer.feature_movies.shared.domain.model.MovieList
+import com.mustafakocer.feature_movies.shared.data.mapper.toDomainList
+import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -22,18 +22,16 @@ import java.io.IOException
 
 class SearchPagingSource(
     private val movieApiService: MovieApiService,
-    private val apiKey: String,
     private val searchQuery: String,
-) : PagingSource<Int, MovieList>() {
+) : PagingSource<Int, MovieListItem>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieList> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieListItem> {
         return try {
             // Determine which page to load (start from 1)
             val currentPage = params.key ?: 1
 
             // Make API call
             val response = movieApiService.searchMovies(
-                apiKey = apiKey,
                 query = searchQuery,
                 page = currentPage
             )
@@ -45,13 +43,14 @@ class SearchPagingSource(
                 ?: throw Exception("Empty response body")
 
             // Convert DTOs to domain models
-            val movies = searchResponse.results.map { it.toDomainMovieList() }
+
+            val movies = searchResponse.results?.map { it.toDomainList() }
 // Calculate pagination info
             val prevPage = if (currentPage == 1) null else currentPage - 1
-            val nextPage = if (currentPage >= searchResponse.total_pages) null else currentPage + 1
+            val nextPage = if (currentPage >= searchResponse.totalPages) null else currentPage + 1
 
             LoadResult.Page(
-                data = movies,
+                data = movies ?: emptyList(), // Eğer liste cevabı gelmezse emptyList göster.
                 prevKey = prevPage,
                 nextKey = nextPage
             )
@@ -65,7 +64,7 @@ class SearchPagingSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, MovieList>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, MovieListItem>): Int? {
         // Return the page that was closest to the most recently accessed index
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)

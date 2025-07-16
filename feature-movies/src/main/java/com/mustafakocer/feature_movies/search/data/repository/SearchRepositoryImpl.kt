@@ -1,15 +1,13 @@
 package com.mustafakocer.feature_movies.search.data.repository
 
 import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.mustafakocer.core_database.pagination.PaginationSettings
 import com.mustafakocer.feature_movies.search.data.paging.SearchPagingSource
 import com.mustafakocer.feature_movies.search.domain.model.SearchQuery
 import com.mustafakocer.feature_movies.search.domain.repository.SearchRepository
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
-import com.mustafakocer.feature_movies.shared.domain.model.Movie
-import com.mustafakocer.feature_movies.shared.domain.model.MovieList
+import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Named
@@ -30,16 +28,14 @@ import javax.inject.Singleton
 @Singleton
 class SearchRepositoryImpl @Inject constructor(
     private val movieApiService: MovieApiService,
-    @Named("tmdb_api_key") private val apiKey: String,
     ): SearchRepository{
 
-    override fun searchMovies(query: SearchQuery): Flow<PagingData<MovieList>> {
+    override fun searchMovies(query: SearchQuery): Flow<PagingData<MovieListItem>> {
         return Pager(
             config = PaginationSettings.search.toPagingConfig(),
             pagingSourceFactory = {
                 SearchPagingSource(
                     movieApiService = movieApiService,
-                    apiKey = apiKey,
                     searchQuery = query.cleanQuery
                 )
             }

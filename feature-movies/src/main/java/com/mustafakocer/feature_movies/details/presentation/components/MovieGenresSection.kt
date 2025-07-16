@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.mustafakocer.feature_movies.details.domain.model.Genre
+import com.mustafakocer.feature_movies.shared.domain.model.Genre
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

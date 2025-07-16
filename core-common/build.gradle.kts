@@ -62,6 +62,7 @@ dependencies {
 
     // 🔄 SERIALIZATION (Shared)
     api(libs.kotlinx.serialization.json)  // ✅ api - shared
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)  // viewModelScope için bu
 
     // 📊 TESTING (Shared)
     testImplementation(libs.junit)

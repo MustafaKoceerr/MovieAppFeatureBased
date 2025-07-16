@@ -2,10 +2,8 @@ package com.mustafakocer.feature_movies.details.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,7 +29,6 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun MovieDetailsTopBar(
     title: String,
-    isOffline: Boolean,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -49,16 +46,6 @@ fun MovieDetailsTopBar(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f, fill = false)
                 )
-
-                // Çevrimdışı durumu göstergesi
-                if (isOffline) {
-                    Icon(
-                        imageVector = Icons.Default.WifiOff,
-                        contentDescription = "Offline content",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
             }
         },
         navigationIcon = {

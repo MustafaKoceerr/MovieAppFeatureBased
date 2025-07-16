@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import com.mustafakocer.core_database.dao.BaseDao
-import com.mustafakocer.feature_movies.list.data.local.entity.MovieListEntity
+import com.mustafakocer.feature_movies.shared.data.local.entity.MovieListEntity
 
 /**
  * Movie list DAO extending core database capabilities
@@ -23,10 +23,10 @@ interface MovieListDao : BaseDao<MovieListEntity> {
      */
     @Query(
         """
-        SELECT * FROM movie_list_items 
+        SELECT * FROM movie_list 
         WHERE category = :category 
         AND (movie_cache_is_persistent = 1 OR movie_cache_expires_at > :currentTime)
-        ORDER BY page ASC, position ASC
+        ORDER BY position ASC
     """
     )
     fun getMoviesPagingSource(
@@ -37,7 +37,7 @@ interface MovieListDao : BaseDao<MovieListEntity> {
     /**
      * Delete movies for specific category
      */
-    @Query("DELETE FROM movie_list_items WHERE category = :category")
+    @Query("DELETE FROM movie_list WHERE category = :category")
     suspend fun deleteMoviesForCategory(category: String): Int
 
     /**
@@ -45,7 +45,7 @@ interface MovieListDao : BaseDao<MovieListEntity> {
      */
     @Query(
         """
-        SELECT COUNT(*) > 0 FROM movie_list_items 
+        SELECT COUNT(*) > 0 FROM movie_list 
         WHERE category = :category
         AND (movie_cache_is_persistent = 1 OR movie_cache_expires_at > :currentTime)
     """

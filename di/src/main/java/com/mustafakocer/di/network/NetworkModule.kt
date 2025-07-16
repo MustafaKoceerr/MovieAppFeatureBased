@@ -1,9 +1,8 @@
 package com.mustafakocer.di.network
 
-import retrofit2.Retrofit
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.mustafakocer.core_common.config.NetworkConfigProvider // Bu arayüzü birazdan oluşturacağız
+import com.mustafakocer.core_common.config.NetworkConfigProvider
 import com.mustafakocer.core_network.config.NetworkConfig
 import dagger.Module
 import dagger.Provides
@@ -15,6 +14,7 @@ import okhttp3.Cache
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -22,7 +22,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    // Bu Json nesnesi, Retrofit'in DTO'ları parse etmesi için gerekli.
     @Provides
     @Singleton
     fun provideJson(): Json {
@@ -56,6 +55,7 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
+        apiKeyInterceptor: ApiKeyInterceptor, // ApiKeyInterceptor'ı inject ediyoruz.
         cache: Cache
     ): OkHttpClient {
         return OkHttpClient.Builder()
@@ -64,6 +64,7 @@ object NetworkModule {
             .readTimeout(NetworkConfig.READ_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(NetworkConfig.WRITE_TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(apiKeyInterceptor) // Interceptor'ı zincire ekliyoruz.
             .build()
     }
 
@@ -76,7 +77,7 @@ object NetworkModule {
     ): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
-            .baseUrl(configProvider.baseUrl) // App-specific bilgiyi buradan alacak
+            .baseUrl(configProvider.baseUrl)
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()

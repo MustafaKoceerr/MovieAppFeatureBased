@@ -2,7 +2,7 @@ package com.mustafakocer.feature_movies.search.domain.repository
 
 import androidx.paging.PagingData
 import com.mustafakocer.feature_movies.search.domain.model.SearchQuery
-import com.mustafakocer.feature_movies.shared.domain.model.MovieList
+import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -19,5 +19,5 @@ interface SearchRepository {
      * @param query Search query object
      * @return Flow of paged search results
      */
-    fun searchMovies(query: SearchQuery): Flow<PagingData<MovieList>>
+    fun searchMovies(query: SearchQuery): Flow<PagingData<MovieListItem>>
 }

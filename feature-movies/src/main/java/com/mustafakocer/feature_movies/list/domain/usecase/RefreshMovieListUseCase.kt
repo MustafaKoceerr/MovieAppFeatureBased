@@ -1,6 +1,6 @@
 package com.mustafakocer.feature_movies.list.domain.usecase
 
-import com.mustafakocer.feature_movies.list.domain.model.MovieCategory
+import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.list.domain.repository.MovieListRepository
 import javax.inject.Inject
 

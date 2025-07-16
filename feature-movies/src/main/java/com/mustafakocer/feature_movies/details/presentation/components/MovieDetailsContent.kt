@@ -13,18 +13,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mustafakocer.feature_movies.details.domain.model.MovieDetails
 import com.mustafakocer.feature_movies.details.util.fullBackdropUrl
 import com.mustafakocer.feature_movies.details.util.fullPosterUrl
+import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails
 
 /**
  * Ana içerik ve yenileme göstergesi için bir sarmalayıcı (wrapper).
  */
 @Composable
 fun MovieDetailsContent(
-    movieDetails: MovieDetails,
+    movie: MovieDetails,
     isRefreshLoading: Boolean,
-    isOffline: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -34,11 +33,10 @@ fun MovieDetailsContent(
                 .verticalScroll(rememberScrollState())
         ) {
             MovieHeroSection(
-                backdropUrl = movieDetails.fullBackdropUrl(),
-                posterUrl = movieDetails.fullPosterUrl(),
-                title = movieDetails.title,
-                tagline = movieDetails.tagline.takeIf { movieDetails.hasTagline },
-                isOffline = isOffline
+                backdropUrl = movie.fullBackdropUrl(),
+                posterUrl = movie.fullPosterUrl(),
+                title = movie.title,
+                tagline = if (movie.hasTagline) movie.tagline else null
             )
 
             Column(
@@ -46,14 +44,14 @@ fun MovieDetailsContent(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 MovieStatsSection(
-                    voteAverage = movieDetails.voteAverage,
-                    releaseDate = movieDetails.releaseDate,
-                    runtime = movieDetails.runtime
+                    voteAverage = movie.voteAverage,
+                    releaseDate = movie.releaseDate,
+                    runtime = movie.runtime
                 )
-                if (movieDetails.genres.isNotEmpty()) {
-                    MovieGenresSection(genres = movieDetails.genres)
+                if (movie.genres.isNotEmpty()) {
+                    MovieGenresSection(genres = movie.genres)
                 }
-                MovieOverviewSection(overview = movieDetails.overview)
+                MovieOverviewSection(overview = movie.overview)
             }
 
             Spacer(modifier = Modifier.height(80.dp)) // FAB için boşluk
