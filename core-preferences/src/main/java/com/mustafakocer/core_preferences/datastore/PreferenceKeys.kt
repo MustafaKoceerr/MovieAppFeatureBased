@@ -14,6 +14,7 @@ object PreferenceKeys {
      */
 
     val THEME_PREFERENCE = stringPreferencesKey("theme_preference")
+    val LANGUAGE_PREFERENCE = stringPreferencesKey("language_preference")
 
     // Future keys will be added when needed:
     // val LANGUAGE_PREFERENCE = stringPreferencesKey("language_preference")

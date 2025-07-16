@@ -9,12 +9,6 @@ interface BaseUiState {
 
     val isAnyLoading: Boolean
         get() = isLoading || isRefreshing
-
-    val hasError: Boolean
-        get() = error != null
-
-    val isIdle: Boolean
-        get() = !isAnyLoading && error == null
 }
 
 /**

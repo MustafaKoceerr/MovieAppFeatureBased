@@ -14,7 +14,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mustafakocer.feature_movies.R
 import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 
@@ -52,7 +54,7 @@ fun MovieCategorySection(
                 modifier = Modifier.weight(1f)
             )
             TextButton(onClick = onViewAllClick) {
-                Text("Hepsini Gör")
+                Text(stringResource(R.string.view_all))
             }
         }
 

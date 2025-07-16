@@ -45,7 +45,7 @@ fun MovieDetailsDto.toDomain(): MovieDetails {
         voteAverage = voteAverage ?: 0.0,
         runtime = when {
             runtime == null || runtime <= 0 -> ""
-            else -> "${runtime} min"
+            else -> "$runtime min"
         },
         tagline = tagline?.takeIf { it.isNotBlank() } ?: "",
         genres = genres?.mapNotNull { genreDto ->

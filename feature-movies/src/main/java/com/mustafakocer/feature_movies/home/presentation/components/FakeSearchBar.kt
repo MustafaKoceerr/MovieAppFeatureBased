@@ -13,7 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mustafakocer.feature_movies.R
 
 // MovieCard, FakeSearchBar gibi tekrar kullanılabilir küçük composable bileşenler burada yer alır.
 
@@ -41,11 +43,11 @@ fun FakeSearchBar(
         ) {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = "Search",
+                contentDescription = stringResource(R.string.search),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "Search movies...",
+                text = stringResource(R.string.search_movies),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

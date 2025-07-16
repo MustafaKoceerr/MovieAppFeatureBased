@@ -14,7 +14,15 @@ sealed interface MovieDetailsEffect : BaseUiEffect {
 
 sealed interface MovieDetailsEvent : BaseUiEvent {
     object Refresh : MovieDetailsEvent
-    object ShareMovie : MovieDetailsEvent
+    data class ShareMovie(
+        val shareTitle: String,
+        val textRating: String,
+        val textRelease: String,
+        val textRuntime: String,
+        val textGenres: String,
+        val textTags: String,
+    ) : MovieDetailsEvent
+
     object BackPressed : MovieDetailsEvent
     object DismissError : MovieDetailsEvent // hata mesajını kapatmak için
 

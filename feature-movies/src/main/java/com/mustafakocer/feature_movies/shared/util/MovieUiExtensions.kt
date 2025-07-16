@@ -1,16 +1,7 @@
 package com.mustafakocer.feature_movies.shared.util
 
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
-
-/**
- * TEACHING MOMENT: Feature-Specific UI Extensions
- *
- * ✅ NEDEN FEATURE-SPECIFIC:
- * - Movie domain model'ini biliyor
- * - UI logic ama feature'a özel
- * - Gereksiz generic yapı yok
- * - Clean ve focused
- */
+import java.util.Locale
 
 // ===== MOVIE UI EXTENSIONS =====
 
@@ -43,19 +34,6 @@ fun MovieListItem.getBackdropUrl(size: String = "w780"): String? {
 /**
  * Format rating for UI display
  */
-val MovieListItem.formattedRating: String
-    get() = String.format("%.1f", voteAverage)
-
-/**
- * Check if movie has high rating
- */
-val MovieListItem.isHighRated: Boolean
-    get() = voteAverage >= 7.0
-
-
-/**
- * Check if poster is available
- */
-val MovieListItem.hasValidPoster: Boolean
-    get() = !posterUrl.isNullOrBlank()
+val Double.formattedRating: String
+    get() = String.format(Locale.getDefault(), "%.1f", this)
 

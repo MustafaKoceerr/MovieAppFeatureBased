@@ -1,7 +1,6 @@
 package com.mustafakocer.feature_movies.search.presentation.screen
 
 
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

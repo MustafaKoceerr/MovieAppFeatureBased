@@ -8,8 +8,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mustafakocer.feature_movies.R
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEffect
 import com.mustafakocer.feature_movies.details.presentation.viewmodel.MovieDetailsViewModel
 import com.mustafakocer.navigation_contracts.actions.FeatureMoviesNavActions
@@ -23,6 +25,8 @@ fun MovieDetailsRoute(
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val snackbarErrorMessage: String = stringResource(R.string.error_share_movie)
 
     // Handle UI Effects (side effects)
     LaunchedEffect(Unit) {
@@ -46,7 +50,7 @@ fun MovieDetailsRoute(
                     } catch (e: Exception) {
                         // ✅ ERROR: Show error snackbar if sharing fails
                         snackbarHostState.showSnackbar(
-                            message = "Unable to share movie details",
+                            message = snackbarErrorMessage,
                             duration = SnackbarDuration.Short
                         )
                     }

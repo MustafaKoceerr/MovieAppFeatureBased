@@ -16,8 +16,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.mustafakocer.core_preferences.models.LanguagePreference
 import com.mustafakocer.core_preferences.models.ThemePreference
 import com.mustafakocer.feature_movies.settings.presentation.component.ComingSoonSection
+import com.mustafakocer.feature_movies.settings.presentation.component.LanguageSelectionSection
 import com.mustafakocer.feature_movies.settings.presentation.component.SettingsHeader
 import com.mustafakocer.feature_movies.settings.presentation.component.SettingsTopBar
 import com.mustafakocer.feature_movies.settings.presentation.component.ThemeSelectionSection
@@ -47,6 +49,9 @@ fun SettingsScreen(
             state = state,
             onThemeSelected = { theme ->
                 onEvent(SettingsEvent.ThemeSelected(theme))
+            },
+            onLanguageSelected = { language ->
+                onEvent(SettingsEvent.LanguageSelected(language))
             }
         )
     }
@@ -60,6 +65,7 @@ private fun SettingsContent(
     modifier: Modifier = Modifier,
     state: SettingsUiState,
     onThemeSelected: (ThemePreference) -> Unit,
+    onLanguageSelected: (LanguagePreference) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -75,6 +81,13 @@ private fun SettingsContent(
             // bir yükleme göstergesi göstermek için bu state'i kullanabiliriz.
             isLoading = state.isLoading,
             onThemeSelected = onThemeSelected
+        )
+
+        // Yeni language selection
+        LanguageSelectionSection(
+            currentLanguage = state.currentLanguage,
+            isLoading = state.isLoading,
+            onLanguageSelected = onLanguageSelected
         )
 
         ComingSoonSection()

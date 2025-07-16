@@ -22,24 +22,6 @@ data class CacheMetadata(
     @ColumnInfo(name = "is_persistent")
     val isPersistent: Boolean = false,
 ) {
-    /**
-     * Cache hala geçerli mi?
-     */
-    val isValid: Boolean
-        get() = System.currentTimeMillis() < expiresAt
-
-    /**
-     * Cache expire olmuş mu?
-     */
-    val isExpired: Boolean
-        get() = !isValid
-
-    /**
-     * Cache kaç dakika eski?
-     */
-    val ageMinutes: Long
-        get() = (System.currentTimeMillis() - cachedAt) / (60 * 1000L)
-
     companion object {
 
         /**
@@ -54,15 +36,5 @@ data class CacheMetadata(
                 isPersistent = false
             )
         }
-
-        /**
-         * 1 saatlik cache
-         */
-        fun oneHour(): CacheMetadata = create(CacheDuration.HOURS_24)
-
-        /**
-         * 24 saatlik cache
-         */
-        fun oneDay(): CacheMetadata = create(CacheDuration.HOURS_24)
     }
 }

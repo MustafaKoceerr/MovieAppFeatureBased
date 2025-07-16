@@ -5,6 +5,8 @@ import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.core_common.presentation.BaseViewModel
 import com.mustafakocer.core_common.presentation.LoadingType
 import com.mustafakocer.core_preferences.models.ThemePreference
+import com.mustafakocer.core_preferences.models.LanguagePreference
+import com.mustafakocer.data_common.preferences.repository.LanguageRepository
 import com.mustafakocer.data_common.preferences.repository.ThemeRepository
 import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsEffect
 import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsEvent
@@ -17,18 +19,24 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val themeRepository: ThemeRepository,
+    private val languageRepository: LanguageRepository,
 ) : BaseViewModel<SettingsUiState, SettingsEvent, SettingsEffect>(SettingsUiState()) {
 
     init {
         // ViewModel oluşturulur oluşturulmaz, DataStore'daki tema değişikliklerini
         // sürekli olarak dinlemeye başlıyoruz.
         observeThemeChanges()
+        observeLanguageChanges()
     }
 
     override fun onEvent(event: SettingsEvent) {
         when (event) {
             is SettingsEvent.ThemeSelected -> {
                 saveSelectedTheme(event.theme)
+            }
+
+            is SettingsEvent.LanguageSelected -> {
+                saveSelectedLanguage(event.language)
             }
 
             is SettingsEvent.BackClicked -> {
@@ -54,6 +62,14 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    private fun observeLanguageChanges() {
+        viewModelScope.launch {
+            languageRepository.languageFlow.collect { language ->
+                setState { copy(currentLanguage = language) }
+            }
+        }
+    }
+
     /**
      * Kullanıcının seçtiği temayı DataStore'a kaydeder.
      * Bu tek seferlik bir işlem olduğu için executeSafeOnce kullanıyoruz.
@@ -65,7 +81,18 @@ class SettingsViewModel @Inject constructor(
         executeSafeOnce(loadingType = LoadingType.MAIN) {
             themeRepository.setTheme(theme)
             // Başarılı olduğunda kullanıcıya geri bildirim ver.
-            sendEffect(SettingsEffect.ShowSnackbar("Tema değiştirildi: ${theme.name}"))
+//            sendEffect(SettingsEffect.ShowSnackbar("Tema değiştirildi: ${theme.name}"))
+        }
+    }
+
+    private fun saveSelectedLanguage(language: LanguagePreference) {
+        if (currentState.isLoading) return
+
+        executeSafeOnce(loadingType = LoadingType.MAIN) {
+            languageRepository.setLanguage(language)
+
+            // Dil başarıyla kaydedildi, şimdi UI'a haber verelim.
+            sendEffect(SettingsEffect.RestartActivity)
         }
     }
 

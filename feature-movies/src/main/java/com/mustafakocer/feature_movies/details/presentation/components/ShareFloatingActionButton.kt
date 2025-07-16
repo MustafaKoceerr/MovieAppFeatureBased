@@ -9,7 +9,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mustafakocer.feature_movies.R
 
 /**
  * Paylaşım için kullanılan FloatingActionButton.
@@ -35,7 +37,7 @@ import androidx.compose.ui.unit.dp
         } else {
             Icon(
                 imageVector = Icons.Default.Share,
-                contentDescription = "Share movie",
+                contentDescription = stringResource(R.string.share_movie),
                 tint = MaterialTheme.colorScheme.onPrimary
             )
         }

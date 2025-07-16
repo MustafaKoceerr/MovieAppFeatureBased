@@ -21,9 +21,26 @@
     <fields>;
 }
 
-# Keep serializable classes structure
+# ==================== KOTLINX SERIALIZATION ====================
+# Keep serialization annotations and generated classes
+-keepattributes *Annotation*, InnerClasses, Signature
+-dontwarn kotlinx.serialization.**
+-keep class kotlinx.serialization.internal.*Serializer { *; }
+
+# Keep classes with @Serializable annotation and their companion objects
 -keep,allowobfuscation,allowshrinking @kotlinx.serialization.Serializable class * {
-    static **.*$Companion Companion;
+    <init>(...);
+    public static final ** Companion;
+}
+
+# Keep the serializer() method in the companion object
+-keepclassmembers class * {
+    @kotlinx.serialization.Serializable ** Companion;
+}
+
+# Keep the synthetic field for serialized names
+-keepclassmembers class ** {
+    @kotlinx.serialization.SerialName <fields>;
 }
 
 # ==================== CORE DATABASE CLASSES ====================

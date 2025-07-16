@@ -19,21 +19,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.mustafakocer.feature_movies.R
 
 @Composable
 fun ComingSoonSection() {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionTitle("More to Come")
+        SectionTitle(stringResource(R.string.more_to_come))
         ComingSoonCard(
-            title = "Language & Region",
-            description = "Choose your preferred language",
+            title = stringResource(R.string.language_region),
+            description = stringResource(R.string.choose_preferred_language),
             icon = Icons.Default.Settings
         )
         ComingSoonCard(
-            title = "Account & Sync",
-            description = "Manage your account preferences",
+            title = stringResource(R.string.account_sync),
+            description = stringResource(R.string.manage_account_preferences),
             icon = Icons.Default.Settings
         )
     }
@@ -80,7 +82,7 @@ private fun ComingSoonCard(
                 color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
             ) {
                 Text(
-                    text = "Soon",
+                    text = stringResource(R.string.soon),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)

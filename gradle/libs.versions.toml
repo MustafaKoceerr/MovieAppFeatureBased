@@ -8,12 +8,12 @@ core-ktx = "1.16.0"
 lifecycle = "2.9.1"
 activity-compose = "1.10.1"
 appcompat = "1.7.1"
-material = "1.12.0"
 
 gson = "2.13.1"
 
 # Architecture
 hilt = "2.56.2"
+mockitoCore = "5.8.0"
 navigation = "2.8.4"
 room = "2.6.1"
 paging = "3.2.1"
@@ -42,6 +42,7 @@ materialVersion = "1.12.0"
 # Preferences
 datastore = "1.1.7"
 testng = "6.9.6"
+turbine = "1.0.0"
 
 [libraries]
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
@@ -71,6 +72,7 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.2.0" }
 
 # Room
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -105,13 +107,12 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 
 # Icons Extended
-androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "compose-material" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose-material" }
-material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 
 # Preferences
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 testng = { group = "org.testng", name = "testng", version.ref = "testng" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }

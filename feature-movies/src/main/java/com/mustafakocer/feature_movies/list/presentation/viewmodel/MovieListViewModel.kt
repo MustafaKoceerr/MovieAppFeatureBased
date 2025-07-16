@@ -41,12 +41,12 @@ class MovieListViewModel @Inject constructor(
         if (categoryEndpoint == null) {
             // Eğer argüman yoksa, bu kritik bir hatadır.
             // Bir hata mesajı gösterip geri navigasyon yapabiliriz.
-            sendEffect(MovieListEffect.ShowSnackbar("Kategori bulunamadı."))
+            sendEffect(MovieListEffect.ShowSnackbar("Category isn't found."))
             sendEffect(MovieListEffect.NavigateBack)
         } else {
             val category = MovieCategory.fromApiEndpoint(categoryEndpoint)
             if (category == null) {
-                sendEffect(MovieListEffect.ShowSnackbar("Geçersiz kategori."))
+                sendEffect(MovieListEffect.ShowSnackbar("Unavailable category."))
                 sendEffect(MovieListEffect.NavigateBack)
             } else {
                 // Her şey yolundaysa, filmleri yükle ve başlığı ayarla.

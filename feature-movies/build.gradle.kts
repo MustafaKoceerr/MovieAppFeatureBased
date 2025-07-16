@@ -77,7 +77,6 @@ dependencies {
     implementation(project(":core-database"))  // → Room, Paging, core-common
     implementation(project(":core-preferences")) // ✅ NEW: Theme & Preferences
     implementation(project(":data-common"))       // ← NEW: Access to ThemeRepository
-    implementation(project(":core-database-contract")) // <-- YENİ SATIR
     implementation(project(":navigation-contracts")) // <-- SÖZLEŞMELERİ BİLMELİ
 
     // Navigation modülü
@@ -109,9 +108,9 @@ dependencies {
 
     // 📊 TESTING
     testImplementation(libs.junit)
-    testImplementation("org.mockito:mockito-core:5.8.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    testImplementation("app.cash.turbine:turbine:1.0.0")
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
 
     // 📱 UI TESTING
     androidTestImplementation(libs.androidx.junit)

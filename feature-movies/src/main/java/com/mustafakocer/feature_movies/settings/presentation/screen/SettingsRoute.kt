@@ -12,9 +12,19 @@ import com.mustafakocer.feature_movies.settings.presentation.viewmodel.SettingsV
 import com.mustafakocer.navigation_contracts.actions.FeatureMoviesNavActions
 import kotlinx.coroutines.flow.collectLatest
 
+/**
+ * Host (Barındırıcı) Eylemleri: Bunlar, bir özelliğin (feature) kendi başına yapamayacağı, sadece tüm uygulamanın sahibi olan Activity gibi bir üst bileşenin yapabileceği çok nadir ve özel eylemlerdir.
+ *
+ *     activity.recreate() (Dil/Tema değişikliği)
+ *
+ *     Sistem izni istemek (requestPermissions)
+ *
+ *     Sistem ayarları ekranını açmak
+ */
 @Composable
 fun SettingsRoute(
     navActions: FeatureMoviesNavActions,
+    onLanguageChanged: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -27,8 +37,14 @@ fun SettingsRoute(
                 is SettingsEffect.NavigateBack -> {
                     navActions.navigateUp()
                 }
+
                 is SettingsEffect.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(message = effect.message)
+                }
+
+                is SettingsEffect.RestartActivity -> {
+                    // ViewModel'den gelen sinyali yakala ve dışarıdan verilen callback'i tetikle.
+                    onLanguageChanged()
                 }
             }
         }

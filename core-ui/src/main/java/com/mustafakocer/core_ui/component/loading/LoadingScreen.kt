@@ -1,7 +1,6 @@
 package com.mustafakocer.core_ui.component.loading
 
 import androidx.compose.animation.core.EaseInOutCubic
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -22,9 +21,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,19 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
 
-/**
- * TEACHING MOMENT: Reusable Loading Screen
- *
- * DESIGN PRINCIPLES:
- * ✅ Consistent loading experience across app
- * ✅ Beautiful animations and transitions
- * ✅ Customizable for different contexts
- * ✅ Movie app themed design
- */
-
-/**
- * Primary loading screen with movie-themed animations
- */
 @Composable
 fun LoadingScreen(
     modifier: Modifier = Modifier,
@@ -63,17 +49,6 @@ fun LoadingScreen(
             repeatMode = RepeatMode.Reverse
         ),
         label = "pulse"
-    )
-
-    // Rotating animation
-    val rotationAnimation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "rotation"
     )
 
     Box(

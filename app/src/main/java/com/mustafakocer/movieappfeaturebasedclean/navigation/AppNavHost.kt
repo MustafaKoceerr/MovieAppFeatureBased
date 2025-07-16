@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.mustafakocer.feature_movies.navigation.moviesNavGraph
+import androidx.activity.compose.LocalActivity
 
 @Composable
 fun AppNavHost(
@@ -12,6 +13,7 @@ fun AppNavHost(
     startDestination: Any,
     modifier: Modifier = Modifier,
 ) {
+    val activity = LocalActivity.current
     NavHost(
         navController = navController,
         startDestination = startDestination, // Örn: MoviesFeatureGraph
@@ -20,7 +22,11 @@ fun AppNavHost(
         // :app modülü artık HomeRoute'u, SearchRoute'u vs. BİLMİYOR.
         // Sadece :feature-movies modülünün dışarıya açtığı
         // tek bir fonksiyonu çağırıyor.
-        moviesNavGraph(navController)
+        moviesNavGraph(
+            navController = navController,
+            // :feature-movies modülünün istediği "eylemi" burada tanımlıyoruz.
+            onLanguageChanged = { activity?.recreate() }
+        )
 
         // Gelecekte bir :feature-profile eklendiğinde,
         // buraya sadece tek bir satır daha eklenecek:

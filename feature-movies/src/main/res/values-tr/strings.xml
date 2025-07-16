@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Film Keşfetme Uygulaması</string>
+
+    <!-- Film Kategorileri -->
+    <string name="popular_movies">Popüler Filmler</string>
+    <string name="now_playing">Vizyondakiler</string>
+    <string name="top_rated">En Çok Puan Alanlar</string>
+    <string name="upcoming">Yakında Gelecekler</string>
+
+    <!-- Arama -->
+    <string name="search_placeholder">Film, dizi veya oyuncu ara…</string>
+    <string name="search_initial_title">Aramaya Başla</string>
+    <string name="search_initial_description">Film, dizi ve favori oyuncularını arayarak keşfet.</string>
+
+    <!-- Film Detayları -->
+    <string name="genres">Türler</string>
+    <string name="overview">Özet</string>
+    <string name="refreshing">Yenileniyor…</string>
+
+    <!-- Ayarlar -->
+    <string name="settings">Ayarlar</string>
+    <string name="theme">Tema</string>
+    <string name="theme_light">Açık Tema</string>
+    <string name="theme_dark">Koyu Tema</string>
+    <string name="theme_system">Sistem Ayarları</string>
+
+    <!-- Ortak İşlemler -->
+    <string name="back">Geri</string>
+    <string name="clear">Temizle</string>
+    <string name="try_again">Tekrar Dene</string>
+    <string name="retry">Yeniden Dene</string>
+
+    <!-- Hata Mesajları -->
+    <string name="error_generic">Bir hata oluştu</string>
+    <string name="error_loading_more">Daha fazla içerik yüklenirken hata oluştu.</string>
+    <string name="error_no_internet">İnternet bağlantısı yok</string>
+
+    <!-- Puanlama -->
+    <string name="votes_format">(%d oy)</string>
+
+    <!-- Yükleniyor -->
+    <string name="loading">Yükleniyor…</string>
+    <string name="please_wait">Lütfen bekleyin…</string>
+    <string name="more_to_come">Daha Fazlası Gelecek</string>
+    <string name="language_region"><![CDATA[Dil & Bölge]]></string>
+    <string name="choose_preferred_language">Tercih ettiğiniz dili seçin</string>
+    <string name="account_sync"><![CDATA[Hesap & Senkronizasyon]]></string>
+    <string name="manage_account_preferences">Hesap tercihlerinizi yönetin</string>
+
+    <!-- Paylaşım -->
+    <string name="share_text_title">Bu filmi inceleyin!</string>
+    <string name="share_text_rating">Puan</string>
+    <string name="share_text_release">Vizyon</string>
+    <string name="share_text_runtime">Süre</string>
+    <string name="share_text_genres">Türler</string>
+    <string name="share_text_tags">#Filmler #Sinema</string>
+    <string name="error_share_movie">Film detayları paylaşılırken hata oluştu</string>
+    <string name="movie_details">Film Detayları</string>
+    <string name="loading_movie_details">Film detayları yükleniyor…</string>
+    <string name="loading_movies">Filmler yükleniyor…</string>
+    <string name="navigate_back">Geri dön</string>
+    <string name="backdrop_description">%1$s arka plan resmi</string>
+    <string name="poster_description">%1$s poster</string>
+    <string name="rating">Puan</string>
+    <string name="release">Vizyon</string>
+    <string name="runtime">Süre</string>
+    <string name="share_movie">Filmi Paylaş</string>
+    <string name="search">Ara</string>
+    <string name="search_movies">Filmleri ara…</string>
+    <string name="view_all">Hepsini Gör</string>
+    <string name="start_searching">Aramaya Başla</string>
+    <string name="discover_content">İzlemek istediğin film, dizi ve favori oyuncuları bul ve keşfetmeye başla.</string>
+    <string name="search_placeholder_alt">Film, dizi veya oyuncu ara…</string>
+    <string name="clear_search">Aramayı Temizle</string>
+    <string name="go_back">Geri Dön</string>
+    <string name="soon">Yakında</string>
+    <string name="customize_experience">Deneyimini Özelleştir</string>
+    <string name="personalize_app">Uygulamayı tercihlerine göre kişiselleştir</string>
+    <string name="app_theme">Uygulama Teması</string>
+    <string name="theme_light_always">Her zaman açık tema kullan</string>
+    <string name="theme_dark_always">Her zaman koyu tema kullan</string>
+    <string name="theme_follow_system">Sistem ayarlarını takip et</string>
+    <string name="selected_text">Seçili</string>
+    <string name="votes">(%1$s oy)</string>
+</resources>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Film Keşfetme Uygulaması</string>
+
+    <!-- Movie Categories -->
+    <string name="popular_movies">Popular Movies</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="upcoming">Upcoming</string>
+
+    <!-- Search -->
+    <string name="search_placeholder">Search movies, series or actors…</string>
+    <string name="search_initial_title">Start Searching</string>
+    <string name="search_initial_description">Discover movies, series and your favorite actors by searching.</string>
+
+    <!-- Movie Details -->
+    <string name="genres">Genres</string>
+    <string name="overview">Overview</string>
+    <string name="refreshing">Refreshing…</string>
+
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="theme">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System</string>
+
+    <!-- Common Actions -->
+    <string name="back">Back</string>
+    <string name="clear">Clear</string>
+    <string name="try_again">Try Again</string>
+    <string name="retry">Retry</string>
+
+    <!-- Error Messages -->
+    <string name="error_generic">An error occurred</string>
+    <string name="error_loading_more">An error occurred while loading more content.</string>
+    <string name="error_no_internet">No internet connection</string>
+
+    <!-- Rating -->
+    <string name="votes_format">(%d votes)</string>
+
+    <!-- Loading -->
+    <string name="loading">Loading…</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="more_to_come">More to Come</string>
+    <string name="language_region"><![CDATA[Language & Region]]></string>
+    <string name="choose_preferred_language">Choose your preferred language</string>
+    <string name="account_sync"><![CDATA[Account & Sync]]></string>
+    <string name="manage_account_preferences">Manage your account preferences</string>
+
+    <!-- Sharing -->
+    <string name="share_text_title">Check out this movie!</string>
+    <string name="share_text_rating">Rating</string>
+    <string name="share_text_release">Release</string>
+    <string name="share_text_runtime">Runtime</string>
+    <string name="share_text_genres">Genres</string>
+    <string name="share_text_tags">#Movies #Cinema</string>
+    <string name="error_share_movie">Unable to share movie details</string>
+    <string name="movie_details">Movie Details</string>
+    <string name="loading_movie_details">Loading movie details…</string>
+
+    <string name="loading_movies">Movies Loading…</string>
+    <string name="navigate_back">Navigate back</string>
+    <string name="backdrop_description">%1$s backdrop</string>
+    <string name="poster_description">%1$s poster</string>
+
+    <string name="rating">Rating</string>
+    <string name="release">Release</string>
+    <string name="runtime">Runtime</string>
+    <string name="share_movie">Share movie</string>
+    <string name="search">Search</string>
+    <string name="search_movies">Search movies…</string>
+    <string name="view_all">View All</string>
+    <string name="start_searching">Start Searching</string>
+    <string name="discover_content">Find the movies, TV shows, and favorite actors you want to watch and start discovering.</string>
+
+    <string name="search_placeholder_alt">Search movies, shows, or actors…</string>
+    <string name="clear_search">Clear Search Query</string>
+    <string name="go_back">Go Back</string>
+    <string name="soon">Soon</string>
+    <string name="customize_experience">Customize Your Experience</string>
+    <string name="personalize_app">Personalize the app to match your preferences</string>
+    <string name="app_theme">App Theme</string>
+    <string name="theme_light_always">Always use light theme</string>
+    <string name="theme_dark_always">Always use dark theme</string>
+    <string name="theme_follow_system">Follow system setting</string>
+    <string name="selected_text">Selected</string>
+    <string name="votes">(%1$s votes)</string>
+</resources>
