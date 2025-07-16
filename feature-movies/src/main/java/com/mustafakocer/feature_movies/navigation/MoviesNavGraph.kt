@@ -12,7 +12,10 @@ import com.mustafakocer.feature_movies.settings.presentation.screen.SettingsRout
 import com.mustafakocer.navigation_contracts.actions.FeatureMoviesNavActions
 import com.mustafakocer.navigation_contracts.navigation.*
 
-fun NavGraphBuilder.moviesNavGraph(navController: NavController) {
+fun NavGraphBuilder.moviesNavGraph(
+    navController: NavController,
+    onLanguageChanged: () -> Unit,
+) {
 
     val navActions = object : FeatureMoviesNavActions {
         override fun navigateToMovieDetails(movieId: Int) {
@@ -48,6 +51,11 @@ fun NavGraphBuilder.moviesNavGraph(navController: NavController) {
         composable<MovieListScreen> { MovieListRoute(navActions = navActions) }
         composable<MovieDetailsScreen> { MovieDetailsRoute(navActions = navActions) }
         composable<SearchScreen> { SearchRoute(navActions = navActions) }
-        composable<SettingsScreen> { SettingsRoute(navActions = navActions) }
+        composable<SettingsScreen> {
+            SettingsRoute(
+                navActions = navActions,
+                onLanguageChanged = onLanguageChanged
+            )
+        }
     }
 }
