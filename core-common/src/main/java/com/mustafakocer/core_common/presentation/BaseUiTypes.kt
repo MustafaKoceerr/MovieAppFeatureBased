@@ -1,13 +1,20 @@
 package com.mustafakocer.core_common.presentation
 
-/**
- * TEACHING MOMENT: Base UI Type Definitions
- *
- * Group related base types together - they're all simple marker interfaces
- */
+import com.mustafakocer.core_common.exception.AppException
+
 interface BaseUiState {
     val isLoading: Boolean
-    val error: String?
+    val isRefreshing: Boolean
+    val error: AppException?
+
+    val isAnyLoading: Boolean
+        get() = isLoading || isRefreshing
+
+    val hasError: Boolean
+        get() = error != null
+
+    val isIdle: Boolean
+        get() = !isAnyLoading && error == null
 }
 
 /**
