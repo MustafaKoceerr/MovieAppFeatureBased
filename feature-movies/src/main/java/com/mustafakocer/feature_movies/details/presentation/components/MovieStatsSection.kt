@@ -19,9 +19,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mustafakocer.feature_movies.R
 import com.mustafakocer.feature_movies.shared.util.formattedRating
 
 @Composable
@@ -38,7 +40,7 @@ fun MovieStatsSection(
         // Puanlama Kartı
         MovieStatItem(
             icon = Icons.Default.Star,
-            label = "Rating",
+            label = stringResource(R.string.rating),
             value = voteAverage.formattedRating,
             modifier = Modifier.weight(1f)
         )
@@ -46,7 +48,7 @@ fun MovieStatsSection(
         // Çıkış Tarihi Kartı
         MovieStatItem(
             icon = Icons.Default.DateRange,
-            label = "Release",
+            label = stringResource(R.string.release),
             value = releaseDate,
             modifier = Modifier.weight(1f)
         )
@@ -55,7 +57,7 @@ fun MovieStatsSection(
         runtime?.let {
             MovieStatItem(
                 icon = Icons.Default.Schedule,
-                label = "Runtime",
+                label = stringResource(R.string.runtime),
                 value = it,
                 modifier = Modifier.weight(1f)
             )

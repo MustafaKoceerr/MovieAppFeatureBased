@@ -33,10 +33,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_preferences.models.ThemePreference
+import com.mustafakocer.feature_movies.R
 
 @Composable
 fun ThemeSelectionSection(
@@ -46,7 +48,7 @@ fun ThemeSelectionSection(
 ) {
     SectionCard(
         icon = Icons.Default.Palette,
-        title = "App Theme",
+        title = stringResource(R.string.app_theme),
         isLoading = isLoading
     ) {
         Column(
@@ -56,7 +58,7 @@ fun ThemeSelectionSection(
             ThemeOption(
                 theme = ThemePreference.LIGHT,
                 icon = Icons.Default.LightMode,
-                description = "Always use light theme",
+                description = stringResource(R.string.theme_light_always),
                 isSelected = currentTheme == ThemePreference.LIGHT,
                 isEnabled = !isLoading,
                 onSelected = { onThemeSelected(ThemePreference.LIGHT) }
@@ -64,7 +66,7 @@ fun ThemeSelectionSection(
             ThemeOption(
                 theme = ThemePreference.DARK,
                 icon = Icons.Default.DarkMode,
-                description = "Always use dark theme",
+                description = stringResource(R.string.theme_dark_always),
                 isSelected = currentTheme == ThemePreference.DARK,
                 isEnabled = !isLoading,
                 onSelected = { onThemeSelected(ThemePreference.DARK) }
@@ -72,7 +74,7 @@ fun ThemeSelectionSection(
             ThemeOption(
                 theme = ThemePreference.SYSTEM,
                 icon = Icons.Default.Settings,
-                description = "Follow system setting",
+                description = stringResource(R.string.theme_follow_system),
                 isSelected = currentTheme == ThemePreference.SYSTEM,
                 isEnabled = !isLoading,
                 onSelected = { onThemeSelected(ThemePreference.SYSTEM) }
@@ -154,7 +156,7 @@ private fun ThemeOption(
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                         Icon(
                             imageVector = Icons.Default.Check,
-                            contentDescription = "Selected",
+                            contentDescription = stringResource(R.string.selected_text),
                             tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(14.dp)
                         )

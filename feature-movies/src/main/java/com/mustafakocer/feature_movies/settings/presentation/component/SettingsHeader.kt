@@ -22,8 +22,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.mustafakocer.feature_movies.R
 
 @Composable
 fun SettingsHeader() {
@@ -55,14 +57,14 @@ fun SettingsHeader() {
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Customize Your Experience",
+                    text = stringResource(R.string.customize_experience),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Personalize the app to match your preferences",
+                    text = stringResource(R.string.personalize_app),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

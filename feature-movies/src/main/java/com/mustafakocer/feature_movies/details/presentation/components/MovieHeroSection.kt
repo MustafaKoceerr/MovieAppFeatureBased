@@ -19,10 +19,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.mustafakocer.feature_movies.R
 
 /**
  * Filmin en üstteki "kahraman" bölümünü oluşturur.
@@ -45,7 +47,7 @@ fun MovieHeroSection(
         // 1. Arka plan resmi (Backdrop)
         AsyncImage(
             model = backdropUrl,
-            contentDescription = "$title backdrop",
+            contentDescription = stringResource(R.string.backdrop_description, title),
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
             // Hata veya yükleme durumları için placeholder ekleyebilirsin
@@ -107,7 +109,7 @@ private fun MovieInfoOverlay(
         // Film afişi
         AsyncImage(
             model = posterUrl,
-            contentDescription = "$title poster",
+            contentDescription = stringResource(R.string.poster_description, title),
             modifier = Modifier
                 .size(120.dp, 180.dp)
                 .clip(MaterialTheme.shapes.medium), // Köşeleri yuvarlatır

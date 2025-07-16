@@ -30,12 +30,12 @@ fun ComingSoonSection() {
         SectionTitle(stringResource(R.string.more_to_come))
         ComingSoonCard(
             title = stringResource(R.string.language_region),
-            description = stringResource(R.string.choose_your_preferred_language),
+            description = stringResource(R.string.choose_preferred_language),
             icon = Icons.Default.Settings
         )
         ComingSoonCard(
             title = stringResource(R.string.account_sync),
-            description = stringResource(R.string.manage_your_account_preferences),
+            description = stringResource(R.string.manage_account_preferences),
             icon = Icons.Default.Settings
         )
     }
@@ -82,7 +82,7 @@ private fun ComingSoonCard(
                 color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
             ) {
                 Text(
-                    text = "Soon",
+                    text = stringResource(R.string.soon),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)

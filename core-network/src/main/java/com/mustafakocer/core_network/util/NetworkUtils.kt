@@ -1,4 +1,4 @@
-//package com.mustafakocer.core_network.util
+package com.mustafakocer.core_network.util
 //
 //import com.mustafakocer.core_common.exception.AppException
 //import com.mustafakocer.core_common.exception.toAppException

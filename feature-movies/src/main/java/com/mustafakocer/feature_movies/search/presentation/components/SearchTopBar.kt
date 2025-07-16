@@ -19,7 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import com.mustafakocer.feature_movies.R
 
 /**
  * Arama ekranı için, içinde arama kutusu bulunan TopAppBar.
@@ -56,7 +58,7 @@ fun SearchTopBar(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester), // Focus'u bu alana bağlıyoruz.
-                placeholder = { Text("Film, dizi veya oyuncu ara...") },
+                placeholder = { Text(stringResource(R.string.search_placeholder_alt)) },
                 // Otomatik arama yaptığımız için, klavyedeki "Search" butonu
                 // artık bir eylem yapmıyor, sadece klavyeyi kapatabilir.
                 keyboardOptions = KeyboardOptions(
@@ -72,7 +74,7 @@ fun SearchTopBar(
                         IconButton(onClick = onClearSearch) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
-                                contentDescription = "Aramayı Temizle"
+                                contentDescription = stringResource(R.string.clear_search)
                             )
                         }
                     }
@@ -83,7 +85,7 @@ fun SearchTopBar(
             IconButton(onClick = onNavigateBack) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Geri Git"
+                    contentDescription = stringResource(R.string.go_back)
                 )
             }
         },

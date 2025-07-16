@@ -9,8 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mustafakocer.feature_movies.R
 
 /**
  * Arama ekranı boşken kullanıcıyı bilgilendirmek için gösterilen Composable.
@@ -33,11 +35,11 @@ fun SearchInitialPrompt(modifier: Modifier = Modifier) {
                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
             Text(
-                text = "Aramaya Başla",
+                text = stringResource(R.string.start_searching),
                 style = MaterialTheme.typography.headlineSmall
             )
             Text(
-                text = "İzlemek istediğin filmleri, dizileri veya favori oyuncularını bularak keşfet.",
+                text = stringResource(R.string.discover_content),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)

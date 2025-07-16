@@ -14,12 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import com.mustafakocer.feature_movies.shared.util.formattedRating
 import com.mustafakocer.feature_movies.shared.util.getPosterUrl
+import com.mustafakocer.feature_movies.R
 
 /**
  * TEACHING MOMENT: Clean MovieCard with Utils
@@ -45,7 +47,7 @@ fun MovieCard(
             // Real Movie Poster with Extension
             AsyncImage(
                 model = movie.getPosterUrl(), // ✅ Extension kullanıyor
-                contentDescription = "${movie.title} poster",
+                contentDescription = stringResource(R.string.poster_description),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)

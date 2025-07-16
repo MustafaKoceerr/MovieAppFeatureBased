@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -15,7 +16,7 @@ import androidx.paging.compose.itemKey
 import com.mustafakocer.core_ui.component.error.ErrorScreen
 import com.mustafakocer.core_ui.component.loading.LoadingScreen
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
-
+import com.mustafakocer.feature_movies.R
 /**
  * Paging 3 ile gelen film listesini ve yükleme/hata durumlarını yöneten
  * yeniden kullanılabilir bir Composable.
@@ -32,23 +33,18 @@ fun MovieListContent(
     when (lazyMovieItems.loadState.refresh) {
         // 1. TAM EKRAN YÜKLEME DURUMU
         is LoadState.Loading -> {
-            LoadingScreen(message = "Filmler yükleniyor...")
+            LoadingScreen(message = stringResource(R.string.loading_movies))
         }
         // 2. TAM EKRAN HATA DURUMU
         is LoadState.Error -> {
-            // Hata mesajını ve yeniden deneme fonksiyonunu ErrorScreen'e paslıyoruz.
             ErrorScreen(
-                // error = refreshState.error.toErrorInfoOrFallback(),
                 onRetry = { lazyMovieItems.retry() }
             )
         }
         // 3. BAŞARILI VEYA BOŞ DURUM
         is LoadState.NotLoading -> {
-            // Liste boşsa, özel bir "boş ekran" gösterebiliriz.
             if (lazyMovieItems.itemCount == 0) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    // EmptyScreen() adında bir Composable oluşturulabilir.
-                    // Text("Bu kategoride hiç film bulunamadı.")
                 }
             } else {
                 // Veri varsa, LazyColumn'u gösteriyoruz.
@@ -56,13 +52,12 @@ fun MovieListContent(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Filmleri listele
                     items(
                         count = lazyMovieItems.itemCount,
                         key = lazyMovieItems.itemKey { it.id }
                     ) { index ->
                         lazyMovieItems[index]?.let { movie ->
-                            MovieListItem( // Bu component'in var olduğunu varsayıyoruz
+                            MovieListItem(
                                 movie = movie,
                                 onClick = { onMovieClick(movie) }
                             )

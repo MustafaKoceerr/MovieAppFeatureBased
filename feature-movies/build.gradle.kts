@@ -77,7 +77,6 @@ dependencies {
     implementation(project(":core-database"))  // → Room, Paging, core-common
     implementation(project(":core-preferences")) // ✅ NEW: Theme & Preferences
     implementation(project(":data-common"))       // ← NEW: Access to ThemeRepository
-    implementation(project(":core-database-contract")) // <-- YENİ SATIR
     implementation(project(":navigation-contracts")) // <-- SÖZLEŞMELERİ BİLMELİ
 
     // Navigation modülü

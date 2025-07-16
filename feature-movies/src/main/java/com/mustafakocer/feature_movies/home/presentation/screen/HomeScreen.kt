@@ -21,9 +21,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_ui.component.error.ErrorScreen
 import com.mustafakocer.core_ui.component.loading.LoadingScreen
+import com.mustafakocer.feature_movies.R
 import com.mustafakocer.feature_movies.home.presentation.components.FakeSearchBar
 import com.mustafakocer.feature_movies.home.presentation.components.MovieCategorySection
 import com.mustafakocer.feature_movies.home.presentation.contract.*
@@ -39,10 +41,10 @@ fun HomeScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("MovieApp") },
+                title = { Text(text = stringResource(R.string.app_name)) },
                 actions = {
                     IconButton(onClick = { onEvent(HomeEvent.ProfileClicked) }) {
-                        Icon(Icons.Default.Settings, contentDescription = "Ayarlar")
+                        Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings))
                     }
                 }
             )
@@ -57,7 +59,7 @@ fun HomeScreen(
         )
         {
             if (state.showFullScreenLoading) {
-                LoadingScreen(message = "Movies Loading...")
+                LoadingScreen(message = stringResource(R.string.loading_movies))
             } else if (state.showFullScreenError) {
                 ErrorScreen(
                     // errorInfo'yu anlık olarak oluşturabiliriz.

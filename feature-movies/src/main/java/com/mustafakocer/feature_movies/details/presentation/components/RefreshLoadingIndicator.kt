@@ -12,7 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mustafakocer.feature_movies.R
 
 /**
  * Yenileme sırasında gösterilen küçük yükleme göstergesi.
@@ -31,7 +33,7 @@ fun RefreshLoadingIndicator(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
-            Text(text = "Refreshing...", style = MaterialTheme.typography.bodySmall)
+            Text(text = stringResource(R.string.refreshing), style = MaterialTheme.typography.bodySmall)
         }
     }
 }

@@ -13,9 +13,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.feature_movies.shared.domain.model.Genre
+import com.mustafakocer.feature_movies.R
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -28,7 +30,7 @@ fun MovieGenresSection(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "Genres",
+            text = stringResource(R.string.genres),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold
         )

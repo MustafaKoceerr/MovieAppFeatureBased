@@ -10,8 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mustafakocer.feature_movies.R
 
 /**
  * Paging listesinin sonunda, yeni sayfa yüklenirken bir hata oluştuğunda
@@ -32,12 +34,12 @@ fun PagingAppendErrorIndicator(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "Daha fazla içerik yüklenirken bir hata oluştu.",
+            text = stringResource(R.string.error_loading_more),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )
         Button(onClick = onRetry) {
-            Text("Tekrar Dene")
+            Text(stringResource(R.string.try_again))
         }
     }
 }
