@@ -1,9 +1,8 @@
 package com.mustafakocer.feature_movies.shared.data.api
 
-import com.mustafakocer.core_network.api.PaginatedResponse
-import com.mustafakocer.feature_movies.shared.data.dto.MovieDto
-import com.mustafakocer.feature_movies.details.data.remote.dto.MovieDetailsDto
-import com.mustafakocer.feature_movies.shared.data.dto.MovieListDto
+import com.mustafakocer.feature_movies.shared.data.model.MovieDto
+import com.mustafakocer.feature_movies.shared.data.model.PaginatedResponseDto
+import com.mustafakocer.feature_movies.shared.data.model.moviedetails.MovieDetailsDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -11,92 +10,79 @@ import retrofit2.http.Query
 
 interface MovieApiService {
 
-    // ==================== HOME SCREEN ENDPOINTS ====================
+    // ==================== HOME SCREEN & LIST SCREEN ENDPOINTS ====================
+    // Bu endpoint'ler, içinde MovieDto listesi olan bir PaginatedResponseDto döndürür.
 
     /**
-     * Get now playing movies (Home screen)
+     * Get now playing movies.
      */
     @GET("movie/now_playing")
     suspend fun getNowPlayingMovies(
-        @Query("api_key") apiKey: String,
         @Query("page") page: Int = 1,
         @Query("language") language: String = "en-US",
-    ): Response<PaginatedResponse<MovieDto>>
+    ): Response<PaginatedResponseDto<MovieDto>>
 
     /**
-     * Get popular movies (Home screen)
+     * Get popular movies.
      */
     @GET("movie/popular")
     suspend fun getPopularMovies(
-        @Query("api_key") apiKey: String,
         @Query("page") page: Int = 1,
         @Query("language") language: String = "en-US",
-    ): Response<PaginatedResponse<MovieDto>>
+    ): Response<PaginatedResponseDto<MovieDto>>
 
     /**
-     * Get top rated movies (Home screen)
+     * Get top rated movies.
      */
     @GET("movie/top_rated")
     suspend fun getTopRatedMovies(
-        @Query("api_key") apiKey: String,
         @Query("page") page: Int = 1,
         @Query("language") language: String = "en-US",
-    ): Response<PaginatedResponse<MovieDto>>
+    ): Response<PaginatedResponseDto<MovieDto>>
 
     /**
-     * Get upcoming movies (Home screen)
+     * Get upcoming movies.
      */
     @GET("movie/upcoming")
     suspend fun getUpcomingMovies(
-        @Query("api_key") apiKey: String,
         @Query("page") page: Int = 1,
         @Query("language") language: String = "en-US",
-    ): Response<PaginatedResponse<MovieDto>>
-
-    // ==================== MOVIE LIST ENDPOINTS (PAGINATION) ====================
+    ): Response<PaginatedResponseDto<MovieDto>>
 
     /**
-     * Get movies by category with pagination (Movie List screen)
-     *
-     * @param category now_playing, popular, top_rated, upcoming
+     * Get movies by a dynamic category with pagination.
      */
     @GET("movie/{category}")
     suspend fun getMoviesByCategory(
         @Path("category") category: String,
-        @Query("api_key") apiKey: String,
         @Query("page") page: Int = 1,
         @Query("language") language: String = "en-US",
-    ): PaginatedResponse<MovieListDto>
+    ): Response<PaginatedResponseDto<MovieDto>>
 
-    // ==================== MOVIE DETAILS ENDPOINTS ====================
+
+    // ==================== SEARCH ENDPOINT ====================
+    // Bu endpoint de bir liste döndürdüğü için, aynı PaginatedResponseDto<MovieDto> yapısını kullanır.
 
     /**
-     * Get movie details by ID (Details screen)
+     * Search movies by query.
+     */
+    @GET("search/movie")
+    suspend fun searchMovies(
+        @Query("query") query: String,
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = "en-US",
+    ): Response<PaginatedResponseDto<MovieDto>>
+
+
+    // ==================== MOVIE DETAILS ENDPOINT ====================
+    // Bu endpoint, tamamen farklı bir yapıya sahip olduğu için kendi özel DTO'sunu kullanır.
+
+    /**
+     * Get movie details by ID.
      */
     @GET("movie/{movie_id}")
     suspend fun getMovieDetails(
         @Path("movie_id") movieId: Int,
-        @Query("api_key") apiKey: String,
         @Query("language") language: String = "en-US",
     ): Response<MovieDetailsDto>
-
-    // ==================== SEARCH ENDPOINTS ====================
-
-    /**
-     * Search movies by query (Search screen)
-     */
-    @GET("search/movie")
-    suspend fun searchMovies(
-        @Query("api_key") apiKey: String,
-        @Query("query") query: String,
-        @Query("page") page: Int = 1,
-        @Query("language") language: String = "en-US",
-    ): Response<PaginatedResponse<MovieListDto>>
-
-    // ==================== FUTURE ENDPOINTS ====================
-    // When needed, add:
-    // - Movie videos: GET movie/{movie_id}/videos
-    // - Movie credits: GET movie/{movie_id}/credits
-    // - Similar movies: GET movie/{movie_id}/similar
-    // - Recommendations: GET movie/{movie_id}/recommendations
 }

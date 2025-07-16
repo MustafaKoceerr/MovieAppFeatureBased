@@ -1,15 +1,13 @@
 package com.mustafakocer.feature_movies.home.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -17,104 +15,60 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mustafakocer.core_ui.component.error.ErrorCard
-import com.mustafakocer.feature_movies.shared.domain.model.Movie
-import com.mustafakocer.feature_movies.home.domain.model.MovieSection
+import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
+import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 
+/**
+ * Ana ekranda tek bir film kategorisini (örn. "Popüler Filmler") ve
+ * filmlerini yatay bir listede gösteren, yeniden kullanılabilir Composable.
+ *
+ * @param category Gösterilecek kategorinin enum'u (başlık için kullanılır).
+ * @param movies O kategoriye ait film listesi.
+ * @param onMovieClick Bir filme tıklandığında tetiklenecek olay. Filmin ID'sini döndürür.
+ * @param onViewAllClick "Hepsini Gör" butonuna tıklandığında tetiklenecek olay.
+ */
 @Composable
 fun MovieCategorySection(
-    section: MovieSection,
-    onMovieClick: (Movie) -> Unit,
+    category: MovieCategory,
+    movies: List<MovieListItem>,
+    onMovieClick: (movieId: Int) -> Unit,
     onViewAllClick: () -> Unit,
-    onRetryClick: (() -> Unit)? = null,
-    isRetrying: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
+    // Liste boşsa, bu bölümü hiç gösterme.
+    if (movies.isEmpty()) return
+
     Column(modifier = modifier) {
-        // Section header
+        // Başlık ve "Hepsini Gör" Butonu
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = section.category.displayName,
-                style = MaterialTheme.typography.headlineSmall
+                text = category.title, // MovieCategory enum'unun bir 'title' alanı olduğunu varsayıyoruz.
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.weight(1f)
             )
-
-            // Only show "View All" if section has movies and no error
-            if (section.movies.isNotEmpty() && section.error == null && !isRetrying) {
-                TextButton(onClick = onViewAllClick) {
-                    Text("View All")
-                }
+            TextButton(onClick = onViewAllClick) {
+                Text("Hepsini Gör")
             }
         }
 
-        // Section Content
-        when {
-            // Loading State (initial loading or retrying)
-            section.isLoading || isRetrying -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        CircularProgressIndicator()
-                        Text(
-                            text = if (isRetrying)
-                                "Retrying ${section.category.displayName.lowercase()}..."
-                            else
-                                "Loading ${section.category.displayName.lowercase()}...",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-
-            // Error State
-            section.error != null -> {
-                ErrorCard(
-                    title = "${section.category.displayName} Failed",
-                    message = section.error,
-                    onRetry = onRetryClick
+        // Filmlerin Yatay Listesi (LazyRow)
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(
+                items = movies,
+                key = { movie -> movie.id } // Performans için her öğeye benzersiz bir anahtar veriyoruz.
+            ) { movie ->
+                MovieCard(
+                    movie = movie,
+                    onClick = { onMovieClick(movie.id) }
                 )
-            }
-
-            // Success State with Movies
-            section.movies.isNotEmpty() -> {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(vertical = 8.dp)
-                ) {
-                    items(section.movies) { movie ->
-                        MovieCard(
-                            movie = movie,
-                            onClick = { onMovieClick(movie) }
-                        )
-                    }
-                }
-            }
-
-            // Empty State (no movies, no loading, no error)
-            else -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "No ${section.category.displayName.lowercase()} available",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
             }
         }
     }
