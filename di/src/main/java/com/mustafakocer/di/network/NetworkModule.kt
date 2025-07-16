@@ -56,6 +56,7 @@ object NetworkModule {
     fun provideOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         apiKeyInterceptor: ApiKeyInterceptor, // ApiKeyInterceptor'ı inject ediyoruz.
+        languageInterceptor: LanguageInterceptor, // ApiKeyInterceptor'ı inject ediyoruz.
         cache: Cache
     ): OkHttpClient {
         return OkHttpClient.Builder()
@@ -65,6 +66,7 @@ object NetworkModule {
             .writeTimeout(NetworkConfig.WRITE_TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor(loggingInterceptor)
             .addInterceptor(apiKeyInterceptor) // Interceptor'ı zincire ekliyoruz.
+            .addInterceptor(languageInterceptor) // Interceptor'ı zincire ekliyoruz.
             .build()
     }
 
