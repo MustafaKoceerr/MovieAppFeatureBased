@@ -1,57 +1,43 @@
 package com.mustafakocer.feature_movies.settings.presentation.screen
 
-
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.mustafakocer.feature_movies.settings.presentation.viewmodel.SettingsViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsEffect
-import com.mustafakocer.navigation_contracts.SettingsNavActions
+import com.mustafakocer.feature_movies.settings.presentation.viewmodel.SettingsViewModel
+import com.mustafakocer.navigation_contracts.actions.FeatureMoviesNavActions
+import kotlinx.coroutines.flow.collectLatest
 
-/**
- * Settings Route - Effect handling and navigation
- *
- * RESPONSIBILITY: Handle navigation effects and side effects
- * PATTERN: Route handles effects, Screen handles pure UI
- */
 @Composable
 fun SettingsRoute(
-    navActions: SettingsNavActions,
+    navActions: FeatureMoviesNavActions,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Handle UI Effects
-    LaunchedEffect(Unit) {
-        viewModel.uiEffect.collect { effect ->
+    // Yan etkileri (Effect'leri) dinleyip yöneten bölüm.
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEffect.collectLatest { effect ->
             when (effect) {
                 is SettingsEffect.NavigateBack -> {
-                    navActions.navigateBack()
+                    navActions.navigateUp()
                 }
-
-                is SettingsEffect.ShowSuccessSnackbar -> {
-                    snackbarHostState.showSnackbar(
-                        message = effect.message,
-                        duration = SnackbarDuration.Short
-                    )
-                }
-
-                is SettingsEffect.ShowErrorSnackbar -> {
-                    snackbarHostState.showSnackbar(
-                        message = effect.message,
-                        duration = SnackbarDuration.Long
-                    )
+                is SettingsEffect.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(message = effect.message)
                 }
             }
         }
     }
 
-    // Render the screen
+    // Saf UI bileşenini çağırıyoruz.
     SettingsScreen(
-        contract = viewModel,
+        state = state,
+        onEvent = viewModel::onEvent,
         snackbarHostState = snackbarHostState
     )
 }
