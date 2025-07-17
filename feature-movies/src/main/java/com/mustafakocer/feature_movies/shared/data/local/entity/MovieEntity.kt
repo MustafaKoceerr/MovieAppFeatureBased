@@ -9,10 +9,13 @@ import com.mustafakocer.core_database.cache.CacheMetadata
  * Room Entity for storing movie list items with pagination and cache metadata.
  * Based on MovieDto structure with additional database-specific fields.
  */
-@Entity(tableName = "movie_list")
+@Entity(
+    tableName = "movie_list",
+    primaryKeys = ["id", "language"] // <-- BİLEŞİK ANAHTAR
+)
 data class MovieListEntity(
-    @PrimaryKey
     val id: Int,
+    val language: String, // <-- YENİ SÜTUN
 
     // Core movie data from MovieDto
     val title: String?,
@@ -36,5 +39,5 @@ data class MovieListEntity(
 
     // Cache metadata via composition
     @Embedded(prefix = "movie_cache_")
-    val cacheMetadata: CacheMetadata
+    val cacheMetadata: CacheMetadata,
 )
