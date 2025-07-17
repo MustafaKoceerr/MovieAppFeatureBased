@@ -24,12 +24,14 @@ fun List<MovieDto>.toDomainList(): List<MovieListItem> {
 fun List<MovieDto>.toEntityList(
     category: String,
     page: Int,
-    pageSize: Int // Default değer yok, zorunlu parametre
+    pageSize: Int,
+    language: String,
 ): List<MovieListEntity> {
     val startPosition = (page - 1) * pageSize
 
     return this.mapIndexed { index, movieDto ->
         movieDto.toEntity(
+            language = language,
             category = category,
             page = page,
             position = startPosition + index
