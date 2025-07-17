@@ -1,65 +1,83 @@
 package com.mustafakocer.feature_movies.home.data.repository
 
-import com.mustafakocer.core_network.connectivity.NetworkConnectivityMonitor
+import android.util.Log
+import com.mustafakocer.core_preferences.provider.LanguageProvider
+import com.mustafakocer.feature_movies.home.data.repository.local.HomeMovieDao
 import com.mustafakocer.feature_movies.home.domain.repository.MovieRepository
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
 import com.mustafakocer.feature_movies.shared.data.mapper.toDomainList
+import com.mustafakocer.feature_movies.shared.data.mapper.toHomeMovieEntityList
 import com.mustafakocer.feature_movies.shared.data.model.MovieDto
 import com.mustafakocer.feature_movies.shared.data.model.PaginatedResponseDto
+import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
-
-/**
- * TEACHING MOMENT: Clean Repository Implementation
- *
- * ✅ BENEFITS:
- * - Each method handles specific endpoint
- * - Consistent error handling with safeApiCall
- * - Clean data transformation with mappers
- * - Easy to test individual methods
- * - API key injection for security
- */
+// Dosya: home/data/repository/MovieRepositoryImpl.kt
 
 @Singleton
 class MovieRepositoryImpl @Inject constructor(
-    private val movieApiService: MovieApiService, // ← UPDATED: Single service
-    private val networkConnectivityMonitor: NetworkConnectivityMonitor, // ✅ ADDED!
+    private val movieApiService: MovieApiService,
+    private val homeMovieDao: HomeMovieDao,
+    private val languageProvider: LanguageProvider,
 ) : MovieRepository {
 
-    // Dört fonksiyonun da mantığı aynı olduğu için bu özel yardımcı fonksiyonu kullanalım.
-    // Bu, kod tekrarını tamamen ortadan kaldırır.
-    private fun fetchMoviesFromApi(
-        apiCall: suspend () -> Response<PaginatedResponseDto<MovieDto>>,
+    private fun getMoviesForCategory(
+        category: MovieCategory,
+        fetchFromApi: suspend () -> Response<PaginatedResponseDto<MovieDto>>
     ): Flow<List<MovieListItem>> = flow {
-        val response = apiCall()
-        if (response.isSuccessful && response.body() != null) {
-            // Gelen DTO listesini, domain model listesine çevirip emit ediyoruz.
-            response.body()!!.results?.let { results ->
-                emit(results.map { it.toDomainList() })
+        val language = languageProvider.getLanguageParam()
+        val categoryKey = category.apiEndpoint
+
+        // 1. Cache'den ilk veriyi bir kere al ve yayınla.
+        val initialCache = homeMovieDao.getMoviesForCategory(categoryKey, language)
+        Log.d("RepoDebug", "[$categoryKey] Cache'den ilk veri emit ediliyor. Boyut: ${initialCache.size}")
+        emit(initialCache.toDomainList())
+
+        // 2. Ağdan veriyi çek.
+        try {
+            Log.d("RepoDebug", "[$categoryKey] API isteği başlatılıyor.")
+            val response = fetchFromApi()
+
+            if (response.isSuccessful && response.body() != null) {
+                val moviesDto = response.body()!!.results ?: emptyList()
+                Log.d("RepoDebug", "[$categoryKey] API'den veri başarıyla alındı. Boyut: ${moviesDto.size}")
+
+                // 3. Veritabanını güncelle.
+                val movieEntities = moviesDto.toHomeMovieEntityList(categoryKey, language)
+                homeMovieDao.deleteMoviesForCategory(categoryKey, language)
+                homeMovieDao.upsertAll(movieEntities)
+                Log.d("RepoDebug", "[$categoryKey] Veritabanı güncellendi.")
+
+                // 4. Veritabanı güncellendikten sonra, en güncel veriyi tekrar yayınla.
+                val updatedCache = homeMovieDao.getMoviesForCategory(categoryKey, language)
+                Log.d("RepoDebug", "[$categoryKey] Güncel cache emit ediliyor. Boyut: ${updatedCache.size}")
+                emit(updatedCache.toDomainList())
+
+            } else {
+                Log.w("RepoDebug", "[$categoryKey] API isteği başarısız. Kod: ${response.code()}")
             }
-        } else {
-            // Hata durumunda, ViewModel'in yakalaması için HttpException fırlatıyoruz.
-            throw retrofit2.HttpException(response)
+        } catch (e: Exception) {
+            Log.e("RepoDebug", "[$categoryKey] API isteği çöktü.", e)
         }
     }
 
     override fun getNowPlayingMovies(page: Int): Flow<List<MovieListItem>> {
-        return fetchMoviesFromApi { movieApiService.getNowPlayingMovies(page) }
+        return getMoviesForCategory(MovieCategory.NOW_PLAYING) { movieApiService.getNowPlayingMovies(page) }
     }
 
     override fun getPopularMovies(page: Int): Flow<List<MovieListItem>> {
-        return fetchMoviesFromApi { movieApiService.getPopularMovies(page) }
+        return getMoviesForCategory(MovieCategory.POPULAR) { movieApiService.getPopularMovies(page) }
     }
 
     override fun getTopRatedMovies(page: Int): Flow<List<MovieListItem>> {
-        return fetchMoviesFromApi { movieApiService.getTopRatedMovies(page) }
+        return getMoviesForCategory(MovieCategory.TOP_RATED) { movieApiService.getTopRatedMovies(page) }
     }
 
     override fun getUpcomingMovies(page: Int): Flow<List<MovieListItem>> {
-        return fetchMoviesFromApi { movieApiService.getUpcomingMovies(page) }
+        return getMoviesForCategory(MovieCategory.UPCOMING) { movieApiService.getUpcomingMovies(page) }
     }
 }

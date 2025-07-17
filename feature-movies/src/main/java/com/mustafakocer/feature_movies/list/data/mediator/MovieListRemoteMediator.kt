@@ -99,7 +99,6 @@ class MovieListRemoteMediator(
             val apiResponse = apiService.getMoviesByCategory(
                 category = category.apiEndpoint,
                 page = page,
-                language = language // <-- DİLİ API'YE GEÇİR (NOT: Bu, Interceptor'ı iptal eder, sonra düzelteceğiz)
             )
             // 2. ADIM: Zarfın sağlam geldiğinden emin oluyoruz.
             if (!apiResponse.isSuccessful) {

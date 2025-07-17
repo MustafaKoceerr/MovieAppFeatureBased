@@ -1,5 +1,6 @@
 package com.mustafakocer.feature_movies.shared.data.mapper
 
+import com.mustafakocer.feature_movies.shared.data.local.entity.HomeMovieEntity
 import com.mustafakocer.feature_movies.shared.data.local.entity.MovieListEntity
 import com.mustafakocer.feature_movies.shared.data.model.MovieDto
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
@@ -39,3 +40,16 @@ fun List<MovieDto>.toEntityList(
     }
 }
 
+// List<HomeMovieEntity> -> List<MovieListItem>
+@JvmName("toDomainListFromHomeEntity")
+fun List<HomeMovieEntity>.toDomainList(): List<MovieListItem> {
+    return this.map { it.toDomainList() }
+}
+
+// List<MovieDto> -> List<HomeMovieEntity>
+fun List<MovieDto>.toHomeMovieEntityList(
+    category: String,
+    language: String,
+): List<HomeMovieEntity> {
+    return this.map { it.toHomeMovieEntity(category, language) }
+}
