@@ -19,10 +19,10 @@ fun NavGraphBuilder.moviesNavGraph(
 
     val navActions = object : FeatureMoviesNavActions {
         override fun navigateToMovieDetails(movieId: Int) {
-            navController.navigate(MovieDetailsScreen(movieId = movieId))
+            navController.navigate(route = MovieDetailsScreen(movieId = movieId))
         }
 
-        override fun navigateToMovieList( categoryEndpoint: String) {
+        override fun navigateToMovieList(categoryEndpoint: String) {
             navController.navigate(
                 MovieListScreen(
                     categoryEndpoint = categoryEndpoint
@@ -44,7 +44,7 @@ fun NavGraphBuilder.moviesNavGraph(
     }
 
     navigation<MoviesFeatureGraph>(
-        startDestination = HomeScreen
+        startDestination = HomeScreen,
     ) {
         composable<HomeScreen> { HomeRoute(navActions = navActions) }
         composable<MovieListScreen> { MovieListRoute(navActions = navActions) }

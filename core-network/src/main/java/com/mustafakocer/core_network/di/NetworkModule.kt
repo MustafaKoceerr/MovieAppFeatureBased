@@ -35,7 +35,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideHttpLoggingInterceptor(
-        configProvider: NetworkConfigProvider
+        configProvider: NetworkConfigProvider,
     ): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
             level = if (configProvider.isDebug) {
@@ -56,9 +56,9 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
-        apiKeyInterceptor: com.mustafakocer.di.network.ApiKeyInterceptor, // ApiKeyInterceptor'ı inject ediyoruz.
-        languageInterceptor: com.mustafakocer.di.network.LanguageInterceptor, // ApiKeyInterceptor'ı inject ediyoruz.
-        cache: Cache
+        apiKeyInterceptor: ApiKeyInterceptor, // ApiKeyInterceptor'ı inject ediyoruz.
+        languageInterceptor: LanguageInterceptor, // ApiKeyInterceptor'ı inject ediyoruz.
+        cache: Cache,
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .cache(cache)
@@ -76,7 +76,7 @@ object NetworkModule {
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
         json: Json,
-        configProvider: NetworkConfigProvider
+        configProvider: NetworkConfigProvider,
     ): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()

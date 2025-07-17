@@ -146,6 +146,9 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
+    // GSON
+    implementation(libs.gson)
+
     // --- TEST ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

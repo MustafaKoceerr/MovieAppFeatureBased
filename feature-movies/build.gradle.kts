@@ -53,6 +53,9 @@ dependencies {
     implementation(project(":core-domain"))
     implementation(project(":navigation-contracts"))
 
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+
     // --- HILT ---
     // Bu modül @HiltViewModel, @Inject, @Module kullandığı için zorunlu.
     implementation(libs.hilt.android)
