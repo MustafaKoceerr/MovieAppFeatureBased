@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">App de Découverte de Films</string>
+
+    <!-- Catégories de Films -->
+    <string name="category_title_popular">Films Populaires</string>
+    <string name="category_title_now_playing">À l\'affiche</string>
+    <string name="category_title_top_rated">Les mieux notés</string>
+    <string name="category_title_upcoming">Prochainement</string>
+
+    <!-- Recherche -->
+    <string name="search_placeholder">Rechercher des films, séries ou acteurs…</string>
+    <string name="search_initial_title">Commencer la recherche</string>
+    <string name="search_initial_description">Découvrez des films, séries et vos acteurs préférés en effectuant une recherche.</string>
+
+    <!-- Détails du Film -->
+    <string name="genres">Genres</string>
+    <string name="overview">Synopsis</string>
+    <string name="refreshing">Actualisation…</string>
+
+    <!-- Paramètres -->
+    <string name="settings">Paramètres</string>
+    <string name="theme">Thème</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+    <string name="theme_system">Système</string>
+
+    <!-- Actions Communes -->
+    <string name="back">Retour</string>
+    <string name="clear">Effacer</string>
+    <string name="try_again">Réessayer</string>
+    <string name="retry">Réessayer</string>
+
+    <!-- Messages d\'erreur -->
+    <string name="error_generic">Une erreur s\'est produite</string>
+    <string name="error_loading_more">Erreur lors du chargement de plus de contenu.</string>
+    <string name="error_no_internet">Pas de connexion internet</string>
+
+    <!-- Évaluation -->
+    <string name="votes_format">(%d votes)</string>
+
+    <!-- Chargement -->
+    <string name="loading">Chargement…</string>
+    <string name="please_wait">Veuillez patienter…</string>
+    <string name="more_to_come">Plus à venir</string>
+    <string name="language_region"><![CDATA[Langue et Région]]></string>
+    <string name="choose_preferred_language">Choisissez votre langue préférée</string>
+    <string name="account_sync"><![CDATA[Compte et Synchronisation]]></string>
+    <string name="manage_account_preferences">Gérez vos préférences de compte</string>
+
+    <!-- Partage -->
+    <string name="share_text_title">Découvrez ce film !</string>
+    <string name="share_text_rating">Note</string>
+    <string name="share_text_release">Sortie</string>
+    <string name="share_text_runtime">Durée</string>
+    <string name="share_text_genres">Genres</string>
+    <string name="share_text_tags">#Films #Cinéma</string>
+    <string name="error_share_movie">Impossible de partager les détails du film</string>
+    <string name="movie_details">Détails du Film</string>
+    <string name="loading_movie_details">Chargement des détails du film…</string>
+
+    <string name="loading_movies">Chargement des films…</string>
+    <string name="navigate_back">Naviguer en arrière</string>
+    <string name="backdrop_description">Image de fond de %1$s</string>
+    <string name="poster_description">Affiche de %1$s</string>
+
+    <string name="rating">Note</string>
+    <string name="release">Sortie</string>
+    <string name="runtime">Durée</string>
+    <string name="share_movie">Partager le film</string>
+    <string name="search">Rechercher</string>
+    <string name="search_movies">Rechercher des films…</string>
+    <string name="view_all">Voir Tout</string>
+    <string name="start_searching">Commencer la recherche</string>
+    <string name="discover_content">Trouvez les films, émissions TV et acteurs favoris que vous voulez regarder et commencez à découvrir.</string>
+
+    <string name="search_placeholder_alt">Rechercher des films, séries ou acteurs…</string>
+    <string name="clear_search">Effacer la requête de recherche</string>
+    <string name="go_back">Revenir en arrière</string>
+    <string name="soon">Bientôt</string>
+    <string name="customize_experience">Personnalisez Votre Expérience</string>
+    <string name="personalize_app">Personnalisez l\'application selon vos préférences</string>
+    <string name="app_theme">Thème de l\'Application</string>
+    <string name="theme_light_always">Toujours utiliser le thème clair</string>
+    <string name="theme_dark_always">Toujours utiliser le thème sombre</string>
+    <string name="theme_follow_system">Suivre les paramètres du système</string>
+    <string name="selected_text">Sélectionné</string>
+    <string name="votes">(%1$s votes)</string>
+</resources>

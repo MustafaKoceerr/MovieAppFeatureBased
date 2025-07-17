@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">App di Scoperta Film</string>
+
+    <!-- Categorie Film -->
+    <string name="category_title_popular">Film Popolari</string>
+    <string name="category_title_now_playing">Al Cinema</string>
+    <string name="category_title_top_rated">Più Votati</string>
+    <string name="category_title_upcoming">Prossimamente</string>
+
+    <!-- Ricerca -->
+    <string name="search_placeholder">Cerca film, serie o attori…</string>
+    <string name="search_initial_title">Inizia la Ricerca</string>
+    <string name="search_initial_description">Scopri film, serie e i tuoi attori preferiti cercando.</string>
+
+    <!-- Dettagli Film -->
+    <string name="genres">Generi</string>
+    <string name="overview">Trama</string>
+    <string name="refreshing">Aggiornamento…</string>
+
+    <!-- Impostazioni -->
+    <string name="settings">Impostazioni</string>
+    <string name="theme">Tema</string>
+    <string name="theme_light">Chiaro</string>
+    <string name="theme_dark">Scuro</string>
+    <string name="theme_system">Sistema</string>
+
+    <!-- Azioni Comuni -->
+    <string name="back">Indietro</string>
+    <string name="clear">Cancella</string>
+    <string name="try_again">Riprova</string>
+    <string name="retry">Riprova</string>
+
+    <!-- Messaggi di Errore -->
+    <string name="error_generic">Si è verificato un errore</string>
+    <string name="error_loading_more">Errore durante il caricamento di più contenuti.</string>
+    <string name="error_no_internet">Nessuna connessione internet</string>
+
+    <!-- Valutazione -->
+    <string name="votes_format">(%d voti)</string>
+
+    <!-- Caricamento -->
+    <string name="loading">Caricamento…</string>
+    <string name="please_wait">Attendere prego…</string>
+    <string name="more_to_come">Altro in arrivo</string>
+    <string name="language_region"><![CDATA[Lingua e Regione]]></string>
+    <string name="choose_preferred_language">Scegli la tua lingua preferita</string>
+    <string name="account_sync"><![CDATA[Account e Sincronizzazione]]></string>
+    <string name="manage_account_preferences">Gestisci le preferenze del tuo account</string>
+
+    <!-- Condivisione -->
+    <string name="share_text_title">Guarda questo film!</string>
+    <string name="share_text_rating">Valutazione</string>
+    <string name="share_text_release">Uscita</string>
+    <string name="share_text_runtime">Durata</string>
+    <string name="share_text_genres">Generi</string>
+    <string name="share_text_tags">#Film #Cinema</string>
+    <string name="error_share_movie">Impossibile condividere i dettagli del film</string>
+    <string name="movie_details">Dettagli Film</string>
+    <string name="loading_movie_details">Caricamento dettagli film…</string>
+
+    <string name="loading_movies">Caricamento film…</string>
+    <string name="navigate_back">Naviga indietro</string>
+    <string name="backdrop_description">Sfondo di %1$s</string>
+    <string name="poster_description">Poster di %1$s</string>
+
+    <string name="rating">Valutazione</string>
+    <string name="release">Uscita</string>
+    <string name="runtime">Durata</string>
+    <string name="share_movie">Condividi film</string>
+    <string name="search">Cerca</string>
+    <string name="search_movies">Cerca film…</string>
+    <string name="view_all">Visualizza Tutto</string>
+    <string name="start_searching">Inizia la Ricerca</string>
+    <string name="discover_content">Trova i film, programmi TV e attori preferiti che vuoi guardare e inizia a scoprire.</string>
+
+    <string name="search_placeholder_alt">Cerca film, serie o attori…</string>
+    <string name="clear_search">Cancella Query di Ricerca</string>
+    <string name="go_back">Torna Indietro</string>
+    <string name="soon">Presto</string>
+    <string name="customize_experience">Personalizza La Tua Esperienza</string>
+    <string name="personalize_app">Personalizza l\'app secondo le tue preferenze</string>
+    <string name="app_theme">Tema dell\'App</string>
+    <string name="theme_light_always">Usa sempre il tema chiaro</string>
+    <string name="theme_dark_always">Usa sempre il tema scuro</string>
+    <string name="theme_follow_system">Segui le impostazioni di sistema</string>
+    <string name="selected_text">Selezionato</string>
+    <string name="votes">(%1$s voti)</string>
+</resources>

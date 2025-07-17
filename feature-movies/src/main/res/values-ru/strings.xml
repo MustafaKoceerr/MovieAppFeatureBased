@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Приложение для открытия фильмов</string>
+
+    <!-- Категории фильмов -->
+    <string name="category_title_popular">Популярные фильмы</string>
+    <string name="category_title_now_playing">В кино сейчас</string>
+    <string name="category_title_top_rated">Лучшие по рейтингу</string>
+    <string name="category_title_upcoming">Скоро в кино</string>
+
+    <!-- Поиск -->
+    <string name="search_placeholder">Искать фильмы, сериалы или актёров…</string>
+    <string name="search_initial_title">Начать поиск</string>
+    <string name="search_initial_description">Открывайте фильмы, сериалы и любимых актёров через поиск.</string>
+
+    <!-- Детали фильма -->
+    <string name="genres">Жанры</string>
+    <string name="overview">Описание</string>
+    <string name="refreshing">Обновление…</string>
+
+    <!-- Настройки -->
+    <string name="settings">Настройки</string>
+    <string name="theme">Тема</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="theme_system">Системная</string>
+
+    <!-- Общие действия -->
+    <string name="back">Назад</string>
+    <string name="clear">Очистить</string>
+    <string name="try_again">Попробовать снова</string>
+    <string name="retry">Повторить</string>
+
+    <!-- Сообщения об ошибках -->
+    <string name="error_generic">Произошла ошибка</string>
+    <string name="error_loading_more">Ошибка при загрузке дополнительного контента.</string>
+    <string name="error_no_internet">Нет соединения с интернетом</string>
+
+    <!-- Рейтинг -->
+    <string name="votes_format">(%d голосов)</string>
+
+    <!-- Загрузка -->
+    <string name="loading">Загрузка…</string>
+    <string name="please_wait">Пожалуйста, подождите…</string>
+    <string name="more_to_come">Скоро будет больше</string>
+    <string name="language_region"><![CDATA[Язык и регион]]></string>
+    <string name="choose_preferred_language">Выберите предпочитаемый язык</string>
+    <string name="account_sync"><![CDATA[Аккаунт и синхронизация]]></string>
+    <string name="manage_account_preferences">Управляйте настройками аккаунта</string>
+
+    <!-- Поделиться -->
+    <string name="share_text_title">Посмотрите этот фильм!</string>
+    <string name="share_text_rating">Рейтинг</string>
+    <string name="share_text_release">Дата выхода</string>
+    <string name="share_text_runtime">Продолжительность</string>
+    <string name="share_text_genres">Жанры</string>
+    <string name="share_text_tags">#Фильмы #Кино</string>
+    <string name="error_share_movie">Не удалось поделиться информацией о фильме</string>
+    <string name="movie_details">Детали фильма</string>
+    <string name="loading_movie_details">Загрузка деталей фильма…</string>
+
+    <string name="loading_movies">Загрузка фильмов…</string>
+    <string name="navigate_back">Вернуться назад</string>
+    <string name="backdrop_description">Фон %1$s</string>
+    <string name="poster_description">Постер %1$s</string>
+
+    <string name="rating">Рейтинг</string>
+    <string name="release">Дата выхода</string>
+    <string name="runtime">Продолжительность</string>
+    <string name="share_movie">Поделиться фильмом</string>
+    <string name="search">Поиск</string>
+    <string name="search_movies">Искать фильмы…</string>
+    <string name="view_all">Показать всё</string>
+    <string name="start_searching">Начать поиск</string>
+    <string name="discover_content">Найдите фильмы, ТВ-шоу и любимых актёров, которые хотите посмотреть, и начните исследование.</string>
+
+    <string name="search_placeholder_alt">Искать фильмы, сериалы или актёров…</string>
+    <string name="clear_search">Очистить поисковый запрос</string>
+    <string name="go_back">Вернуться</string>
+    <string name="soon">Скоро</string>
+    <string name="customize_experience">Настройте ваш опыт</string>
+    <string name="personalize_app">Персонализируйте приложение под ваши предпочтения</string>
+    <string name="app_theme">Тема приложения</string>
+    <string name="theme_light_always">Всегда использовать светлую тему</string>
+    <string name="theme_dark_always">Всегда использовать тёмную тему</string>
+    <string name="theme_follow_system">Следовать системным настройкам</string>
+    <string name="selected_text">Выбрано</string>
+    <string name="votes">(%1$s голосов)</string>
+</resources>

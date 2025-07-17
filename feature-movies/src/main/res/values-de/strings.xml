@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Film Entdeckungsapp</string>
+
+    <!-- Film Kategorien -->
+    <string name="category_title_popular">Beliebte Filme</string>
+    <string name="category_title_now_playing">Jetzt im Kino</string>
+    <string name="category_title_top_rated">Am besten bewertet</string>
+    <string name="category_title_upcoming">Demnächst</string>
+
+    <!-- Suche -->
+    <string name="search_placeholder">Filme, Serien oder Schauspieler suchen…</string>
+    <string name="search_initial_title">Suche starten</string>
+    <string name="search_initial_description">Entdecke Filme, Serien und deine Lieblings-Schauspieler durch Suchen.</string>
+
+    <!-- Film Details -->
+    <string name="genres">Genres</string>
+    <string name="overview">Übersicht</string>
+    <string name="refreshing">Wird aktualisiert…</string>
+
+    <!-- Einstellungen -->
+    <string name="settings">Einstellungen</string>
+    <string name="theme">Design</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
+    <string name="theme_system">System</string>
+
+    <!-- Allgemeine Aktionen -->
+    <string name="back">Zurück</string>
+    <string name="clear">Löschen</string>
+    <string name="try_again">Erneut versuchen</string>
+    <string name="retry">Wiederholen</string>
+
+    <!-- Fehlermeldungen -->
+    <string name="error_generic">Ein Fehler ist aufgetreten</string>
+    <string name="error_loading_more">Fehler beim Laden weiterer Inhalte.</string>
+    <string name="error_no_internet">Keine Internetverbindung</string>
+
+    <!-- Bewertung -->
+    <string name="votes_format">(%d Stimmen)</string>
+
+    <!-- Laden -->
+    <string name="loading">Laden…</string>
+    <string name="please_wait">Bitte warten…</string>
+    <string name="more_to_come">Mehr kommt bald</string>
+    <string name="language_region"><![CDATA[Sprache & Region]]></string>
+    <string name="choose_preferred_language">Wähle deine bevorzugte Sprache</string>
+    <string name="account_sync"><![CDATA[Konto & Synchronisation]]></string>
+    <string name="manage_account_preferences">Verwalte deine Kontoeinstellungen</string>
+
+    <!-- Teilen -->
+    <string name="share_text_title">Schau dir diesen Film an!</string>
+    <string name="share_text_rating">Bewertung</string>
+    <string name="share_text_release">Erscheinungsdatum</string>
+    <string name="share_text_runtime">Laufzeit</string>
+    <string name="share_text_genres">Genres</string>
+    <string name="share_text_tags">#Filme #Kino</string>
+    <string name="error_share_movie">Filmdetails können nicht geteilt werden</string>
+    <string name="movie_details">Filmdetails</string>
+    <string name="loading_movie_details">Filmdetails werden geladen…</string>
+
+    <string name="loading_movies">Filme werden geladen…</string>
+    <string name="navigate_back">Zurück navigieren</string>
+    <string name="backdrop_description">%1$s Hintergrundbild</string>
+    <string name="poster_description">%1$s Poster</string>
+
+    <string name="rating">Bewertung</string>
+    <string name="release">Erscheinungsdatum</string>
+    <string name="runtime">Laufzeit</string>
+    <string name="share_movie">Film teilen</string>
+    <string name="search">Suchen</string>
+    <string name="search_movies">Filme suchen…</string>
+    <string name="view_all">Alle anzeigen</string>
+    <string name="start_searching">Suche starten</string>
+    <string name="discover_content">Finde die Filme, TV-Serien und Lieblings-Schauspieler, die du schauen möchtest und beginne zu entdecken.</string>
+
+    <string name="search_placeholder_alt">Filme, Serien oder Schauspieler suchen…</string>
+    <string name="clear_search">Suchanfrage löschen</string>
+    <string name="go_back">Zurückgehen</string>
+    <string name="soon">Bald</string>
+    <string name="customize_experience">Erlebnis anpassen</string>
+    <string name="personalize_app">Personalisiere die App nach deinen Vorlieben</string>
+    <string name="app_theme">App-Design</string>
+    <string name="theme_light_always">Immer helles Design verwenden</string>
+    <string name="theme_dark_always">Immer dunkles Design verwenden</string>
+    <string name="theme_follow_system">Systemeinstellung folgen</string>
+    <string name="selected_text">Ausgewählt</string>
+    <string name="votes">(%1$s Stimmen)</string>
+</resources>
