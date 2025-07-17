@@ -6,9 +6,6 @@ interface BaseUiState {
     val isLoading: Boolean
     val isRefreshing: Boolean
     val error: AppException?
-
-    val isAnyLoading: Boolean
-        get() = isLoading || isRefreshing
 }
 
 /**

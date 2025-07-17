@@ -1,4 +1,4 @@
-package com.mustafakocer.core_ui.util
+package com.mustafakocer.core_android.util
 
 import android.content.Context
 import android.content.ContextWrapper

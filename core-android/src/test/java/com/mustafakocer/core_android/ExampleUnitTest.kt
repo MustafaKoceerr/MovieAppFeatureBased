@@ -1,4 +1,4 @@
-package com.mustafakocer.data_common
+package com.mustafakocer.core_android
 
 import org.junit.Test
 

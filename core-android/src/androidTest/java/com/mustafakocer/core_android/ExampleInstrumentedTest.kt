@@ -1,4 +1,4 @@
-package com.mustafakocer.data_common
+package com.mustafakocer.core_android
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.mustafakocer.data_common.test", appContext.packageName)
+        assertEquals("com.mustafakocer.core_android.test", appContext.packageName)
     }
 }
