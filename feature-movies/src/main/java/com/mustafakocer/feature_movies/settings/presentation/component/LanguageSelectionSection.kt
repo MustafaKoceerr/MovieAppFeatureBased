@@ -108,6 +108,11 @@ private fun FlagIcon(
     val drawableRes = when (flagResource) {
         "flag_us" -> R.drawable.flag_us
         "flag_tr" -> R.drawable.flag_tr
+        "flag_fr" -> R.drawable.flag_fr // <-- YENİ
+        "flag_de" -> R.drawable.flag_de // <-- YENİ
+        "flag_es" -> R.drawable.flag_es // <-- YENİ
+        "flag_it" -> R.drawable.flag_it // <-- YENİ
+        "flag_ru" -> R.drawable.flag_ru // <-- YENİ
         else -> null
     }
 

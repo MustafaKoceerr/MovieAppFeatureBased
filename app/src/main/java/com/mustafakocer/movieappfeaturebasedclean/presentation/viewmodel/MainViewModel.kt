@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mustafakocer.core_preferences.models.LanguagePreference
 import com.mustafakocer.core_preferences.models.ThemePreference
-import com.mustafakocer.data_common.preferences.repository.LanguageRepository
-import com.mustafakocer.data_common.preferences.repository.ThemeRepository
+import com.mustafakocer.core_preferences.repository.LanguageRepository
+import com.mustafakocer.core_preferences.repository.ThemeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

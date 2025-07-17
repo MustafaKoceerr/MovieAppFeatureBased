@@ -27,12 +27,12 @@ fun SettingsRoute(
     onLanguageChanged: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val state by com.mustafakocer.core_android.presentation.BaseViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Yan etkileri (Effect'leri) dinleyip yöneten bölüm.
     LaunchedEffect(key1 = true) {
-        viewModel.uiEffect.collectLatest { effect ->
+        com.mustafakocer.core_android.presentation.BaseViewModel.uiEffect.collectLatest { effect ->
             when (effect) {
                 is SettingsEffect.NavigateBack -> {
                     navActions.navigateUp()

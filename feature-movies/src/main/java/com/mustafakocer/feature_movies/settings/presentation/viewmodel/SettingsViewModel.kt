@@ -2,12 +2,11 @@ package com.mustafakocer.feature_movies.settings.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mustafakocer.core_common.exception.AppException
-import com.mustafakocer.core_common.presentation.BaseViewModel
-import com.mustafakocer.core_common.presentation.LoadingType
+import com.mustafakocer.core_android.presentation.LoadingType
 import com.mustafakocer.core_preferences.models.ThemePreference
 import com.mustafakocer.core_preferences.models.LanguagePreference
-import com.mustafakocer.data_common.preferences.repository.LanguageRepository
-import com.mustafakocer.data_common.preferences.repository.ThemeRepository
+import com.mustafakocer.core_preferences.repository.LanguageRepository
+import com.mustafakocer.core_preferences.repository.ThemeRepository
 import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsEffect
 import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsEvent
 import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsUiState
@@ -20,7 +19,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val themeRepository: ThemeRepository,
     private val languageRepository: LanguageRepository,
-) : BaseViewModel<SettingsUiState, SettingsEvent, SettingsEffect>(SettingsUiState()) {
+) : com.mustafakocer.core_android.presentation.BaseViewModel<SettingsUiState, SettingsEvent, SettingsEffect>(SettingsUiState()) {
 
     init {
         // ViewModel oluşturulur oluşturulmaz, DataStore'daki tema değişikliklerini
@@ -40,7 +39,7 @@ class SettingsViewModel @Inject constructor(
             }
 
             is SettingsEvent.BackClicked -> {
-                sendEffect(SettingsEffect.NavigateBack)
+                com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(SettingsEffect.NavigateBack)
             }
         }
     }
@@ -53,11 +52,19 @@ class SettingsViewModel @Inject constructor(
             themeRepository.themeFlow
                 .catch { exception ->
                     // Tema okunurken bir hata olursa yakala.
-                    setState { handleError(AppException.DataException.ParseError(originalCause = exception)) }
+                    com.mustafakocer.core_android.presentation.BaseViewModel.setState {
+                        handleError(
+                            AppException.DataException.ParseError(originalCause = exception)
+                        )
+                    }
                 }
                 .collect { theme ->
                     // Her yeni tema geldiğinde, state'i güncelle.
-                    setState { copy(currentTheme = theme) }
+                    com.mustafakocer.core_android.presentation.BaseViewModel.setState {
+                        copy(
+                            currentTheme = theme
+                        )
+                    }
                 }
         }
     }
@@ -65,7 +72,11 @@ class SettingsViewModel @Inject constructor(
     private fun observeLanguageChanges() {
         viewModelScope.launch {
             languageRepository.languageFlow.collect { language ->
-                setState { copy(currentLanguage = language) }
+                com.mustafakocer.core_android.presentation.BaseViewModel.setState {
+                    copy(
+                        currentLanguage = language
+                    )
+                }
             }
         }
     }
@@ -76,9 +87,9 @@ class SettingsViewModel @Inject constructor(
      */
     private fun saveSelectedTheme(theme: ThemePreference) {
         // Zaten bir işlem devam ediyorsa, yenisini başlatma.
-        if (currentState.isLoading) return
+        if (com.mustafakocer.core_android.presentation.BaseViewModel.currentState.isLoading) return
 
-        executeSafeOnce(loadingType = LoadingType.MAIN) {
+        com.mustafakocer.core_android.presentation.BaseViewModel.executeSafeOnce(loadingType = com.mustafakocer.core_android.presentation.LoadingType.MAIN) {
             themeRepository.setTheme(theme)
             // Başarılı olduğunda kullanıcıya geri bildirim ver.
 //            sendEffect(SettingsEffect.ShowSnackbar("Tema değiştirildi: ${theme.name}"))
@@ -86,25 +97,29 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun saveSelectedLanguage(language: LanguagePreference) {
-        if (currentState.isLoading) return
+        if (com.mustafakocer.core_android.presentation.BaseViewModel.currentState.isLoading) return
 
-        executeSafeOnce(loadingType = LoadingType.MAIN) {
+        com.mustafakocer.core_android.presentation.BaseViewModel.executeSafeOnce(loadingType = com.mustafakocer.core_android.presentation.LoadingType.MAIN) {
             languageRepository.setLanguage(language)
 
             // Dil başarıyla kaydedildi, şimdi UI'a haber verelim.
-            sendEffect(SettingsEffect.RestartActivity)
+            com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(SettingsEffect.RestartActivity)
         }
     }
 
     // BaseViewModel'in zorunlu kıldığı abstract metodları implemente ediyoruz.
     override fun handleError(error: AppException): SettingsUiState {
         // Hata durumunda kullanıcıya geri bildirim ver.
-        sendEffect(SettingsEffect.ShowSnackbar(error.userMessage))
-        return currentState.copy(error = error)
+        com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(
+            SettingsEffect.ShowSnackbar(
+                error.userMessage
+            )
+        )
+        return com.mustafakocer.core_android.presentation.BaseViewModel.currentState.copy(error = error)
     }
 
-    override fun setLoading(loadingType: LoadingType, isLoading: Boolean): SettingsUiState {
+    override fun setLoading(loadingType: com.mustafakocer.core_android.presentation.LoadingType, isLoading: Boolean): SettingsUiState {
         // Bu ekranda sadece ana yükleme durumu var (isRefreshing yok).
-        return currentState.copy(isLoading = isLoading)
+        return com.mustafakocer.core_android.presentation.BaseViewModel.currentState.copy(isLoading = isLoading)
     }
 }
