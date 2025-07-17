@@ -5,6 +5,7 @@ import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.core_common.presentation.BaseUiEffect
 import com.mustafakocer.core_common.presentation.BaseUiEvent
 import com.mustafakocer.core_common.presentation.BaseUiState
+import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -13,9 +14,7 @@ import kotlinx.coroutines.flow.emptyFlow
 data class MovieListUiState(
     // Paging 3'ün kendisi bir Flow olduğu için, onu state içinde tutuyoruz.
     val movies: Flow<PagingData<MovieListItem>> = emptyFlow(),
-
-    // TopAppBar'da gösterilecek olan kategori başlığı.
-    val categoryTitle: String = "",
+    val category: MovieCategory? = null,
 
     // BaseUiState'den gelen bu alanları, Paging dışındaki işlemler için
     // (ileride eklenebilecek) tutarlılık adına koruyoruz.

@@ -19,7 +19,7 @@ class RefreshMovieListUseCase @Inject constructor(
      *
      * @param category Movie category to refresh
      */
-    suspend operator fun invoke(category: MovieCategory) {
-        repository.refreshCategory(category)
+    suspend operator fun invoke(category: MovieCategory, language: String) {
+        repository.refreshCategory(category, language)
     }
 }

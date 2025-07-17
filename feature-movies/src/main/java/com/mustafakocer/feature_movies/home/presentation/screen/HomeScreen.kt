@@ -29,6 +29,7 @@ import com.mustafakocer.feature_movies.R
 import com.mustafakocer.feature_movies.home.presentation.components.FakeSearchBar
 import com.mustafakocer.feature_movies.home.presentation.components.MovieCategorySection
 import com.mustafakocer.feature_movies.home.presentation.contract.*
+import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,7 +45,10 @@ fun HomeScreen(
                 title = { Text(text = stringResource(R.string.app_name)) },
                 actions = {
                     IconButton(onClick = { onEvent(HomeEvent.ProfileClicked) }) {
-                        Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings))
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = stringResource(R.string.settings)
+                        )
                     }
                 }
             )
@@ -96,7 +100,7 @@ private fun HomeContent(state: HomeUiState, onEvent: (HomeEvent) -> Unit) {
         // Sıralama, enum'daki tanım sırasına göre otomatik olarak gelir.
         state.categories.forEach { (category, movies) ->
             MovieCategorySection(
-                category = category,
+                categoryTitle = category.toLocalizedTitle(),
                 movies = movies,
                 onMovieClick = { movieId -> onEvent(HomeEvent.MovieClicked(movieId)) },
                 onViewAllClick = { onEvent(HomeEvent.ViewAllClicked(category)) }
@@ -104,5 +108,15 @@ private fun HomeContent(state: HomeUiState, onEvent: (HomeEvent) -> Unit) {
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+fun MovieCategory.toLocalizedTitle(): String {
+    return when (this) {
+        MovieCategory.NOW_PLAYING -> stringResource(id = R.string.category_title_now_playing)
+        MovieCategory.POPULAR -> stringResource(id = R.string.category_title_popular)
+        MovieCategory.TOP_RATED -> stringResource(id = R.string.category_title_top_rated)
+        MovieCategory.UPCOMING -> stringResource(id = R.string.category_title_upcoming)
     }
 }

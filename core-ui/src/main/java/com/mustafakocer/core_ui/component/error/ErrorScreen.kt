@@ -43,17 +43,6 @@ import androidx.compose.ui.unit.sp
 import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
 
 /**
- * TEACHING MOMENT: Comprehensive Error Handling UI
- *
- * ERROR TYPES:
- * ✅ Network errors (no internet, timeout)
- * ✅ Server errors (4xx, 5xx)
- * ✅ Data errors (empty, parsing)
- * ✅ General errors (unknown)
- * ✅ Movie-specific contexts
- */
-
-/**
  * Primary error screen with contextual messaging
  */
 @Composable

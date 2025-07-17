@@ -20,8 +20,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
-import com.mustafakocer.core_ui.util.updateLocale
-import com.mustafakocer.data_common.preferences.repository.LanguageRepository
+import com.mustafakocer.core_android.util.updateLocale
+import com.mustafakocer.core_preferences.repository.LanguageRepository
 import com.mustafakocer.movieappfeaturebasedclean.navigation.AppNavHost
 import com.mustafakocer.movieappfeaturebasedclean.presentation.viewmodel.MainViewModel
 import com.mustafakocer.navigation_contracts.navigation.MoviesFeatureGraph
@@ -33,7 +33,6 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import java.util.Locale
-import javax.inject.Inject
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)

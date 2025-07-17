@@ -1,9 +1,9 @@
 package com.mustafakocer.feature_movies.details.presentation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import com.mustafakocer.core_android.presentation.BaseViewModel
 import com.mustafakocer.core_common.exception.AppException
-import com.mustafakocer.core_common.presentation.BaseViewModel
-import com.mustafakocer.core_common.presentation.LoadingType
+import com.mustafakocer.core_android.presentation.LoadingType
 import com.mustafakocer.feature_movies.details.domain.usecase.GetMovieDetailsUseCase
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEffect
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEvent
@@ -41,8 +41,14 @@ class MovieDetailsViewModel @Inject constructor(
                 textTags = event.textTags
             )
 
-            is MovieDetailsEvent.BackPressed -> sendEffect(MovieDetailsEffect.NavigateBack) // bu fonksiyon baseViewModel'den geliyor
-            is MovieDetailsEvent.DismissError -> setState { copy(error = null) } // bu fonksiyon baseViewModel'den geliyor.
+            is MovieDetailsEvent.BackPressed -> sendEffect(
+                MovieDetailsEffect.NavigateBack
+            ) // bu fonksiyon baseViewModel'den geliyor
+            is MovieDetailsEvent.DismissError -> setState {
+                copy(
+                    error = null
+                )
+            } // bu fonksiyon baseViewModel'den geliyor.
 
         }
     }
@@ -76,7 +82,12 @@ class MovieDetailsViewModel @Inject constructor(
             textGenres,
             textTags,
         )
-        sendEffect(MovieDetailsEffect.ShareContent(shareTitle, shareContent))
+        sendEffect(
+            MovieDetailsEffect.ShareContent(
+                shareTitle,
+                shareContent
+            )
+        )
 
         // Paylaşım anlık bir işlem olduğu için, UI'da spinner göstermek adına
         // durumu hemen geri alabiliriz veya bir gecikme ekleyebiliriz.
@@ -95,8 +106,13 @@ class MovieDetailsViewModel @Inject constructor(
         isLoading: Boolean,
     ): MovieDetailsUiState {
         return when (loadingType) {
-            LoadingType.MAIN -> currentState.copy(isLoading = isLoading)
-            LoadingType.REFRESH -> currentState.copy(isRefreshing = isLoading)
+            LoadingType.MAIN -> currentState.copy(
+                isLoading = isLoading
+            )
+
+            LoadingType.REFRESH -> currentState.copy(
+                isRefreshing = isLoading
+            )
         }
     }
 

@@ -3,10 +3,10 @@
     <string name="app_name">Film Keşfetme Uygulaması</string>
 
     <!-- Film Kategorileri -->
-    <string name="popular_movies">Popüler Filmler</string>
-    <string name="now_playing">Vizyondakiler</string>
-    <string name="top_rated">En Çok Puan Alanlar</string>
-    <string name="upcoming">Yakında Gelecekler</string>
+    <string name="category_title_popular">Popüler Filmler</string>
+    <string name="category_title_now_playing">Vizyondakiler</string>
+    <string name="category_title_top_rated">En Çok Puan Alanlar</string>
+    <string name="category_title_upcoming">Yakında Gelecekler</string>
 
     <!-- Arama -->
     <string name="search_placeholder">Film, dizi veya oyuncu ara…</string>

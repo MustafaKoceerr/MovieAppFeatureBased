@@ -3,10 +3,10 @@
     <string name="app_name">Film Keşfetme Uygulaması</string>
 
     <!-- Movie Categories -->
-    <string name="popular_movies">Popular Movies</string>
-    <string name="now_playing">Now Playing</string>
-    <string name="top_rated">Top Rated</string>
-    <string name="upcoming">Upcoming</string>
+    <string name="category_title_popular">Popular Movies</string>
+    <string name="category_title_now_playing">Now Playing</string>
+    <string name="category_title_top_rated">Top Rated</string>
+    <string name="category_title_upcoming">Upcoming</string>
 
     <!-- Search -->
     <string name="search_placeholder">Search movies, series or actors…</string>

@@ -27,7 +27,6 @@ fun HomeRoute(
             when (effect) {
                 is HomeEffect.NavigateToMovieDetails -> navActions.navigateToMovieDetails(effect.movieId)
                 is HomeEffect.NavigateToMovieList -> navActions.navigateToMovieList(
-                    effect.categoryTitle,
                     effect.categoryEndpoint
                 )
 

@@ -10,7 +10,7 @@ interface FeatureMoviesNavActions : CommonNavActions {
     fun navigateToMovieDetails(movieId: Int)
 
     // Home ekranından -> Daha fazla filmin olduğu liste ekranına
-    fun navigateToMovieList(categoryTitle: String, categortEndpoint: String)
+    fun navigateToMovieList(categoryEndpoint: String)
 
     // Home ekranından -> Arama ekranına
     fun navigateToSearch()

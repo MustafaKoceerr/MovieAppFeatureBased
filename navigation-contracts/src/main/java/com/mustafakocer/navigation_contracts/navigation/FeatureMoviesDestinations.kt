@@ -11,7 +11,7 @@ object MoviesFeatureGraph // Bu, tüm feature'ın kök rotası olacak
 object HomeScreen
 
 @Serializable
-data class MovieListScreen(val categoryTitle: String, val categoryEndpoint: String){
+data class MovieListScreen(val categoryEndpoint: String) {
     // Bu companion object, argüman anahtarını merkezi ve tip-güvenli
     // bir şekilde saklamamızı sağlar.
     companion object {
@@ -22,7 +22,7 @@ data class MovieListScreen(val categoryTitle: String, val categoryEndpoint: Stri
 }
 
 @Serializable
-data class MovieDetailsScreen(val movieId: Int){
+data class MovieDetailsScreen(val movieId: Int) {
     companion object {
         const val KEY_MOVIE_ID = "movieId"
     }

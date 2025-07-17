@@ -27,9 +27,11 @@ fun MovieListRoute(
                 is MovieListEffect.NavigateToMovieDetail -> {
                     navActions.navigateToMovieDetails(effect.movieId)
                 }
+
                 is MovieListEffect.NavigateBack -> {
                     navActions.navigateUp()
                 }
+
                 is MovieListEffect.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(message = effect.message)
                 }

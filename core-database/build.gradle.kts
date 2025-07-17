@@ -1,15 +1,5 @@
 // core-database/build.gradle.kts
 
-/**
- * SADELEŞTIRILMIŞ CORE DATABASE MODULE
- *
- * AMAÇ: Minimal database infrastructure
- * ✅ Room entities ve basic DAO support
- * ✅ Paging 3 config
- * ✅ Cache metadata support
- * ✅ Sıfır business logic - sadece infrastructure
- */
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -47,21 +37,22 @@ android {
 }
 
 dependencies {
-    // ⭐ CORE DEPENDENCY (Brings Hilt, Coroutines, Serialization)
-    api(project(":core-common"))
+    api(project(":core-domain"))
 
-    // 🗄️ ROOM DATABASE - Core functionality
+    // --- VERİTABANI KÜTÜPHANELERİ ---
     api(libs.room.runtime)
     api(libs.room.ktx)
-    ksp(libs.room.compiler)
+    ksp(libs.room.compiler) // Sadece bu modülün kendi @Dao/@Entity'lerini derlemesi için.
 
-    // 📄 PAGING 3 - Pagination support
+    // --- PAGING 3 KÜTÜPHANELERİ ---
+
     api(libs.paging.runtime)
-    api(libs.paging.compose) // ✅ EKLENDİ - Compose için
     api(libs.room.paging)
+    // Bu, UI katmanına ait bir bağımlılık gibi görünse de, PagingSource'un
+    // kendisi genellikle UI'a kadar taşındığı için burada 'api' olarak tutmak pratiktir.
+    api(libs.paging.compose)
 
-    // 📊 TESTING
-
+    // --- TEST ---
     testImplementation(libs.junit)
     testImplementation(libs.testng)
     androidTestImplementation(libs.androidx.junit)

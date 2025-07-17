@@ -1,5 +1,8 @@
 import org.gradle.api.initialization.resolve.RepositoriesMode.FAIL_ON_PROJECT_REPOS
 
+include(":core-android")
+
+
 pluginManagement {
     repositories {
         google {
@@ -23,13 +26,10 @@ dependencyResolutionManagement {
 
 rootProject.name = "MovieAppFeatureBasedClean"
 include(":app")
-include(":core-common")
+include(":core-domain")
 include(":core-ui")
 include(":core-network")
 include(":feature-movies")
 include(":core-database")
 include(":navigation-contracts")
 include(":core-preferences")
-include(":data-common")
-include(":di")
-include(":core-database-contract")

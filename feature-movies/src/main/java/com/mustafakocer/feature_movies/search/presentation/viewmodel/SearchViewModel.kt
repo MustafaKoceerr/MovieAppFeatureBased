@@ -2,9 +2,8 @@ package com.mustafakocer.feature_movies.search.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.mustafakocer.core_android.presentation.BaseViewModel
 import com.mustafakocer.core_common.exception.AppException
-import com.mustafakocer.core_common.presentation.BaseViewModel
-import com.mustafakocer.core_common.presentation.LoadingType
 import com.mustafakocer.feature_movies.search.domain.usecase.SearchMoviesUseCase
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchEffect
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchEvent
@@ -22,7 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchMoviesUseCase: SearchMoviesUseCase,
-) : BaseViewModel<SearchUiState, SearchEvent, SearchEffect>(SearchUiState()) {
+) : BaseViewModel<SearchUiState, SearchEvent, SearchEffect>(
+    SearchUiState()
+) {
 
     // Kullanıcının girdiği arama sorgusunu reaktif olarak işlemek için.
     private val searchQueryFlow = MutableStateFlow("")
@@ -41,12 +42,21 @@ class SearchViewModel @Inject constructor(
 
             is SearchEvent.ClearSearch -> {
                 // Arama kutusunu ve sonuçları temizle.
-                setState { copy(searchQuery = "", searchResults = emptyFlow()) }
+                setState {
+                    copy(
+                        searchQuery = "",
+                        searchResults = emptyFlow()
+                    )
+                }
                 searchQueryFlow.value = ""
             }
 
             is SearchEvent.MovieClicked -> {
-                sendEffect(SearchEffect.NavigateToMovieDetail(event.movieId))
+                sendEffect(
+                    SearchEffect.NavigateToMovieDetail(
+                        event.movieId
+                    )
+                )
             }
 
             is SearchEvent.BackClicked -> {
@@ -70,7 +80,11 @@ class SearchViewModel @Inject constructor(
                         performSearch(query)
                     } else {
                         // Yeterli uzunlukta değilse, mevcut sonuçları temizle
-                        setState { copy(searchResults = emptyFlow()) }
+                        setState {
+                            copy(
+                                searchResults = emptyFlow()
+                            )
+                        }
                     }
                 }
         }
@@ -93,11 +107,18 @@ class SearchViewModel @Inject constructor(
 
     // Paging kendi durumlarını yönettiği için şimdilik basit kalabilirler.
     override fun handleError(error: AppException): SearchUiState {
-        sendEffect(SearchEffect.ShowSnackbar(error.userMessage))
+        sendEffect(
+            SearchEffect.ShowSnackbar(
+                error.userMessage
+            )
+        )
         return currentState.copy(error = error)
     }
 
-    override fun setLoading(loadingType: LoadingType, isLoading: Boolean): SearchUiState {
+    override fun setLoading(
+        loadingType: com.mustafakocer.core_android.presentation.LoadingType,
+        isLoading: Boolean,
+    ): SearchUiState {
         return currentState.copy(isLoading = isLoading)
     }
 }

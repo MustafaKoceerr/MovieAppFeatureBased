@@ -25,25 +25,28 @@ class MovieListRepositoryImpl @Inject constructor(
 ) : MovieListRepository {
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun getMoviesForCategory(category: MovieCategory): Flow<PagingData<MovieListItem>> {
+    override fun getMoviesByCategory(
+        category: MovieCategory,
+        language: String, // <-- YENİ PARAMETRE
+    ): Flow<PagingData<MovieListItem>> {
 
         // Use simple pagination settings
         val paginationSettings = PaginationSettings.movieList
 
         return Pager(
             config = paginationSettings.toPagingConfig(),
-            remoteMediator = mediatorFactory.create(category),
+            remoteMediator = mediatorFactory.create(category,language),
             pagingSourceFactory = {
-                movieListDao.getMoviesPagingSource(category.apiEndpoint)
+                movieListDao.getMoviesForCategory(category.apiEndpoint,language)
             }
         ).flow.map { pagingData ->
             pagingData.map { entity -> entity.toDomainList() }
         }
     }
 
-    override suspend fun refreshCategory(category: MovieCategory) {
-        movieListDao.deleteMoviesForCategory(category.apiEndpoint)
-        remoteKeyDao.deleteRemoteKey(category.cacheKey)
+    override suspend fun refreshCategory(category: MovieCategory, language: String) { // <-- BURAYI DA GÜNCELLE
+        movieListDao.deleteMoviesForCategory(category.apiEndpoint, language)
+        remoteKeyDao.deleteRemoteKey(category.cacheKey, language)
     }
 
 }

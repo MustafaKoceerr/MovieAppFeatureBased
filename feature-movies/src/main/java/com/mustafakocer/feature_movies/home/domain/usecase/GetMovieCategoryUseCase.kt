@@ -6,15 +6,6 @@ import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-/**
- * TEACHING MOMENT: Individual Category Use Case
- *
- * ✅ BENEFITS:
- * - Load one category at a time
- * - Independent error handling
- * - Selective retry capability
- * - Better user experience
- */
 class GetMovieCategoryUseCase @Inject constructor(
     private val movieRepository: MovieRepository,
 ) {

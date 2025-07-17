@@ -35,12 +35,15 @@ fun SearchRoute(
                 is SearchEffect.NavigateToMovieDetail -> {
                     navActions.navigateToMovieDetails(effect.movieId)
                 }
+
                 is SearchEffect.NavigateBack -> {
                     navActions.navigateUp()
                 }
+
                 is SearchEffect.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(message = effect.message)
                 }
+
                 is SearchEffect.HideKeyboard -> {
                     keyboardController?.hide()
                     focusManager.clearFocus() // Klavyeyi gizledikten sonra focus'u da temizlemek iyidir.
