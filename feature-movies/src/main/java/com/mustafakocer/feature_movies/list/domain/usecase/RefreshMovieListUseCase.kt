@@ -2,6 +2,7 @@ package com.mustafakocer.feature_movies.list.domain.usecase
 
 import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.list.domain.repository.MovieListRepository
+import com.mustafakocer.feature_movies.shared.data.model.moviedetails.SpokenLanguage
 import javax.inject.Inject
 
 /**
@@ -19,7 +20,7 @@ class RefreshMovieListUseCase @Inject constructor(
      *
      * @param category Movie category to refresh
      */
-    suspend operator fun invoke(category: MovieCategory) {
-        repository.refreshCategory(category)
+    suspend operator fun invoke(category: MovieCategory, language: String) {
+        repository.refreshCategory(category, language)
     }
 }
