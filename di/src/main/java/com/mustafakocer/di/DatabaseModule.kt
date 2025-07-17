@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import com.mustafakocer.core_database.dao.RemoteKeyDao
 import com.mustafakocer.core_database_contract.DatabaseConstants
 import com.mustafakocer.di.database.AppDatabase
+import com.mustafakocer.feature_movies.home.data.repository.local.HomeMovieDao
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
 import dagger.Module
 import dagger.Provides
@@ -58,5 +59,11 @@ object DatabaseModule {
     @Singleton
     fun provideRemoteKeyDao(appDatabase: AppDatabase): RemoteKeyDao {
         return appDatabase.remoteKeyDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideHomeMovieDao(appDatabase: AppDatabase): HomeMovieDao {
+        return appDatabase.homeMovieDao()
     }
 }

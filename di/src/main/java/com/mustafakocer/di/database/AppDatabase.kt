@@ -5,9 +5,10 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.mustafakocer.core_database.dao.RemoteKeyDao
 import com.mustafakocer.core_database.pagination.RemoteKey
-import com.mustafakocer.core_database_contract.DatabaseConstants
 import com.mustafakocer.feature_movies.database.converter.MovieConverters
+import com.mustafakocer.feature_movies.home.data.repository.local.HomeMovieDao
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
+import com.mustafakocer.feature_movies.shared.data.local.entity.HomeMovieEntity
 import com.mustafakocer.feature_movies.shared.data.local.entity.MovieListEntity
 
 /**
@@ -15,6 +16,10 @@ import com.mustafakocer.feature_movies.shared.data.local.entity.MovieListEntity
  * Bu sınıf, :di modülünde bulunur çünkü tüm feature modüllerine erişimi olan tek yer burasıdır.
  * Tüm Entity'leri ve DAO'ları burada listeleriz.
  */
+internal object DatabaseConstants {
+    const val DATABASE_NAME = "movie_app_database.db"
+    const val DATABASE_VERSION = 2
+}
 
 @Database(
     entities = [
@@ -23,6 +28,7 @@ import com.mustafakocer.feature_movies.shared.data.local.entity.MovieListEntity
 
         // Feature:Movies Entities
         MovieListEntity::class,
+        HomeMovieEntity::class,
 
         // Gelecekteki diğer feature'ların entity'leri buraya eklenecek...
     ],
@@ -35,5 +41,7 @@ abstract class AppDatabase : RoomDatabase() {
     // Gerekli tüm DAO'ları burada abstract fonksiyon olarak tanımla
     abstract fun remoteKeyDao(): RemoteKeyDao
     abstract fun movieListDao(): MovieListDao
+    abstract fun homeMovieDao(): HomeMovieDao
+
 // Gelecekteki diğer feature'ların DAO'ları buraya eklenecek...
 }

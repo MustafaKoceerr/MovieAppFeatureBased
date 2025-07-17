@@ -3,8 +3,8 @@ package com.mustafakocer.di.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.mustafakocer.data_common.preferences.repository.LanguageRepository
-import com.mustafakocer.data_common.preferences.repository.ThemeRepository
+import com.mustafakocer.core_preferences.repository.LanguageRepository
+import com.mustafakocer.core_preferences.repository.ThemeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
