@@ -4,9 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.mustafakocer.core_common.exception.AppException
-import com.mustafakocer.core_common.presentation.BaseViewModel
-import com.mustafakocer.core_common.presentation.LoadingType
-import com.mustafakocer.data_common.preferences.repository.LanguageRepository
+import com.mustafakocer.core_preferences.repository.LanguageRepository
 import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.list.domain.usecase.GetMovieListUseCase
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEffect
@@ -36,7 +34,7 @@ class MovieListViewModel @Inject constructor(
     private val getMovieListUseCase: GetMovieListUseCase,
     private val languageRepository: LanguageRepository, // <-- 1. YENİ BAĞIMLILIK
     private val savedStateHandle: SavedStateHandle,
-) : BaseViewModel<MovieListUiState, MovieListEvent, MovieListEffect>(
+) : com.mustafakocer.core_android.presentation.BaseViewModel<MovieListUiState, MovieListEvent, MovieListEffect>(
     initialState = MovieListUiState()
 ) {
     private val categoryEndpoint: String? = savedStateHandle[MovieListScreen.KEY_CATEGORY_ENDPOINT]
@@ -47,8 +45,12 @@ class MovieListViewModel @Inject constructor(
     private fun initScreen() {
         if (category == null) {
             // Kategori bilgisi yoksa hata ver ve geri dön.
-            sendEffect(MovieListEffect.ShowSnackbar("Category isn't found.")) // Bunu da UiText ile yapmalıyız :)
-            sendEffect(MovieListEffect.NavigateBack)
+            com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(
+                MovieListEffect.ShowSnackbar(
+                    "Category isn't found."
+                )
+            ) // Bunu da UiText ile yapmalıyız :)
+            com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(MovieListEffect.NavigateBack)
         } else {
             viewModelScope.launch {
                 languageRepository.languageFlow
@@ -68,11 +70,15 @@ class MovieListViewModel @Inject constructor(
     override fun onEvent(event: MovieListEvent) {
         when (event) {
             is MovieListEvent.MovieClicked -> {
-                sendEffect(MovieListEffect.NavigateToMovieDetail(event.movieId))
+                com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(
+                    MovieListEffect.NavigateToMovieDetail(
+                        event.movieId
+                    )
+                )
             }
 
             is MovieListEvent.BackClicked -> {
-                sendEffect(MovieListEffect.NavigateBack)
+                com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(MovieListEffect.NavigateBack)
             }
         }
     }
@@ -81,7 +87,7 @@ class MovieListViewModel @Inject constructor(
         try {
             val moviesPagingFlow = getMovieListUseCase(category, language).cachedIn(viewModelScope)
 
-            setState {
+            com.mustafakocer.core_android.presentation.BaseViewModel.setState {
                 copy(
                     movies = moviesPagingFlow,
                     category = category
@@ -94,12 +100,16 @@ class MovieListViewModel @Inject constructor(
     // şimdilik boş kalabilir veya basitçe mevcut state'i döndürebilir.
     override fun handleError(error: AppException): MovieListUiState {
         // Paging dışı bir hata olursa diye, bir snackbar gösterebiliriz.
-        sendEffect(MovieListEffect.ShowSnackbar(error.userMessage))
-        return currentState
+        com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(
+            MovieListEffect.ShowSnackbar(
+                error.userMessage
+            )
+        )
+        return com.mustafakocer.core_android.presentation.BaseViewModel.currentState
     }
 
-    override fun setLoading(loadingType: LoadingType, isLoading: Boolean): MovieListUiState {
+    override fun setLoading(loadingType: com.mustafakocer.core_android.presentation.LoadingType, isLoading: Boolean): MovieListUiState {
         // Paging dışı bir işlem için (örn. favorilere ekleme) kullanılabilir.
-        return currentState.copy(isLoading = isLoading)
+        return com.mustafakocer.core_android.presentation.BaseViewModel.currentState.copy(isLoading = isLoading)
     }
 }
