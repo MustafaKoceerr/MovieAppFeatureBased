@@ -1,33 +1,9 @@
 package com.mustafakocer.core_common.exception
 
-
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-/**
- * TEACHING MOMENT: Exception Hierarchy Design
- *
- * NEDEN STRING ERROR MESSAGE YETERLİ DEĞİL:
- * ❌ Type safety yok
- * ❌ Kategorize edilemiyor
- * ❌ UI'da nasıl gösterileceği belirsiz
- * ❌ Analytics'e nasıl gönderileceği belirsiz
- * ❌ Retry logic yazılamıyor
- *
- * APPEXCEPTION HIERARCHY İLE:
- * ✅ Type-safe error handling
- * ✅ Automatic error categorization
- * ✅ UI presentation strategy
- * ✅ Analytics integration ready
- * ✅ Retry logic support
- */
-
-/**
- * Base exception class for all application exceptions
- *
- * Her proje için bu base class'ı extend edebilirsiniz
- */
 sealed class AppException(
     open val userMessage: String,
     open val technicalMessage: String? = null,

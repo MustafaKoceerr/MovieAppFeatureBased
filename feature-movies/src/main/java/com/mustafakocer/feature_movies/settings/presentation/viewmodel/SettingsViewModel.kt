@@ -1,8 +1,8 @@
 package com.mustafakocer.feature_movies.settings.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.mustafakocer.core_android.presentation.BaseViewModel
 import com.mustafakocer.core_common.exception.AppException
-import com.mustafakocer.core_android.presentation.LoadingType
 import com.mustafakocer.core_preferences.models.ThemePreference
 import com.mustafakocer.core_preferences.models.LanguagePreference
 import com.mustafakocer.core_preferences.repository.LanguageRepository
@@ -19,7 +19,9 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val themeRepository: ThemeRepository,
     private val languageRepository: LanguageRepository,
-) : com.mustafakocer.core_android.presentation.BaseViewModel<SettingsUiState, SettingsEvent, SettingsEffect>(SettingsUiState()) {
+) : BaseViewModel<SettingsUiState, SettingsEvent, SettingsEffect>(
+    SettingsUiState()
+) {
 
     init {
         // ViewModel oluşturulur oluşturulmaz, DataStore'daki tema değişikliklerini
@@ -39,7 +41,7 @@ class SettingsViewModel @Inject constructor(
             }
 
             is SettingsEvent.BackClicked -> {
-                com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(SettingsEffect.NavigateBack)
+                sendEffect(SettingsEffect.NavigateBack)
             }
         }
     }
@@ -52,7 +54,7 @@ class SettingsViewModel @Inject constructor(
             themeRepository.themeFlow
                 .catch { exception ->
                     // Tema okunurken bir hata olursa yakala.
-                    com.mustafakocer.core_android.presentation.BaseViewModel.setState {
+                    setState {
                         handleError(
                             AppException.DataException.ParseError(originalCause = exception)
                         )
@@ -60,7 +62,7 @@ class SettingsViewModel @Inject constructor(
                 }
                 .collect { theme ->
                     // Her yeni tema geldiğinde, state'i güncelle.
-                    com.mustafakocer.core_android.presentation.BaseViewModel.setState {
+                    setState {
                         copy(
                             currentTheme = theme
                         )
@@ -72,7 +74,7 @@ class SettingsViewModel @Inject constructor(
     private fun observeLanguageChanges() {
         viewModelScope.launch {
             languageRepository.languageFlow.collect { language ->
-                com.mustafakocer.core_android.presentation.BaseViewModel.setState {
+                setState {
                     copy(
                         currentLanguage = language
                     )
@@ -87,9 +89,9 @@ class SettingsViewModel @Inject constructor(
      */
     private fun saveSelectedTheme(theme: ThemePreference) {
         // Zaten bir işlem devam ediyorsa, yenisini başlatma.
-        if (com.mustafakocer.core_android.presentation.BaseViewModel.currentState.isLoading) return
+        if (currentState.isLoading) return
 
-        com.mustafakocer.core_android.presentation.BaseViewModel.executeSafeOnce(loadingType = com.mustafakocer.core_android.presentation.LoadingType.MAIN) {
+        executeSafeOnce(loadingType = com.mustafakocer.core_android.presentation.LoadingType.MAIN) {
             themeRepository.setTheme(theme)
             // Başarılı olduğunda kullanıcıya geri bildirim ver.
 //            sendEffect(SettingsEffect.ShowSnackbar("Tema değiştirildi: ${theme.name}"))
@@ -97,29 +99,32 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun saveSelectedLanguage(language: LanguagePreference) {
-        if (com.mustafakocer.core_android.presentation.BaseViewModel.currentState.isLoading) return
+        if (currentState.isLoading) return
 
-        com.mustafakocer.core_android.presentation.BaseViewModel.executeSafeOnce(loadingType = com.mustafakocer.core_android.presentation.LoadingType.MAIN) {
+        executeSafeOnce(loadingType = com.mustafakocer.core_android.presentation.LoadingType.MAIN) {
             languageRepository.setLanguage(language)
 
             // Dil başarıyla kaydedildi, şimdi UI'a haber verelim.
-            com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(SettingsEffect.RestartActivity)
+            sendEffect(SettingsEffect.RestartActivity)
         }
     }
 
     // BaseViewModel'in zorunlu kıldığı abstract metodları implemente ediyoruz.
     override fun handleError(error: AppException): SettingsUiState {
         // Hata durumunda kullanıcıya geri bildirim ver.
-        com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(
+        sendEffect(
             SettingsEffect.ShowSnackbar(
                 error.userMessage
             )
         )
-        return com.mustafakocer.core_android.presentation.BaseViewModel.currentState.copy(error = error)
+        return currentState.copy(error = error)
     }
 
-    override fun setLoading(loadingType: com.mustafakocer.core_android.presentation.LoadingType, isLoading: Boolean): SettingsUiState {
+    override fun setLoading(
+        loadingType: com.mustafakocer.core_android.presentation.LoadingType,
+        isLoading: Boolean,
+    ): SettingsUiState {
         // Bu ekranda sadece ana yükleme durumu var (isRefreshing yok).
-        return com.mustafakocer.core_android.presentation.BaseViewModel.currentState.copy(isLoading = isLoading)
+        return currentState.copy(isLoading = isLoading)
     }
 }

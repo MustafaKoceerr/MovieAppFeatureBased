@@ -2,7 +2,6 @@ package com.mustafakocer.feature_movies.list.domain.usecase
 
 import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.list.domain.repository.MovieListRepository
-import com.mustafakocer.feature_movies.shared.data.model.moviedetails.SpokenLanguage
 import javax.inject.Inject
 
 /**

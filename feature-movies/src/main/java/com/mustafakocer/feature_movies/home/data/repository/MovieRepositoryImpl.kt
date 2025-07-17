@@ -1,6 +1,5 @@
 package com.mustafakocer.feature_movies.home.data.repository
 
-import android.util.Log
 import com.mustafakocer.core_preferences.provider.LanguageProvider
 import com.mustafakocer.feature_movies.home.data.repository.local.HomeMovieDao
 import com.mustafakocer.feature_movies.home.domain.repository.MovieRepository
@@ -34,34 +33,26 @@ class MovieRepositoryImpl @Inject constructor(
 
         // 1. Cache'den ilk veriyi bir kere al ve yayınla.
         val initialCache = homeMovieDao.getMoviesForCategory(categoryKey, language)
-        Log.d("RepoDebug", "[$categoryKey] Cache'den ilk veri emit ediliyor. Boyut: ${initialCache.size}")
         emit(initialCache.toDomainList())
 
         // 2. Ağdan veriyi çek.
         try {
-            Log.d("RepoDebug", "[$categoryKey] API isteği başlatılıyor.")
             val response = fetchFromApi()
 
             if (response.isSuccessful && response.body() != null) {
                 val moviesDto = response.body()!!.results ?: emptyList()
-                Log.d("RepoDebug", "[$categoryKey] API'den veri başarıyla alındı. Boyut: ${moviesDto.size}")
 
                 // 3. Veritabanını güncelle.
                 val movieEntities = moviesDto.toHomeMovieEntityList(categoryKey, language)
                 homeMovieDao.deleteMoviesForCategory(categoryKey, language)
                 homeMovieDao.upsertAll(movieEntities)
-                Log.d("RepoDebug", "[$categoryKey] Veritabanı güncellendi.")
 
                 // 4. Veritabanı güncellendikten sonra, en güncel veriyi tekrar yayınla.
                 val updatedCache = homeMovieDao.getMoviesForCategory(categoryKey, language)
-                Log.d("RepoDebug", "[$categoryKey] Güncel cache emit ediliyor. Boyut: ${updatedCache.size}")
                 emit(updatedCache.toDomainList())
 
-            } else {
-                Log.w("RepoDebug", "[$categoryKey] API isteği başarısız. Kod: ${response.code()}")
             }
         } catch (e: Exception) {
-            Log.e("RepoDebug", "[$categoryKey] API isteği çöktü.", e)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_movies.shared.data.model.moviedetails
+package com.mustafakocer.feature_movies.shared.data.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

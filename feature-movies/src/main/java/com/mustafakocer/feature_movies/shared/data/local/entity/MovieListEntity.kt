@@ -2,7 +2,6 @@ package com.mustafakocer.feature_movies.shared.data.local.entity
 
 import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.mustafakocer.core_database.cache.CacheMetadata
 
 /**

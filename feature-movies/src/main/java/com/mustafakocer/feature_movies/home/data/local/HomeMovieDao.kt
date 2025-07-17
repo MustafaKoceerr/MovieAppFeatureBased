@@ -1,10 +1,9 @@
-package com.mustafakocer.feature_movies.home.data.repository.local
+package com.mustafakocer.feature_movies.home.data.local
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import com.mustafakocer.feature_movies.shared.data.local.entity.HomeMovieEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HomeMovieDao {

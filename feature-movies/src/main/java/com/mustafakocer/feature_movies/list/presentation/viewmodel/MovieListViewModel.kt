@@ -3,6 +3,7 @@ package com.mustafakocer.feature_movies.list.presentation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.mustafakocer.core_android.presentation.BaseViewModel
 import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.core_preferences.repository.LanguageRepository
 import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
@@ -34,7 +35,7 @@ class MovieListViewModel @Inject constructor(
     private val getMovieListUseCase: GetMovieListUseCase,
     private val languageRepository: LanguageRepository, // <-- 1. YENİ BAĞIMLILIK
     private val savedStateHandle: SavedStateHandle,
-) : com.mustafakocer.core_android.presentation.BaseViewModel<MovieListUiState, MovieListEvent, MovieListEffect>(
+) : BaseViewModel<MovieListUiState, MovieListEvent, MovieListEffect>(
     initialState = MovieListUiState()
 ) {
     private val categoryEndpoint: String? = savedStateHandle[MovieListScreen.KEY_CATEGORY_ENDPOINT]
@@ -45,12 +46,12 @@ class MovieListViewModel @Inject constructor(
     private fun initScreen() {
         if (category == null) {
             // Kategori bilgisi yoksa hata ver ve geri dön.
-            com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(
+            sendEffect(
                 MovieListEffect.ShowSnackbar(
                     "Category isn't found."
                 )
             ) // Bunu da UiText ile yapmalıyız :)
-            com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(MovieListEffect.NavigateBack)
+            sendEffect(MovieListEffect.NavigateBack)
         } else {
             viewModelScope.launch {
                 languageRepository.languageFlow
@@ -70,7 +71,7 @@ class MovieListViewModel @Inject constructor(
     override fun onEvent(event: MovieListEvent) {
         when (event) {
             is MovieListEvent.MovieClicked -> {
-                com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(
+                sendEffect(
                     MovieListEffect.NavigateToMovieDetail(
                         event.movieId
                     )
@@ -78,7 +79,7 @@ class MovieListViewModel @Inject constructor(
             }
 
             is MovieListEvent.BackClicked -> {
-                com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(MovieListEffect.NavigateBack)
+                sendEffect(MovieListEffect.NavigateBack)
             }
         }
     }
@@ -87,7 +88,7 @@ class MovieListViewModel @Inject constructor(
         try {
             val moviesPagingFlow = getMovieListUseCase(category, language).cachedIn(viewModelScope)
 
-            com.mustafakocer.core_android.presentation.BaseViewModel.setState {
+            setState {
                 copy(
                     movies = moviesPagingFlow,
                     category = category
@@ -100,16 +101,19 @@ class MovieListViewModel @Inject constructor(
     // şimdilik boş kalabilir veya basitçe mevcut state'i döndürebilir.
     override fun handleError(error: AppException): MovieListUiState {
         // Paging dışı bir hata olursa diye, bir snackbar gösterebiliriz.
-        com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(
+        sendEffect(
             MovieListEffect.ShowSnackbar(
                 error.userMessage
             )
         )
-        return com.mustafakocer.core_android.presentation.BaseViewModel.currentState
+        return currentState
     }
 
-    override fun setLoading(loadingType: com.mustafakocer.core_android.presentation.LoadingType, isLoading: Boolean): MovieListUiState {
+    override fun setLoading(
+        loadingType: com.mustafakocer.core_android.presentation.LoadingType,
+        isLoading: Boolean,
+    ): MovieListUiState {
         // Paging dışı bir işlem için (örn. favorilere ekleme) kullanılabilir.
-        return com.mustafakocer.core_android.presentation.BaseViewModel.currentState.copy(isLoading = isLoading)
+        return currentState.copy(isLoading = isLoading)
     }
 }

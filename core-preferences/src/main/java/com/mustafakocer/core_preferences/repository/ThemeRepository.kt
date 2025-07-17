@@ -11,24 +11,6 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
-/**
- * NEDEN DI package'ini sildim?
- * Aksiyon: Bu dosyayı tamamen sil. data-common modülünün görevi ThemeRepository'nin kendisini (iş mantığını) barındırmaktır, onu Hilt'e nasıl "sağlayacağını" söylemek değil.
- */
-
-/**
- * Theme Repository - Shared Business Logic
- *
- * CLEAN ARCHITECTURE: Data Layer (Shared)
- * RESPONSIBILITY: Theme business operations for all features
- *
- * SHARED ACROSS:
- * ✅ feature-settings (theme selection)
- * ✅ feature-movies (theme-aware UI)
- * ✅ feature-auth (themed login screen)
- * ✅ Any future features that need theme
- */
 @Singleton
 class ThemeRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>, // ← From core-preferences

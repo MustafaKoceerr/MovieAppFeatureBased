@@ -24,13 +24,13 @@ fun MovieDetailsRoute(
 ) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-    val state by com.mustafakocer.core_android.presentation.BaseViewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     val snackbarErrorMessage: String = stringResource(R.string.error_share_movie)
 
     // Handle UI Effects (side effects)
     LaunchedEffect(Unit) {
-        com.mustafakocer.core_android.presentation.BaseViewModel.uiEffect.collectLatest { effect ->
+        viewModel.uiEffect.collectLatest { effect ->
             when (effect) {
                 is MovieDetailsEffect.NavigateBack -> {
                     navActions.navigateUp()

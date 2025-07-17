@@ -6,12 +6,6 @@ import androidx.room.Query
 import com.mustafakocer.core_database.dao.BaseDao
 import com.mustafakocer.feature_movies.shared.data.local.entity.MovieListEntity
 
-/**
- * Movie list DAO extending core database capabilities
- *
- * CLEAN ARCHITECTURE: Infrastructure Layer - Data Access
- * EXTENDS: Core BaseDao for basic CRUD operations
- */
 @Dao
 interface MovieListDao : BaseDao<MovieListEntity> {
 

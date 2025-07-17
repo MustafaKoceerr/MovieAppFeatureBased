@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_movies.database.converter
+package com.mustafakocer.feature_movies.shared.data.local.converter
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson

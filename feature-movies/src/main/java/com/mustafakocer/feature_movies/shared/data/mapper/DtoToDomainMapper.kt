@@ -1,7 +1,7 @@
 package com.mustafakocer.feature_movies.shared.data.mapper
 
 import com.mustafakocer.feature_movies.shared.data.model.MovieDto
-import com.mustafakocer.feature_movies.shared.data.model.moviedetails.MovieDetailsDto
+import com.mustafakocer.feature_movies.shared.data.model.MovieDetailsDto
 import com.mustafakocer.feature_movies.shared.domain.model.Genre
 import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem

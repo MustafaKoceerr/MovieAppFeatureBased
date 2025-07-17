@@ -21,7 +21,7 @@ fun SearchRoute(
     navActions: FeatureMoviesNavActions,
     viewModel: SearchViewModel = hiltViewModel(),
 ) {
-    val state by com.mustafakocer.core_android.presentation.BaseViewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Klavye ve focus yönetimi için gerekli controller'ları alıyoruz.
@@ -30,17 +30,20 @@ fun SearchRoute(
 
     // Yan etkileri dinleyip yöneten bölüm.
     LaunchedEffect(key1 = true) {
-        com.mustafakocer.core_android.presentation.BaseViewModel.uiEffect.collectLatest { effect ->
+        viewModel.uiEffect.collectLatest { effect ->
             when (effect) {
                 is SearchEffect.NavigateToMovieDetail -> {
                     navActions.navigateToMovieDetails(effect.movieId)
                 }
+
                 is SearchEffect.NavigateBack -> {
                     navActions.navigateUp()
                 }
+
                 is SearchEffect.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(message = effect.message)
                 }
+
                 is SearchEffect.HideKeyboard -> {
                     keyboardController?.hide()
                     focusManager.clearFocus() // Klavyeyi gizledikten sonra focus'u da temizlemek iyidir.

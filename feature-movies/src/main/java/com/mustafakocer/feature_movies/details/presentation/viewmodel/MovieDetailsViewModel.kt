@@ -1,6 +1,7 @@
 package com.mustafakocer.feature_movies.details.presentation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import com.mustafakocer.core_android.presentation.BaseViewModel
 import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.core_android.presentation.LoadingType
 import com.mustafakocer.feature_movies.details.domain.usecase.GetMovieDetailsUseCase
@@ -18,19 +19,19 @@ import javax.inject.Inject
 class MovieDetailsViewModel @Inject constructor(
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
     private val savedStateHandle: SavedStateHandle,
-) : com.mustafakocer.core_android.presentation.BaseViewModel<MovieDetailsUiState, MovieDetailsEvent, MovieDetailsEffect>(
+) : BaseViewModel<MovieDetailsUiState, MovieDetailsEvent, MovieDetailsEffect>(
     initialState = MovieDetailsUiState() // Başlangıç state'ini veriyoruz
 ) {
     private val movieId: Int = savedStateHandle.get<Int>(MovieDetailsScreen.KEY_MOVIE_ID)
         ?: throw IllegalStateException("movieId is required")
 
     init {
-        loadMovieDetails(loadingType = com.mustafakocer.core_android.presentation.LoadingType.MAIN)
+        loadMovieDetails(loadingType = LoadingType.MAIN)
     }
 
     override fun onEvent(event: MovieDetailsEvent) {
         when (event) {
-            is MovieDetailsEvent.Refresh -> loadMovieDetails(loadingType = com.mustafakocer.core_android.presentation.LoadingType.REFRESH) // todo sonra implement et
+            is MovieDetailsEvent.Refresh -> loadMovieDetails(loadingType = LoadingType.REFRESH) // todo sonra implement et
             is MovieDetailsEvent.ShareMovie -> handleShareMovie(
                 shareTitle = event.shareTitle,
                 textRating = event.textRating,
@@ -40,10 +41,10 @@ class MovieDetailsViewModel @Inject constructor(
                 textTags = event.textTags
             )
 
-            is MovieDetailsEvent.BackPressed -> com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(
+            is MovieDetailsEvent.BackPressed -> sendEffect(
                 MovieDetailsEffect.NavigateBack
             ) // bu fonksiyon baseViewModel'den geliyor
-            is MovieDetailsEvent.DismissError -> com.mustafakocer.core_android.presentation.BaseViewModel.setState {
+            is MovieDetailsEvent.DismissError -> setState {
                 copy(
                     error = null
                 )
@@ -52,11 +53,11 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun loadMovieDetails(loadingType: com.mustafakocer.core_android.presentation.LoadingType) {
+    private fun loadMovieDetails(loadingType: LoadingType) {
         // Karmaşık collect bloğu yerine, BaseViewModel'deki safeLaunch'ı kullanıyoruz.
-        com.mustafakocer.core_android.presentation.BaseViewModel.executeSafeOnce(loadingType) {
+        executeSafeOnce(loadingType) {
             val details = getMovieDetailsUseCase(movieId).first()
-            com.mustafakocer.core_android.presentation.BaseViewModel.setState { copy(movie = details) }
+            setState { copy(movie = details) }
         }
     }
 
@@ -68,9 +69,9 @@ class MovieDetailsViewModel @Inject constructor(
         textGenres: String,
         textTags: String,
     ) {
-        val movie = com.mustafakocer.core_android.presentation.BaseViewModel.currentState.movie ?: return // Film detayı yoksa paylaşma
+        val movie = currentState.movie ?: return // Film detayı yoksa paylaşma
 
-        com.mustafakocer.core_android.presentation.BaseViewModel.setState { copy(isSharing = true) }
+        setState { copy(isSharing = true) }
 
         val shareContent = buildShareContent(
             movie,
@@ -81,7 +82,7 @@ class MovieDetailsViewModel @Inject constructor(
             textGenres,
             textTags,
         )
-        com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(
+        sendEffect(
             MovieDetailsEffect.ShareContent(
                 shareTitle,
                 shareContent
@@ -91,22 +92,27 @@ class MovieDetailsViewModel @Inject constructor(
         // Paylaşım anlık bir işlem olduğu için, UI'da spinner göstermek adına
         // durumu hemen geri alabiliriz veya bir gecikme ekleyebiliriz.
         // Şimdilik basit tutalım.
-        com.mustafakocer.core_android.presentation.BaseViewModel.setState { copy(isSharing = false) }
+        setState { copy(isSharing = false) }
     }
 
 
     // BaseViewModel'in zorunlu kıldığı abstract metodları implemente ediyoruz.
     override fun handleError(error: AppException): MovieDetailsUiState {
-        return com.mustafakocer.core_android.presentation.BaseViewModel.currentState.copy(error = error)
+        return currentState.copy(error = error)
     }
 
     override fun setLoading(
-        loadingType: com.mustafakocer.core_android.presentation.LoadingType,
+        loadingType: LoadingType,
         isLoading: Boolean,
     ): MovieDetailsUiState {
         return when (loadingType) {
-            com.mustafakocer.core_android.presentation.LoadingType.MAIN -> com.mustafakocer.core_android.presentation.BaseViewModel.currentState.copy(isLoading = isLoading)
-            com.mustafakocer.core_android.presentation.LoadingType.REFRESH -> com.mustafakocer.core_android.presentation.BaseViewModel.currentState.copy(isRefreshing = isLoading)
+            LoadingType.MAIN -> currentState.copy(
+                isLoading = isLoading
+            )
+
+            LoadingType.REFRESH -> currentState.copy(
+                isRefreshing = isLoading
+            )
         }
     }
 

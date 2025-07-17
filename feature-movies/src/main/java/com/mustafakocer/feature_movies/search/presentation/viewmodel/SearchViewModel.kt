@@ -2,6 +2,7 @@ package com.mustafakocer.feature_movies.search.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.mustafakocer.core_android.presentation.BaseViewModel
 import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.feature_movies.search.domain.usecase.SearchMoviesUseCase
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchEffect
@@ -20,7 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchMoviesUseCase: SearchMoviesUseCase,
-) : com.mustafakocer.core_android.presentation.BaseViewModel<SearchUiState, SearchEvent, SearchEffect>(SearchUiState()) {
+) : BaseViewModel<SearchUiState, SearchEvent, SearchEffect>(
+    SearchUiState()
+) {
 
     // Kullanıcının girdiği arama sorgusunu reaktif olarak işlemek için.
     private val searchQueryFlow = MutableStateFlow("")
@@ -33,13 +36,13 @@ class SearchViewModel @Inject constructor(
         when (event) {
             is SearchEvent.QueryChanged -> {
                 // UI'ı anında güncelle ve reaktif akışı tetikle.
-                com.mustafakocer.core_android.presentation.BaseViewModel.setState { copy(searchQuery = event.query) }
+                setState { copy(searchQuery = event.query) }
                 searchQueryFlow.value = event.query
             }
 
             is SearchEvent.ClearSearch -> {
                 // Arama kutusunu ve sonuçları temizle.
-                com.mustafakocer.core_android.presentation.BaseViewModel.setState {
+                setState {
                     copy(
                         searchQuery = "",
                         searchResults = emptyFlow()
@@ -49,7 +52,7 @@ class SearchViewModel @Inject constructor(
             }
 
             is SearchEvent.MovieClicked -> {
-                com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(
+                sendEffect(
                     SearchEffect.NavigateToMovieDetail(
                         event.movieId
                     )
@@ -57,7 +60,7 @@ class SearchViewModel @Inject constructor(
             }
 
             is SearchEvent.BackClicked -> {
-                com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(SearchEffect.NavigateBack)
+                sendEffect(SearchEffect.NavigateBack)
             }
         }
     }
@@ -77,7 +80,7 @@ class SearchViewModel @Inject constructor(
                         performSearch(query)
                     } else {
                         // Yeterli uzunlukta değilse, mevcut sonuçları temizle
-                        com.mustafakocer.core_android.presentation.BaseViewModel.setState {
+                        setState {
                             copy(
                                 searchResults = emptyFlow()
                             )
@@ -95,24 +98,27 @@ class SearchViewModel @Inject constructor(
         // Paging Flow'unu oluşturup doğrudan state'e koyuyoruz.
         val searchResultsFlow = searchMoviesUseCase(query).cachedIn(viewModelScope)
 
-        com.mustafakocer.core_android.presentation.BaseViewModel.setState { copy(searchResults = searchResultsFlow) }
+        setState { copy(searchResults = searchResultsFlow) }
 
         // Arama yapıldıktan sonra klavyeyi gizlemek iyi bir kullanıcı deneyimidir.
-        com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(SearchEffect.HideKeyboard)
+        sendEffect(SearchEffect.HideKeyboard)
     }
 
 
     // Paging kendi durumlarını yönettiği için şimdilik basit kalabilirler.
     override fun handleError(error: AppException): SearchUiState {
-        com.mustafakocer.core_android.presentation.BaseViewModel.sendEffect(
+        sendEffect(
             SearchEffect.ShowSnackbar(
                 error.userMessage
             )
         )
-        return com.mustafakocer.core_android.presentation.BaseViewModel.currentState.copy(error = error)
+        return currentState.copy(error = error)
     }
 
-    override fun setLoading(loadingType: com.mustafakocer.core_android.presentation.LoadingType, isLoading: Boolean): SearchUiState {
-        return com.mustafakocer.core_android.presentation.BaseViewModel.currentState.copy(isLoading = isLoading)
+    override fun setLoading(
+        loadingType: com.mustafakocer.core_android.presentation.LoadingType,
+        isLoading: Boolean,
+    ): SearchUiState {
+        return currentState.copy(isLoading = isLoading)
     }
 }
