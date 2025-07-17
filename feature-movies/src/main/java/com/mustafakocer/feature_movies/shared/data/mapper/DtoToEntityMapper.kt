@@ -14,6 +14,7 @@ fun MovieDto.toEntity(
     category: String,
     page: Int,
     position: Int,
+    language: String,
 ): MovieListEntity {
     return MovieListEntity(
         id = id,
@@ -34,6 +35,7 @@ fun MovieDto.toEntity(
         category = category,
         page = page,
         position = position,
+        language = language,
         cacheMetadata = CacheMetadata.create(CacheDuration.HOURS_24)
     )
 }
