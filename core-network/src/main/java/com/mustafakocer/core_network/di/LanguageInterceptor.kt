@@ -1,6 +1,5 @@
-package com.mustafakocer.di.network
+package com.mustafakocer.core_network.di
 
-import com.mustafakocer.core_preferences.provider.LanguageProvider // <-- YENİ IMPORT
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
@@ -8,7 +7,7 @@ import javax.inject.Singleton
 
 @Singleton
 class LanguageInterceptor @Inject constructor(
-    private val languageProvider: LanguageProvider,
+    private val languageProvider: com.mustafakocer.core_preferences.provider.LanguageProvider,
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {

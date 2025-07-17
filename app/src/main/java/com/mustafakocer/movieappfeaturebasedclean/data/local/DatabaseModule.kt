@@ -1,11 +1,9 @@
-package com.mustafakocer.di
+package com.mustafakocer.movieappfeaturebasedclean.data.local
 
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.mustafakocer.core_database.dao.RemoteKeyDao
-import com.mustafakocer.core_database_contract.DatabaseConstants
-import com.mustafakocer.di.database.AppDatabase
 import com.mustafakocer.feature_movies.home.data.repository.local.HomeMovieDao
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
 import dagger.Module

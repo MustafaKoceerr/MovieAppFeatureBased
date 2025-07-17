@@ -1,4 +1,4 @@
-package com.mustafakocer.di.network
+package com.mustafakocer.core_network.di
 
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -17,6 +17,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+import kotlin.apply
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -55,8 +56,8 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
-        apiKeyInterceptor: ApiKeyInterceptor, // ApiKeyInterceptor'ı inject ediyoruz.
-        languageInterceptor: LanguageInterceptor, // ApiKeyInterceptor'ı inject ediyoruz.
+        apiKeyInterceptor: com.mustafakocer.di.network.ApiKeyInterceptor, // ApiKeyInterceptor'ı inject ediyoruz.
+        languageInterceptor: com.mustafakocer.di.network.LanguageInterceptor, // ApiKeyInterceptor'ı inject ediyoruz.
         cache: Cache
     ): OkHttpClient {
         return OkHttpClient.Builder()

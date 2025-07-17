@@ -1,4 +1,4 @@
-package com.mustafakocer.di.network
+package com.mustafakocer.core_network.di
 
 import com.mustafakocer.core_common.config.NetworkConfigProvider
 import okhttp3.Interceptor

@@ -114,7 +114,6 @@ android {
 
 dependencies {
 // ⭐ FEATURE MODULES (All dependencies inherited through these)
-    implementation(project(":di"))
     implementation(project(":navigation-contracts"))
     implementation(project(":core-domain"))  // ✅ NEW
     implementation(project(":core-ui"))
