@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -45,54 +44,43 @@ android {
 }
 
 dependencies {
-// ⭐ CORE DEPENDENCIES (Everything inherited through api)
-    implementation(project(":core-ui"))        // → Compose, Material3, Coil, core-common
-    implementation(project(":core-network"))   // → Retrofit, Serialization, core-common
-    implementation(project(":core-database"))  // → Room, Paging, core-common
-    implementation(project(":core-preferences")) // ✅ NEW: Theme & Preferences
-    implementation(project(":navigation-contracts")) // <-- SÖZLEŞMELERİ BİLMELİ
-    implementation(project(":core-android")) //
+    // --- CORE MODÜL BAĞIMLILIKLARI ---
+    implementation(project(":core-ui"))
+    implementation(project(":core-network"))
+    implementation(project(":core-database"))
+    implementation(project(":core-preferences"))
+    implementation(project(":core-android"))
+    implementation(project(":core-domain"))
+    implementation(project(":navigation-contracts"))
 
-    // Navigation modülü
-    implementation(libs.androidx.navigation.compose) // <-- NavGraphBuilder İÇİN GEREKLİ
-    implementation(libs.hilt.navigation.compose) // <-- Tip-güvenli rotalar için
-
-    // 📄 PAGING 3 COMPOSE - ✅ EKLENDİ
-    implementation(libs.paging.compose)
-
-    // coil need this
-    implementation(libs.coil.network.okhttp)
-
-    // 📱 COMPOSE LIFECYCLE (Feature-specific)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-
-    // 💉 HILT PROCESSING (Required for this module's @Inject annotations)
+    // --- HILT ---
+    // Bu modül @HiltViewModel, @Inject, @Module kullandığı için zorunlu.
+    implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(libs.hilt.android) // hilt pluginini eklediğimiz için plugin doğrudan iletişime geçiyor, burada olmak zorunda
-
-    // navigation
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.hilt.navigation.compose)
 
-    // 🎨 APP-SPECIFIC UI
-    implementation(libs.androidx.activity.compose)
+    // --- COMPOSE & UI ---
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
-    // GSON
-    api(libs.gson)
+    // --- PAGING 3 ---
+    // :core-database'den 'api' ile geldiği için bu satıra gerek kalmaz.
 
-    // 📊 TESTING
+    // --- GÖRSELLEŞTİRME ---
+    // Coil core kütüphanelerinden gelir.
+
+    // --- VERİ DÖNÜŞÜMÜ ---
+    // MovieConverters'da kullanılıyor.
+    implementation(libs.gson)
+
+    // --- TEST ---
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
-
-    // 📱 UI TESTING
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-
-    // 🛠️ DEBUG
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

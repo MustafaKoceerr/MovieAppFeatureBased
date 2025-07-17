@@ -13,7 +13,6 @@ android {
     defaultConfig {
         minSdk = 24
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -36,21 +35,5 @@ android {
 }
 
 dependencies {
-    // ⭐ NO DEPENDENCIES ON OTHER MODULES
-    // This module should be dependency-free to avoid circular dependencies
-
-    // 🔗 SERIALIZATION - For type-safe navigation
-    implementation(libs.kotlinx.serialization.json)
-
-
-    // 📊 TESTING
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-
-    // ⚠️ NO UI DEPENDENCIES
-    // ❌ No Compose
-    // ❌ No Navigation Compose
-    // ❌ No other feature modules
-    // ❌ No core modules (to avoid circular deps)
+    api(libs.kotlinx.serialization.json)
 }

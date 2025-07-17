@@ -1,27 +1,12 @@
 // core/core-network/build.gradle.kts - REUSABLE NETWORK MODULE
 
-/**
- * TEACHING MOMENT: Reusable Network Module
- *
- * This module is designed to be REUSABLE across projects:
- * ✅ Generic API infrastructure
- * ✅ Standard error handling
- * ✅ Common network utilities
- * ✅ No project-specific dependencies
- *
- * REUSABILITY RULES:
- * - No hardcoded API endpoints
- * - Generic error handling
- * - Configurable base URLs
- * - Standard HTTP client setup
- */
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
 
     alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.serialization)
-
 }
 
 android {
@@ -55,27 +40,22 @@ android {
 
 dependencies {
     api(project(":core-domain"))
-    // ⭐ CORE DEPENDENCY (Brings Hilt, Coroutines, Serialization)
 
-    // 🌐 NETWORK SPECIFIC ONLY
+    // LanguageProvider'a erişim için.
+    implementation(project(":core-preferences"))
+
+    // --- HILT ---
+    // Bu modül @Inject, @Module, @Singleton kullandığı için Hilt'e ihtiyacı var.
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
+    // --- AĞ KÜTÜPHANELERİ ---
     api(libs.retrofit.core)
-    api(libs.retrofit.kotlinx.serialization)
+    api(libs.retrofit.kotlinx.serialization.converter)
     implementation(libs.okhttp.logging)
 
-    // 💉 HILT KSP (Required for annotation processing)
-    ksp(libs.hilt.compiler)  // ✅ Still needed for this module's @Inject
-
-    // ✅ Unit test için JUnit
+    // --- TEST ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    // ❌ NO: hilt.android (inherited from core-common)
-    // ❌ NO: kotlinx.coroutines.android (inherited)
-    // ❌ NO: kotlinx.serialization.json (inherited)
-
-    // ⚠️ NO UI DEPENDENCIES - Pure network logic!
-    // ❌ No Compose
-    // ❌ No Activity/Fragment
-    // ❌ No Navigation
 }

@@ -33,11 +33,12 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-domain"))
+    api(project(":core-domain"))
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    api(libs.androidx.lifecycle.viewmodel.ktx)
+    api(libs.androidx.appcompat)
+
+    // Test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

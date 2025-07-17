@@ -1,23 +1,10 @@
-// core/core-common/build.gradle.kts - BASE INFRASTRUCTURE MODULE
+// Dosya: core-domain/build.gradle.kts
 
-/**
- * TEACHING MOMENT: core-common Module Purpose
- *
- * Bu module APP'İN FUNDATİON'I:
- * ✅ Shared utilities ve extensions
- * ✅ Common constants
- * ✅ Base exception classes
- * ✅ Core domain models
- *
- * DEPENDENCY RULE: Hiçbir şeye depend etmez, herkes buna depend eder
- */
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
 
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -50,24 +37,8 @@ android {
 }
 
 dependencies {
-    // 📱 CORE ANDROID
-    api(libs.androidx.core.ktx)  // ✅ Tüm modüller kullanacak
-
-    // 💉 DEPENDENCY INJECTION (Shared)
-    api(libs.hilt.android)       // ✅ api - child modules inherit
-    ksp(libs.hilt.compiler)      // ✅ Annotation processing
-
-    // ⚡ COROUTINES (Shared)
-    api(libs.kotlinx.coroutines.android)  // ✅ api - shared
-
-    // 🔄 SERIALIZATION (Shared)
-    api(libs.kotlinx.serialization.json)  // ✅ api - shared
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)  // viewModelScope için bu
-
-    // 📊 TESTING (Shared)
+    api(libs.kotlinx.coroutines.core)
+    api(libs.kotlinx.serialization.json)
+    // TESTING
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-
-    // NO UI dependencies - core-common is pure logic!
 }

@@ -37,24 +37,24 @@ android {
 }
 
 dependencies {
-    // ⭐ MINIMAL DEPENDENCIES - App agnostic!
-    // 📱 CORE ANDROID
-    api(libs.androidx.core.ktx)
 
-    // 💉 HILT - For providing DataStore
-    api(libs.hilt.android)
+     implementation(project(":core-domain"))
+
+    // --- HILT ---
+    // Bu modül @Inject, @Module, @Singleton kullandığı için Hilt'e ihtiyacı var.
+    implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    // 📊 TESTING
+    // --- DATASTORE ---
+    api(libs.androidx.datastore.preferences)
+
+    // --- COROUTINES ---
+    // Repository'lerin Flow döndürmesi ve LanguageProvider'ın CoroutineScope kullanması için gerekli.
+    implementation(libs.kotlinx.coroutines.core)
+
+
+    // --- TEST ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    // Datastore
-    implementation(libs.androidx.datastore.preferences)
-
-    // ❌ NO UI DEPENDENCIES
-    // ❌ NO BUSINESS LOGIC DEPENDENCIES
-    // ❌ NO FEATURE DEPENDENCIES
-    // ✅ Pure infrastructure only!
 }

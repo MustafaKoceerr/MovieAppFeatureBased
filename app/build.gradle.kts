@@ -113,50 +113,47 @@ android {
 }
 
 dependencies {
-// ⭐ FEATURE MODULES (All dependencies inherited through these)
-    implementation(project(":navigation-contracts"))
-    implementation(project(":core-domain"))  // ✅ NEW
     implementation(project(":core-ui"))
-    implementation(project(":feature-movies"))
+    implementation(project(":core-android"))
+    implementation(project(":core-network"))
+    implementation(project(":core-database"))
+    implementation(project(":core-preferences"))
+    implementation(project(":core-domain"))
 
-    // 🗄️ ROOM DATABASE - ✅ EKLENDİ (App level'da KSP için gerekli)
+    // :app modülü, tüm feature ve core modüllerini bir araya getiren
+    // en üst katman olduğu için, hepsine 'implementation' ile bağımlı olması normaldir.
+    implementation(project(":feature-movies"))
+    implementation(project(":navigation-contracts"))
+
+    // HILT
+    // :app modülü @AndroidEntryPoint ve @HiltAndroidApp kullandığı için zorunlu.
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
+
+    // ANDROIDX & UI
+    // MainActivity ve temel UI işlemleri için.
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.appcompat) // attachBaseContext ve AppCompatDelegate için.
+
+    // NAVIGATION
+    // NavHost ve NavController için.
+    implementation(libs.androidx.navigation.compose)
+
+    // ROOM
+    // AppDatabase'i derleyebilmek için KSP burada da gerekli.
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-    ksp(libs.room.compiler) // ✅ ÖNEMLİ: Room annotation processor
+    ksp(libs.room.compiler)
 
-    // Appcompact
-    implementation(libs.androidx.appcompat)
-
-    // navigation
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.hilt.navigation.compose)
-    implementation(libs.kotlinx.serialization.json)
-
-    // 🎨 APP-SPECIFIC UI
-    implementation(libs.androidx.activity.compose)
-
-    // Navigation modülü
-    implementation(libs.androidx.navigation.compose)
-
-    // 💉 HILT KSP (For app's @Inject annotations)
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.android) // hilt pluginini eklediğimiz için plugin doğrudan iletişime geçiyor, burada olmak zorunda
-    // core-common'dan katılım almak bu durumda yetmiyor.
-    // serialization plugininin implementasyon istememes, hilt-serialization pluginlerinin beklenti farkları olmasından kaynaklanır.
-
-    // 📊 TESTING
+    // --- TEST ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
-    // 🛠️ DEBUG
+    // --- DEBUG ---
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    // 🌀 COROUTINES
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
-    testImplementation(libs.kotlinx.coroutines.test)
 }
