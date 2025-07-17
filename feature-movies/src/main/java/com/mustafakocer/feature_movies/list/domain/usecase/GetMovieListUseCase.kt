@@ -28,10 +28,7 @@ class GetMovieListUseCase @Inject constructor(
      * @param category Movie category to fetch
      * @return Flow of PagingData for reactive pagination
      */
-    operator fun invoke(category: MovieCategory): Flow<PagingData<MovieListItem>> {
-        Log.d("GetMovieListUseCase", "🎯 UseCase called with category: ${category.apiEndpoint}")
-        val result = repository.getMoviesForCategory(category)
-        Log.d("GetMovieListUseCase", "🎯 Repository returned flow: $result")
-        return result
+    operator fun invoke(category: MovieCategory, language: String): Flow<PagingData<MovieListItem>> {
+        return repository.getMoviesByCategory(category, language)
     }
 }
