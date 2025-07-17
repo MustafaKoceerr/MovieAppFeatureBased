@@ -16,7 +16,6 @@ import com.mustafakocer.feature_movies.shared.data.local.entity.MovieListEntity
 import com.mustafakocer.feature_movies.shared.data.mapper.toEntityList
 import kotlinx.coroutines.delay
 import retrofit2.HttpException
-import android.util.Log
 
 /**
  * Remote Mediator for Movie List pagination
@@ -37,6 +36,7 @@ class MovieListRemoteMediator(
     private val database: androidx.room.RoomDatabase,
     private val networkConnectivityMonitor: NetworkConnectivityMonitor, // ✅ ADDED!
     private val category: MovieCategory,
+    private val language: String,
 ) : RemoteMediator<Int, MovieListEntity>() {
 
     companion object {
@@ -45,25 +45,15 @@ class MovieListRemoteMediator(
     }
 
     override suspend fun initialize(): InitializeAction {
-        Log.d("RemoteMediator", "🔧 Initialize called")
-        val hasCachedData = movieListDao.hasCachedDataForCategory(category.apiEndpoint)
-        Log.d("RemoteMediator", "🔧 Has cached data: $hasCachedData")
+        val hasCachedData = movieListDao.hasCachedDataForCategory(category.apiEndpoint, language)
 
         return if (hasCachedData) {
-            Log.d("RemoteMediator", "🔧 SKIP_INITIAL_REFRESH - Cache var")
             InitializeAction.SKIP_INITIAL_REFRESH // ❌ Bu Page 1'i atlıyor!
         } else {
-            Log.d("RemoteMediator", "🔧 LAUNCH_INITIAL_REFRESH - Cache yok")
             InitializeAction.LAUNCH_INITIAL_REFRESH
         }
     }
 
-    /**
-     * RemoteMediator Gibi Özel Durumlar: Paging 3'ün RemoteMediator'ı gibi senaryolarda, "bağlantı yok" durumu bir hata değil,
-     * "cache'den devam et" anlamına gelebilir. Bu durumda, MediatorResult.Error döndürmek yerine
-     * MediatorResult.Success(endOfPaginationReached = true) döndürmek daha doğru bir davranıştır. Yani kontrolün sonucu,
-     * her zaman bir hata fırlatmak anlamına gelmez.
-     */
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, MovieListEntity>,
@@ -108,7 +98,8 @@ class MovieListRemoteMediator(
 
             val apiResponse = apiService.getMoviesByCategory(
                 category = category.apiEndpoint,
-                page = page
+                page = page,
+                language = language // <-- DİLİ API'YE GEÇİR (NOT: Bu, Interceptor'ı iptal eder, sonra düzelteceğiz)
             )
             // 2. ADIM: Zarfın sağlam geldiğinden emin oluyoruz.
             if (!apiResponse.isSuccessful) {
@@ -129,13 +120,14 @@ class MovieListRemoteMediator(
             // Database transaction öncesi
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    movieListDao.deleteMoviesForCategory(category.apiEndpoint)
+                    movieListDao.deleteMoviesForCategory(category.apiEndpoint, language)
                     // 2. ADIM: Silme işlemi için oluşturduğumuz anahtarı kullan.
-                    remoteKeyDao.deleteRemoteKey(queryKey)
+                    remoteKeyDao.deleteRemoteKey(queryKey, language)
                 }
 
                 val remoteKey = RemoteKey.create(
                     query = queryKey,
+                    language = language,
                     currentPage = page,
                     totalPages = body.totalPages,
                     totalItems = body.totalResults
@@ -146,7 +138,8 @@ class MovieListRemoteMediator(
                 val movieEntities = movies.toEntityList(
                     category = category.apiEndpoint,
                     page = page,
-                    pageSize = state.config.pageSize
+                    pageSize = state.config.pageSize,
+                    language = language
                 )
                 movieListDao.upsertAll(movieEntities) // upsertAll, bir List bekler.
             }
@@ -164,7 +157,7 @@ class MovieListRemoteMediator(
     ): RemoteKey? {
         return state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.let {
-                remoteKeyDao.getRemoteKey(category.cacheKey)
+                remoteKeyDao.getRemoteKey(category.cacheKey, language)
             }
         }
     }
@@ -173,7 +166,7 @@ class MovieListRemoteMediator(
         state: PagingState<Int, MovieListEntity>,
     ): RemoteKey? {
         return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()?.let {
-            remoteKeyDao.getRemoteKey(category.cacheKey)
+            remoteKeyDao.getRemoteKey(category.cacheKey, language)
         }
     }
 
@@ -181,7 +174,7 @@ class MovieListRemoteMediator(
         state: PagingState<Int, MovieListEntity>,
     ): RemoteKey? {
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()?.let {
-            remoteKeyDao.getRemoteKey(category.cacheKey)
+            remoteKeyDao.getRemoteKey(category.cacheKey, language)
         }
     }
 }
