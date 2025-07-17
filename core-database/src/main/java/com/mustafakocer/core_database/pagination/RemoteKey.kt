@@ -12,32 +12,18 @@ import com.mustafakocer.core_database.cache.CacheMetadata
  */
 @Entity(
     tableName = "remote_keys",
-    indices = [Index(value = ["query"], unique = true)]
-)
-data class RemoteKey(
-    @PrimaryKey
-    val query: String,  // "movies_popular", "movies_top_rated" vs.
+    primaryKeys = ["query", "language"] // <-- BİLEŞİK ANAHTAR
+)data class RemoteKey(
+    val query: String,
+    val language: String, // <-- YENİ SÜTUN
 
-    @ColumnInfo(name = "entity_type")
-    val entityType: String, // "movies", "users", etc.
-
-    @ColumnInfo(name = "current_page")
-    val currentPage: Int,
-
-    @ColumnInfo(name = "next_key")
-    val nextKey: String? = null,
-
-    @ColumnInfo(name = "prev_key")
-    val prevKey: String? = null,
-
-    @ColumnInfo(name = "total_pages")
-    val totalPages: Int? = null,
-
-    @ColumnInfo(name = "total_items")
-    val totalItems: Int? = null,
-
-    @Embedded(prefix = "cache_")
-    val cache: CacheMetadata,
+    @ColumnInfo(name = "entity_type") val entityType: String,
+    @ColumnInfo(name = "current_page") val currentPage: Int,
+    @ColumnInfo(name = "next_key") val nextKey: String? = null,
+    @ColumnInfo(name = "prev_key") val prevKey: String? = null,
+    @ColumnInfo(name = "total_pages") val totalPages: Int? = null,
+    @ColumnInfo(name = "total_items") val totalItems: Int? = null,
+    @Embedded(prefix = "cache_") val cache: CacheMetadata,
 ) {
     companion object {
         /**
@@ -45,6 +31,7 @@ data class RemoteKey(
          */
         fun create(
             query: String,
+            language: String, // <-- YENİ PARAMETRE
             currentPage: Int,
             totalPages: Int?,
             totalItems: Int?,
@@ -53,6 +40,7 @@ data class RemoteKey(
             val isEnd = totalPages?.let { currentPage >= it } == true
             return RemoteKey(
                 query = query,
+                language = language, // <-- YENİ ALANI ATA
                 entityType = query.substringBefore('_'), // "movies_popular" -> "movies"
                 currentPage = currentPage,
                 nextKey = if (isEnd) null else (currentPage + 1).toString(),
