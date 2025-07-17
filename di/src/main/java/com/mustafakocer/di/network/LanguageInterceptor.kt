@@ -1,6 +1,6 @@
 package com.mustafakocer.di.network
 
-import com.mustafakocer.data_common.preferences.provider.LanguageProvider // <-- YENİ IMPORT
+import com.mustafakocer.core_preferences.provider.LanguageProvider // <-- YENİ IMPORT
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject

@@ -1,4 +1,4 @@
-package com.mustafakocer.data_common.preferences.repository
+package com.mustafakocer.core_preferences.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

@@ -1,14 +1,6 @@
-package com.mustafakocer.data_common.preferences.provider
+package com.mustafakocer.core_preferences.provider
 
-/**
- * Her api isteğinde veriyi DataStore'dan okumak verimsizdi.
- * Network config'in lifecycle scope'unu Singleton'dan ActivityScoped'a çekersek, her dil değiştiğinde activity recrate olduğu için bu sorunu çözebiliriz ama bu seferde,
- * Sadece dili değiştirmek için birçok network bağımlılığı (retrofit, okhttpclient) vs yeniden oluşturulur. Bu da verimsizdir.
- *
- * Üçüncü ve best case yol olarak: LanguageProvider yardımcı class'ıyla bir kere language'yi okuyacağız ve Bu aracı class yardımıyla bu işi çözeceğiz.
- * // todo yapıyı anladıktan sonra daha iyi bir açıklama yaz.
- */
-import com.mustafakocer.data_common.preferences.repository.LanguageRepository
+import com.mustafakocer.core_preferences.repository.LanguageRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
