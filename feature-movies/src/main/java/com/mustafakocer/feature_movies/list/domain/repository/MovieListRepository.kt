@@ -10,10 +10,16 @@ interface MovieListRepository {
     /**
      * Get paginated movies for specific category
      */
-    fun getMoviesForCategory(category: MovieCategory): Flow<PagingData<MovieListItem>>
+    fun getMoviesByCategory(
+        category: MovieCategory,
+        language: String,
+    ): Flow<PagingData<MovieListItem>>
 
     /**
      * Refresh cache for specific category
      */
-    suspend fun refreshCategory(category: MovieCategory)
+    suspend fun refreshCategory(
+        category: MovieCategory,
+        language: String,
+    )
 }
