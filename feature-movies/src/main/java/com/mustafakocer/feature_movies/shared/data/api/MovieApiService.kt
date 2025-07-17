@@ -3,6 +3,7 @@ package com.mustafakocer.feature_movies.shared.data.api
 import com.mustafakocer.feature_movies.shared.data.model.MovieDto
 import com.mustafakocer.feature_movies.shared.data.model.PaginatedResponseDto
 import com.mustafakocer.feature_movies.shared.data.model.moviedetails.MovieDetailsDto
+import com.mustafakocer.feature_movies.shared.data.model.moviedetails.SpokenLanguage
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -52,6 +53,7 @@ interface MovieApiService {
     suspend fun getMoviesByCategory(
         @Path("category") category: String,
         @Query("page") page: Int = 1,
+        @Query("language") language: String = "en-US",
     ): Response<PaginatedResponseDto<MovieDto>>
 
 
