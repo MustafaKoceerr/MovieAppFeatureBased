@@ -1,7 +1,7 @@
 package com.mustafakocer.feature_movies.home.data.repository
 
 import com.mustafakocer.core_preferences.provider.LanguageProvider
-import com.mustafakocer.feature_movies.home.data.repository.local.HomeMovieDao
+import com.mustafakocer.feature_movies.home.data.local.HomeMovieDao
 import com.mustafakocer.feature_movies.home.domain.repository.MovieRepository
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
 import com.mustafakocer.feature_movies.shared.data.mapper.toDomainList
