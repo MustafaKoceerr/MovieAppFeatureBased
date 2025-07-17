@@ -34,7 +34,10 @@ class MovieListRemoteMediatorFactory @Inject constructor(
      * @param category Movie category for pagination
      * @return Configured RemoteMediator instance
      */
-    fun create(category: MovieCategory): MovieListRemoteMediator {
+    fun create(
+        category: MovieCategory,
+        language: String,
+    ): MovieListRemoteMediator {
         return MovieListRemoteMediator(
             apiService = apiService,
             movieListDao = movieListDao,
@@ -42,6 +45,7 @@ class MovieListRemoteMediatorFactory @Inject constructor(
             database = database,
             networkConnectivityMonitor = networkConnectivityMonitor, // ✅ INJECT!
             category = category,
+            language = language
         )
     }
 }
