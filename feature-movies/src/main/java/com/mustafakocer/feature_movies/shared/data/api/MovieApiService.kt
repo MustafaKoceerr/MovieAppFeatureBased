@@ -53,7 +53,6 @@ interface MovieApiService {
     suspend fun getMoviesByCategory(
         @Path("category") category: String,
         @Query("page") page: Int = 1,
-        @Query("language") language: String = "en-US",
     ): Response<PaginatedResponseDto<MovieDto>>
 
 

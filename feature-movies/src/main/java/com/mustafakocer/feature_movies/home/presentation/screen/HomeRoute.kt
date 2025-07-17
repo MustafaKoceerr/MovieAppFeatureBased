@@ -17,13 +17,13 @@ fun HomeRoute(
     navActions: FeatureMoviesNavActions,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val state by com.mustafakocer.core_android.presentation.BaseViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Yan etkileri (Effect'leri) dinleyip yöneten bölüm.
     // Bu blok, HomeRoute ekranda olduğu sürece aktif kalır.
     LaunchedEffect(Unit) {
-        viewModel.uiEffect.collectLatest { effect ->
+        com.mustafakocer.core_android.presentation.BaseViewModel.uiEffect.collectLatest { effect ->
             when (effect) {
                 is HomeEffect.NavigateToMovieDetails -> navActions.navigateToMovieDetails(effect.movieId)
                 is HomeEffect.NavigateToMovieList -> navActions.navigateToMovieList(
