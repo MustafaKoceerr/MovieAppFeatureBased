@@ -1,4 +1,4 @@
-package com.mustafakocer.data_common.preferences.repository
+package com.mustafakocer.core_preferences.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+
 
 /**
  * NEDEN DI package'ini sildim?

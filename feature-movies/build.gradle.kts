@@ -1,26 +1,4 @@
 // feature-movies/build.gradle.kts
-/**
- * TEACHING MOMENT: Feature Module Dependencies
- *
- * DEPENDENCY HIERARCHY:
- * feature-movies → core-network → core-common
- * feature-movies → core-ui (for shared components)
- * feature-movies → core-database (for pagination)
- *
- * ✅ Feature modules depend on CORE modules
- * ❌ Feature modules NEVER depend on other features
- * ❌ Core modules NEVER depend on features
- */
-
-//// En üste ekle
-//import java.util.Properties
-//
-//// build.gradle.kts (module-level)'in en üstüne ekle:
-//val localProperties = File(rootDir, "local.properties")
-//val apiKey = Properties().apply {
-//    load(localProperties.inputStream())
-//}.getProperty("API_KEY") ?: throw GradleException("API_KEY not found in local.properties")
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -42,10 +20,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-
-
-        // API key'i BuildConfig'e ekliyoruz
-//        buildConfigField("String", "API_KEY", apiKey)
     }
 
     buildTypes {
@@ -76,8 +50,8 @@ dependencies {
     implementation(project(":core-network"))   // → Retrofit, Serialization, core-common
     implementation(project(":core-database"))  // → Room, Paging, core-common
     implementation(project(":core-preferences")) // ✅ NEW: Theme & Preferences
-    implementation(project(":data-common"))       // ← NEW: Access to ThemeRepository
     implementation(project(":navigation-contracts")) // <-- SÖZLEŞMELERİ BİLMELİ
+    implementation(project(":core-android")) //
 
     // Navigation modülü
     implementation(libs.androidx.navigation.compose) // <-- NavGraphBuilder İÇİN GEREKLİ

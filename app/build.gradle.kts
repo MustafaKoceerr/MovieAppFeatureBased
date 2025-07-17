@@ -1,3 +1,4 @@
+// app module gradle.
 import java.util.Properties
 
 // Dosyanın en üstüne bu bloğu ekliyoruz.
@@ -114,10 +115,9 @@ android {
 dependencies {
 // ⭐ FEATURE MODULES (All dependencies inherited through these)
     implementation(project(":di"))
-    implementation(project(":navigation-contracts"))  // ✅ NEW
-    implementation(project(":core-common"))
+    implementation(project(":navigation-contracts"))
+    implementation(project(":core-domain"))  // ✅ NEW
     implementation(project(":core-ui"))
-    implementation(project(":data-common"))
     implementation(project(":feature-movies"))
 
     // 🗄️ ROOM DATABASE - ✅ EKLENDİ (App level'da KSP için gerekli)

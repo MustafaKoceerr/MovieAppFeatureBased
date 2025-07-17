@@ -51,8 +51,8 @@ android {
 }
 
 dependencies {
-// ⭐ CORE DEPENDENCY - UiContract types için
-    api(project(":core-common"))
+api(project(":core-domain"))
+    // ⭐ CORE DEPENDENCY - UiContract types için
 
     // 🎨 COMPOSE CORE (Pure UI)
     api(platform(libs.androidx.compose.bom))

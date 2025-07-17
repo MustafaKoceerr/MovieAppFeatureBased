@@ -54,8 +54,8 @@ android {
 }
 
 dependencies {
+    api(project(":core-domain"))
     // ⭐ CORE DEPENDENCY (Brings Hilt, Coroutines, Serialization)
-    api(project(":core-common"))
 
     // 🌐 NETWORK SPECIFIC ONLY
     api(libs.retrofit.core)

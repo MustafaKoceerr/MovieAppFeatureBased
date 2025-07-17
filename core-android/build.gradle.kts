@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.mustafakocer.core_database_contract"
+    namespace = "com.mustafakocer.core_android"
     compileSdk = 35
 
     defaultConfig {
@@ -32,12 +32,13 @@ android {
     }
 }
 
-// Bu modülün görevi sözleşme tanımlamaktır, başka bir kütüphaneye ihtiyacı yoktur.
 dependencies {
+    implementation(project(":core-domain"))
 
-    // Unit tests
-    testImplementation(libs.testng)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
     testImplementation(libs.junit)
-    // Android Instrumented tests
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }

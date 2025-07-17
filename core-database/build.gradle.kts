@@ -47,8 +47,8 @@ android {
 }
 
 dependencies {
+    api(project(":core-domain"))
     // ⭐ CORE DEPENDENCY (Brings Hilt, Coroutines, Serialization)
-    api(project(":core-common"))
 
     // 🗄️ ROOM DATABASE - Core functionality
     api(libs.room.runtime)

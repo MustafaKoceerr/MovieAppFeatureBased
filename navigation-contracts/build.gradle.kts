@@ -1,20 +1,5 @@
 // navigation-contracts/build.gradle.kts
 
-/**
- * NAVIGATION CONTRACTS MODULE
- *
- * PURPOSE:
- * ✅ App-specific navigation interfaces and destinations
- * ✅ Centralized navigation contracts for all features
- * ✅ Type-safe navigation with @Serializable
- * ✅ No UI dependencies - pure contracts
- *
- * ARCHITECTURE PLACEMENT:
- * - Features depend on this module for navigation contracts
- * - App module implements these contracts
- * - No circular dependencies
- */
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)

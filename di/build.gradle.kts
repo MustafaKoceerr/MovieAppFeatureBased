@@ -1,3 +1,4 @@
+// di module gradle
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -37,15 +38,13 @@ android {
 }
 
 dependencies {
-// ⭐ FEATURE MODULES (All dependencies inherited through these)
-    implementation(project(":core-common"))
+implementation(project(":core-domain"))
+    // ⭐ FEATURE MODULES (All dependencies inherited through these)
     implementation(project(":core-ui"))
     implementation(project(":core-network"))
     implementation(project(":feature-movies"))
     implementation(project(":core-database"))
     implementation(project(":core-preferences"))
-    implementation(project(":data-common"))
-    implementation(project(":core-database-contract"))
 
     // 🗄️ ROOM DATABASE - ✅ EKLENDİ (App level'da KSP için gerekli)
     implementation(libs.room.runtime)
