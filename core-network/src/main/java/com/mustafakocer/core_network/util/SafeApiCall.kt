@@ -20,7 +20,6 @@ import retrofit2.Response
 fun <T> safeApiCall(
     apiCall: suspend () -> Response<T>,
 ): Flow<Resource<T>> = flow {
-
     // 1. Akış başladığında, UI'a yüklemenin başladığını bildir.
     emit(Resource.Loading)
 
