@@ -77,48 +77,6 @@ abstract class BaseViewModel<
             _uiEffect.emit(effect)
         }
     }
-
-    /**
-     * Tek seferlik istekleri güvenli bir şekilde atıyor ve finally bloğunda loading'i false yapıyor.
-     * Launches a coroutine safely, handling loading and error states automatically.
-     * This is the main helper to interact with UseCases.
-     *
-     * @param loadingType Determines whether to show a full-screen loader or a refresh indicator.
-     * @param action The suspend function to execute (e.g., a use case).
-     */
-    protected fun executeSafeOnce(
-        loadingType: LoadingType = LoadingType.MAIN,
-        action: suspend () -> Unit,
-    ) {
-        viewModelScope.launch {
-            // Set loading state before starting the action
-            setLoading(loadingType, true)
-            try {
-                action()
-            } catch (e: Exception) {
-                // Set error state if an exception occurs
-                setState {
-                    handleError(e.toAppException())
-                }
-            } finally {
-                // Ensure loading state is reset after the action completes or fails
-                setLoading(loadingType, false)
-            }
-        }
-    }
-
-    /**
-     * An abstract function that concrete ViewModels must implement to update their
-     * specific state with an error.
-     */
-    protected abstract fun handleError(error: AppException): State
-
-    /**
-     * An abstract function that concrete ViewModels must implement to update their
-     * loading/refreshing state.
-     */
-    protected abstract fun setLoading(loadingType: LoadingType, isLoading: Boolean): State
-
 }
 
 /**
