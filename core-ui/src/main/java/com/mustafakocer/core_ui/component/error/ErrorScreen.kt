@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
 
 /**
@@ -48,11 +49,11 @@ import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
 @Composable
 fun ErrorScreen(
     modifier: Modifier = Modifier,
-    error: ErrorInfo? = null,
+    error: ErrorInfo,
     onRetry: (() -> Unit)? = null,
     onNavigateBack: (() -> Unit)? = null,
 ) {
-    val displayError = error ?: GenericErrorMessageFactory.unknownError()
+    val displayError = error
     val infiniteTransition = rememberInfiniteTransition(label = "error_animation")
 
     val bounceAnimation by infiniteTransition.animateFloat(
@@ -192,8 +193,10 @@ fun ErrorScreen(
 @Composable
 fun ErrorScreenPreview() {
     MovieDiscoveryTheme {
+        val errorInfo = AppException.Api.ServerError(code = 500).toErrorInfo()
         ErrorScreen(
-            error = GenericErrorMessageFactory.serverError()
+            error = errorInfo,
+            onRetry = {}
         )
     }
 }
