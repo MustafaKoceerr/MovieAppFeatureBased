@@ -12,7 +12,6 @@ android {
 
     defaultConfig {
         minSdk = 24
-
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -25,6 +24,14 @@ android {
             )
         }
     }
+
+    // Test kaynakları olmadığı için bu bloğu kaldırabiliriz veya boş bırakabiliriz.
+    // Gradle'ın kafasının karışmaması için boş bırakmak daha güvenli olabilir.
+    sourceSets {
+        named("test") { java.srcDirs() }
+        named("androidTest") { java.srcDirs() }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
