@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_title_no_internet">Keine Internetverbindung</string>
+    <string name="error_desc_no_internet">Sie sind offline. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.</string>
+
+    <string name="error_title_timeout">Zeitüberschreitung der Anfrage</string>
+    <string name="error_desc_timeout">Der Server braucht zu lange zum Antworten. Dies könnte ein temporäres Problem sein.</string>
+
+    <string name="error_title_unauthorized">Nicht autorisiert</string>
+    <string name="error_desc_unauthorized">Es gab ein Authentifizierungsproblem. Bitte versuchen Sie, die App neu zu starten.</string>
+
+    <string name="error_title_not_found">Nicht gefunden</string>
+    <string name="error_desc_not_found">Wir konnten den Inhalt, den Sie suchen, nicht finden.</string>
+
+    <string name="error_title_server">Serverfehler</string>
+    <string name="error_desc_server">Unsere Server haben einige Probleme. Bitte versuchen Sie es in wenigen Augenblicken erneut.</string>
+
+    <string name="error_title_unknown">Ein unerwarteter Fehler</string>
+    <string name="error_desc_unknown">Etwas ist auf unserer Seite schiefgegangen. Wir arbeiten daran, es zu beheben!</string>
+</resources>

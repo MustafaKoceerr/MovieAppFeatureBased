@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_title_no_internet">Pas de Connexion Internet</string>
+    <string name="error_desc_no_internet">Il semble que vous soyez hors ligne. Veuillez vérifier votre connexion et réessayer.</string>
+
+    <string name="error_title_timeout">Délai d\'Attente Dépassé</string>
+    <string name="error_desc_timeout">Le serveur prend trop de temps à répondre. Cela pourrait être un problème temporaire.</string>
+
+    <string name="error_title_unauthorized">Non Autorisé</string>
+    <string name="error_desc_unauthorized">Il y a eu un problème d\'authentification. Veuillez essayer de redémarrer l\'application.</string>
+
+    <string name="error_title_not_found">Introuvable</string>
+    <string name="error_desc_not_found">Nous n\'avons pas pu trouver le contenu que vous recherchiez.</string>
+
+    <string name="error_title_server">Erreur du Serveur</string>
+    <string name="error_desc_server">Nos serveurs rencontrent quelques problèmes. Veuillez réessayer dans quelques instants.</string>
+
+    <string name="error_title_unknown">Une Erreur Inattendue</string>
+    <string name="error_desc_unknown">Quelque chose s\'est mal passé de notre côté. Nous travaillons pour le réparer !</string>
+</resources>
