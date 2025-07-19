@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_title_no_internet">Nessuna Connessione Internet</string>
+    <string name="error_desc_no_internet">Sembra che tu sia offline. Controlla la tua connessione e riprova.</string>
+
+    <string name="error_title_timeout">Richiesta Scaduta</string>
+    <string name="error_desc_timeout">Il server sta impiegando troppo tempo a rispondere. Questo potrebbe essere un problema temporaneo.</string>
+
+    <string name="error_title_unauthorized">Non Autorizzato</string>
+    <string name="error_desc_unauthorized">C\'è stato un problema di autenticazione. Prova a riavviare l\'applicazione.</string>
+
+    <string name="error_title_not_found">Non Trovato</string>
+    <string name="error_desc_not_found">Non siamo riusciti a trovare il contenuto che stavi cercando.</string>
+
+    <string name="error_title_server">Errore del Server</string>
+    <string name="error_desc_server">I nostri server stanno riscontrando alcuni problemi. Riprova tra qualche momento.</string>
+
+    <string name="error_title_unknown">Un Errore Inaspettato</string>
+    <string name="error_desc_unknown">Qualcosa è andato storto dal nostro lato. Stiamo lavorando per risolverlo!</string>
+</resources>

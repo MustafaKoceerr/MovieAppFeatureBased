@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mustafakocer.core_ui.component.error.ErrorScreen
-import com.mustafakocer.core_ui.component.error.toErrorInfoOrFallback
+import com.mustafakocer.core_ui.component.error.toErrorInfo
 import com.mustafakocer.core_ui.component.loading.LoadingScreen
 import com.mustafakocer.feature_movies.details.presentation.components.MovieDetailsContent
 import com.mustafakocer.feature_movies.details.presentation.components.MovieDetailsTopBar
@@ -20,6 +20,7 @@ import com.mustafakocer.feature_movies.details.presentation.components.ShareFloa
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEvent
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsUiState
 import com.mustafakocer.feature_movies.R
+import com.mustafakocer.feature_movies.details.util.formatShareContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,14 +29,6 @@ fun MovieDetailsScreen(
     onEvent: (MovieDetailsEvent) -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
-    // Event handler içinde string resources'ları alamadığım için burada tanımlıyorum.
-    val shareTitle = stringResource(R.string.share_text_title)
-    val textRating = stringResource(R.string.share_text_rating)
-    val textRelease = stringResource(R.string.share_text_release)
-    val textRuntime = stringResource(R.string.share_text_runtime)
-    val textGenres = stringResource(R.string.share_text_genres)
-    val textTags = stringResource(R.string.share_text_tags)
-
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
@@ -48,18 +41,12 @@ fun MovieDetailsScreen(
         floatingActionButton = {
             // Sadece film detayı varsa paylaşma butonu görünsün.
             if (state.movie != null) {
+                val shareContent = formatShareContent(movie = state.movie)
                 ShareFloatingActionButton(
                     isSharing = state.isSharing,
                     onClick = {
                         onEvent(
-                            MovieDetailsEvent.ShareMovie(
-                                shareTitle = shareTitle,
-                                textRating = textRating,
-                                textRelease = textRelease,
-                                textRuntime = textRuntime,
-                                textGenres = textGenres,
-                                textTags = textTags
-                            )
+                            MovieDetailsEvent.ShareMovie(content = shareContent)
                         )
                     }
                 )
@@ -71,21 +58,18 @@ fun MovieDetailsScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Sealed class yerine basit if/else kontrolleri
-            if (state.isLoading) {
-                LoadingScreen(message = stringResource(R.string.loading_movie_details))
-            } else if (state.error != null) {
-                // Hata durumunda ErrorScreen gösterilir.
-                // ErrorInfo'yu anlık olarak oluşturabiliriz veya state'e ekleyebiliriz.
-                ErrorScreen(
-                    error = state.error.toErrorInfoOrFallback(),
-                    onRetry = { onEvent(MovieDetailsEvent.Refresh) }
-                )
-            } else if (state.movie != null) {
-                // Başarılı durumda içerik gösterilir.
+
+            if (state.movie != null) {
                 MovieDetailsContent(
                     movie = state.movie,
-                    isRefreshLoading = state.isRefreshing,
+                    isRefreshLoading = state.isRefreshing
+                )
+            } else if (state.isLoading) {
+                LoadingScreen(message = stringResource(R.string.loading_movie_details))
+            } else if (state.error != null) {
+                ErrorScreen(
+                    error = state.error.toErrorInfo(),
+                    onRetry = { onEvent(MovieDetailsEvent.Refresh) }
                 )
             }
         }

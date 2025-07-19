@@ -22,11 +22,11 @@ sealed interface SettingsEvent : BaseUiEvent {
     data class ThemeSelected(val theme: ThemePreference) : SettingsEvent
     data class LanguageSelected(val language: LanguagePreference) : SettingsEvent
     object BackClicked : SettingsEvent
+    object DismissError : SettingsEvent
 }
 
 // ==================== EFFECT ====================
 sealed interface SettingsEffect : BaseUiEffect {
     object NavigateBack : SettingsEffect
-    data class ShowSnackbar(val message: String) : SettingsEffect
     object RestartActivity : SettingsEffect
 }

@@ -38,6 +38,7 @@ fun SearchTopBar(
     onQueryChange: (String) -> Unit,
     onClearSearch: () -> Unit,
     onNavigateBack: () -> Unit,
+    onSearchSubmitted: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // Ekrana ilk gelindiğinde arama kutusuna otomatik olarak odaklanmak
@@ -65,8 +66,9 @@ fun SearchTopBar(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = { keyboardController?.hide() }
-                ),
+                    onDone = {
+                        onSearchSubmitted()
+                    }),
                 singleLine = true,
                 // Temizle (X) butonu
                 trailingIcon = {

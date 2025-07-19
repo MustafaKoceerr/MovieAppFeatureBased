@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_title_no_internet">Нет подключения к интернету</string>
+    <string name="error_desc_no_internet">Похоже, вы находитесь в автономном режиме. Проверьте соединение и повторите попытку.</string>
+
+    <string name="error_title_timeout">Истекло время ожидания</string>
+    <string name="error_desc_timeout">Сервер слишком долго отвечает. Возможно, это временная проблема.</string>
+
+    <string name="error_title_unauthorized">Не авторизован</string>
+    <string name="error_desc_unauthorized">Возникла проблема с аутентификацией. Попробуйте перезапустить приложение.</string>
+
+    <string name="error_title_not_found">Не найдено</string>
+    <string name="error_desc_not_found">Мы не смогли найти контент, который вы искали.</string>
+
+    <string name="error_title_server">Ошибка сервера</string>
+    <string name="error_desc_server">Наши серверы испытывают некоторые проблемы. Повторите попытку через несколько минут.</string>
+
+    <string name="error_title_unknown">Неожиданная ошибка</string>
+    <string name="error_desc_unknown">Что-то пошло не так с нашей стороны. Мы работаем над устранением проблемы!</string>
+</resources>

@@ -8,21 +8,13 @@ import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails
 
 sealed interface MovieDetailsEffect : BaseUiEffect {
     object NavigateBack : MovieDetailsEffect
-    data class ShareContent(val title: String, val content: String) : MovieDetailsEffect
+    data class ShareContent(val content: String) : MovieDetailsEffect
     data class ShowSnackbar(val message: String, val isError: Boolean = false) : MovieDetailsEffect
 }
 
 sealed interface MovieDetailsEvent : BaseUiEvent {
     object Refresh : MovieDetailsEvent
-    data class ShareMovie(
-        val shareTitle: String,
-        val textRating: String,
-        val textRelease: String,
-        val textRuntime: String,
-        val textGenres: String,
-        val textTags: String,
-    ) : MovieDetailsEvent
-
+    data class ShareMovie(val content: String) : MovieDetailsEvent
     object BackPressed : MovieDetailsEvent
     object DismissError : MovieDetailsEvent // hata mesajını kapatmak için
 

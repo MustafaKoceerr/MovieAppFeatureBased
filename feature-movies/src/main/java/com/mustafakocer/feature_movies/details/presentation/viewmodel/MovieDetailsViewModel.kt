@@ -1,26 +1,26 @@
 package com.mustafakocer.feature_movies.details.presentation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.mustafakocer.core_android.presentation.BaseViewModel
-import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.core_android.presentation.LoadingType
+import com.mustafakocer.core_common.util.Resource
 import com.mustafakocer.feature_movies.details.domain.usecase.GetMovieDetailsUseCase
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEffect
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEvent
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsUiState
-import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails
-import com.mustafakocer.feature_movies.shared.util.formattedRating
 import com.mustafakocer.navigation_contracts.navigation.MovieDetailsScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsEvent, MovieDetailsEffect>(
-    initialState = MovieDetailsUiState() // Başlangıç state'ini veriyoruz
+    initialState = MovieDetailsUiState()
 ) {
     private val movieId: Int = savedStateHandle.get<Int>(MovieDetailsScreen.KEY_MOVIE_ID)
         ?: throw IllegalStateException("movieId is required")
@@ -31,127 +31,68 @@ class MovieDetailsViewModel @Inject constructor(
 
     override fun onEvent(event: MovieDetailsEvent) {
         when (event) {
-            is MovieDetailsEvent.Refresh -> loadMovieDetails(loadingType = LoadingType.REFRESH) // todo sonra implement et
-            is MovieDetailsEvent.ShareMovie -> handleShareMovie(
-                shareTitle = event.shareTitle,
-                textRating = event.textRating,
-                textRelease = event.textRelease,
-                textRuntime = event.textRuntime,
-                textGenres = event.textGenres,
-                textTags = event.textTags
-            )
-
+            is MovieDetailsEvent.Refresh -> loadMovieDetails(loadingType = LoadingType.REFRESH)
+            is MovieDetailsEvent.ShareMovie -> handleShareMovie(event.content)
             is MovieDetailsEvent.BackPressed -> sendEffect(
                 MovieDetailsEffect.NavigateBack
-            ) // bu fonksiyon baseViewModel'den geliyor
+            )
+
             is MovieDetailsEvent.DismissError -> setState {
                 copy(
                     error = null
                 )
-            } // bu fonksiyon baseViewModel'den geliyor.
-
+            }
         }
     }
 
     private fun loadMovieDetails(loadingType: LoadingType) {
-        // Karmaşık collect bloğu yerine, BaseViewModel'deki safeLaunch'ı kullanıyoruz.
-        executeSafeOnce(loadingType) {
-            val details = getMovieDetailsUseCase(movieId).first()
-            setState { copy(movie = details) }
-        }
+        // executeSafeOnce yerine, Flow'u doğrudan dinliyoruz.
+        getMovieDetailsUseCase(movieId)
+            .onEach { resource ->
+                // onEach, Flow'dan gelen her bir emit için bu bloğu çalıştırır.
+                val newState = when (resource) {
+                    is Resource.Loading -> {
+                        // Yükleniyor durumunda, hangi tür yükleme olduğunu (ilk mi, yenileme mi)
+                        // state'e yansıt.
+                        when (loadingType) {
+                            LoadingType.MAIN -> currentState.copy(isLoading = true)
+                            LoadingType.REFRESH -> currentState.copy(isRefreshing = true)
+                        }
+                    }
+
+                    is Resource.Success -> {
+                        // Başarı durumunda, veriyi state'e yaz ve tüm yükleme/hata
+                        // durumlarını temizle.
+                        currentState.copy(
+                            isLoading = false,
+                            isRefreshing = false,
+                            error = null,
+                            movie = resource.data
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        // Hata durumunda, hatayı state'e yaz ve tüm yükleme
+                        // durumlarını temizle.
+                        currentState.copy(
+                            isLoading = false,
+                            isRefreshing = false,
+                            error = resource.exception
+                        )
+                    }
+                }
+                // Hesaplanan yeni state'i tek bir yerden UI'a bildir.
+                setState { newState }
+            }
+            .launchIn(viewModelScope) // Bu Flow'u viewModelScope'ta başlat ve dinle.
     }
 
-    private fun handleShareMovie(
-        shareTitle: String,
-        textRating: String,
-        textRelease: String,
-        textRuntime: String,
-        textGenres: String,
-        textTags: String,
-    ) {
-        val movie = currentState.movie ?: return // Film detayı yoksa paylaşma
-
+    private fun handleShareMovie(shareContent: String) {
         setState { copy(isSharing = true) }
 
-        val shareContent = buildShareContent(
-            movie,
-            shareTitle,
-            textRating,
-            textRelease,
-            textRuntime,
-            textGenres,
-            textTags,
-        )
-        sendEffect(
-            MovieDetailsEffect.ShareContent(
-                shareTitle,
-                shareContent
-            )
-        )
+        sendEffect(MovieDetailsEffect.ShareContent(shareContent))
 
-        // Paylaşım anlık bir işlem olduğu için, UI'da spinner göstermek adına
-        // durumu hemen geri alabiliriz veya bir gecikme ekleyebiliriz.
-        // Şimdilik basit tutalım.
         setState { copy(isSharing = false) }
-    }
-
-
-    // BaseViewModel'in zorunlu kıldığı abstract metodları implemente ediyoruz.
-    override fun handleError(error: AppException): MovieDetailsUiState {
-        return currentState.copy(error = error)
-    }
-
-    override fun setLoading(
-        loadingType: LoadingType,
-        isLoading: Boolean,
-    ): MovieDetailsUiState {
-        return when (loadingType) {
-            LoadingType.MAIN -> currentState.copy(
-                isLoading = isLoading
-            )
-
-            LoadingType.REFRESH -> currentState.copy(
-                isRefreshing = isLoading
-            )
-        }
-    }
-
-    /**
-     * Build formatted content for sharing
-     */
-    private fun buildShareContent(
-        movie: MovieDetails,
-        shareTitle: String,
-        textRating: String,
-        textRelease: String,
-        textRuntime: String,
-        textGenres: String,
-        textTags: String,
-    ): String {
-        return buildString {
-            append("$shareTitle\n\n")
-
-            append("🎬 ${movie.title}\n\n")
-
-            if (movie.hasTagline) {
-                append("\"${movie.tagline}\"\n\n")
-            }
-
-            append("⭐ $textRating: ${movie.voteAverage.formattedRating}/10\n")
-            append("📅 $textRelease: ${movie.releaseDate}\n")
-
-            if (movie.runtime.isNotEmpty()) {
-                append("⏱️ $textRuntime: ${movie.runtime}\n")
-
-            }
-
-            if (movie.genres.isNotEmpty()) {
-                append("🎭 $textGenres: ${movie.genres.joinToString { it.name }}\n")
-            }
-
-            append("\n📖 ${movie.overview}")
-            append("\n\n$textTags #${movie.title.replace(" ", "")}")
-        }
     }
 
 }

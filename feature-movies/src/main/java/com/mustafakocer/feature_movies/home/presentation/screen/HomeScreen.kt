@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_ui.component.error.ErrorScreen
+import com.mustafakocer.core_ui.component.error.toErrorInfo
 import com.mustafakocer.core_ui.component.loading.LoadingScreen
 import com.mustafakocer.feature_movies.R
 import com.mustafakocer.feature_movies.home.presentation.components.FakeSearchBar
@@ -62,22 +63,25 @@ fun HomeScreen(
                 .fillMaxSize()
         )
         {
-            if (state.showFullScreenLoading) {
-                LoadingScreen(message = stringResource(R.string.loading_movies))
-            } else if (state.showFullScreenError) {
+            // 1. Önce tam ekran hata durumunu kontrol et
+            if (state.showFullScreenError) {
+                // Hata null olmayacağı için !! kullanmak güvenlidir.
                 ErrorScreen(
-                    // errorInfo'yu anlık olarak oluşturabiliriz.
-                    // error = state.error!!.toErrorInfoOrFallback(),
+                    error = state.error!!.toErrorInfo(),
                     onRetry = { onEvent(HomeEvent.Refresh) }
                 )
-            } else {
-                // Başarı durumunda, yenilenebilir içeriği gösteriyoruz.
+            }
+            // 2. Sonra tam ekran yükleme durumunu kontrol et.
+            else if (state.showFullScreenLoading) {
+                LoadingScreen(message = stringResource(R.string.loading_movies))
+            }
+            // 3. Hiçbiri yoksa, asıl içerisi göster.
+            else {
                 PullToRefreshBox(
                     isRefreshing = state.isRefreshing,
                     onRefresh = { onEvent(HomeEvent.Refresh) },
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    // Buradaki içeriğin kaydırılabilir olması gereklidir.
                     HomeContent(state = state, onEvent = onEvent)
                 }
             }

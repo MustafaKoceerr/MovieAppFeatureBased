@@ -1,67 +1,69 @@
 package com.mustafakocer.core_ui.component.error
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.SearchOff
+import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import com.mustafakocer.core_common.exception.AppException
+import com.mustafakocer.core_ui.R // :core-ui modülünün kendi R dosyası
 
 /**
- * Extension functions to map AppException to UI-friendly error handling
+ * Bir AppException'ı, UI'da gösterebilecek zengin bir ErrorInfo nesnesine dönüştürür.
+ * Bu, projedeki tüm hata->UI çevirme mantığının tek merkezidir.
  *
- * HYBRID APPROACH:
- * ✅ Global infrastructure errors → GeneralErrorType
- * ✅ Contextual business errors → Handle in ViewModel
- * ✅ Clean separation of concerns
+ * Bu fonksiyon @Composable'dır çünkü string kaynaklarına (`stringResource`) erişir.
  */
 
-/**
- * Map AppException to GeneralErrorType if it's a global infrastructure error.
- * Returns null for contextual errors that should be handled in ViewModel.
- */
-
-fun AppException.toGeneralErrorTypeOrNull(): GeneralErrorType? {
+@Composable
+fun AppException.toErrorInfo(): ErrorInfo {
     return when (this) {
-        // Network infrastructure errors (always global)
-        is AppException.NetworkException.NoInternetConnection -> GeneralErrorType.NO_INTERNET
-        is AppException.NetworkException.ServerTimeout -> GeneralErrorType.SERVER_TIMEOUT
-        is AppException.NetworkException.ServerUnreachable -> GeneralErrorType.SERVER_UNREACHABLE
+        // Ağ hataları
+        // --- Ağ Hataları ---
+        is AppException.Network.NoInternet -> ErrorInfo(
+            title = stringResource(id = R.string.error_title_no_internet),
+            description = stringResource(id = R.string.error_desc_no_internet),
+            icon = Icons.Default.WifiOff,
+            emoji = "📡"
+        )
+        is AppException.Network.Timeout -> ErrorInfo(
+            title = stringResource(id = R.string.error_title_timeout),
+            description = stringResource(id = R.string.error_desc_timeout),
+            icon = Icons.Default.CloudOff,
+            emoji = "⏱️"
+        )
 
-        // Server infrastructure errors (always global)
-        is AppException.ApiException.ServerError -> GeneralErrorType.SERVER_ERROR
+        // --- API Hataları ---
+        is AppException.Api.Unauthorized -> ErrorInfo(
+            title = stringResource(id = R.string.error_title_unauthorized),
+            description = stringResource(id = R.string.error_desc_unauthorized),
+            icon = Icons.Default.Lock,
+            emoji = "🔑"
+        )
+        is AppException.Api.NotFound -> ErrorInfo(
+            title = stringResource(id = R.string.error_title_not_found),
+            description = stringResource(id = R.string.error_desc_not_found),
+            icon = Icons.Default.SearchOff,
+            emoji = "🤷"
+        )
+        is AppException.Api.ServerError -> ErrorInfo(
+            title = stringResource(id = R.string.error_title_server),
+            description = stringResource(id = R.string.error_desc_server),
+            icon = Icons.Default.Error,
+            emoji = "🔧"
+        )
 
-        // Rate limiting (always global)
-        is AppException.ApiException.TooManyRequests -> GeneralErrorType.RATE_LIMITED
-
-        // These are CONTEXTUAL - return null to handle in ViewModel:
-        // - 404 NotFound (context-dependent)
-        // - 400 BadRequest (validation context-dependent)
-        // - 401 Unauthorized (auth context-dependent)
-        // - 403 Forbidden (permission context-dependent)
-        // - DataException.* (feature-dependent)
-        else -> null
+        // --- Veri Hataları ve Bilinmeyen Hatalar ---
+        is AppException.Data.Parse,
+        is AppException.Data.EmptyResponse,
+        is AppException.Unknown -> ErrorInfo(
+            title = stringResource(id = R.string.error_title_unknown),
+            description = stringResource(id = R.string.error_desc_unknown),
+            icon = Icons.Default.Error,
+            emoji = "😕"
+        )
     }
-}
-
-/**
- * Convenience method: Get ErrorInfo for global errors, or fallback message for contextual ones
- */
-fun AppException.toErrorInfoOrFallback(): ErrorInfo {
-    return toGeneralErrorTypeOrNull()?.let { generalType ->
-        // Global infrastructure error - use factory
-        GenericErrorMessageFactory.createFrom(generalType, this.userMessage)
-    } ?: run {
-        // Contextual error - use generic unknown error with message
-        GenericErrorMessageFactory.unknownError(this.userMessage)
-    }
-}
-
-/**
- * Check if this exception represents a global infrastructure error
- */
-fun AppException.isGlobalInfrastructureError(): Boolean {
-    return toGeneralErrorTypeOrNull() != null
-}
-
-/**
- * Check if this exception requires contextual handling in ViewModel
- */
-fun AppException.requiresContextualHandling(): Boolean {
-    return !isGlobalInfrastructureError()
 }

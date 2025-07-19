@@ -42,7 +42,6 @@ fun HomeRoute(
         }
     }
 
-
     // Saf UI bileşenini çağırıyoruz.
     // State'i ve event handler'ı paslıyoruz.
     HomeScreen(

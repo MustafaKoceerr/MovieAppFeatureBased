@@ -9,7 +9,12 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.mustafakocer.core_common.exception.toAppException
+import com.mustafakocer.core_ui.component.error.ErrorScreen
+import com.mustafakocer.core_ui.component.error.toErrorInfo
+import com.mustafakocer.core_ui.component.loading.LoadingScreen
 import com.mustafakocer.feature_movies.search.presentation.components.SearchInitialPrompt
 import com.mustafakocer.feature_movies.search.presentation.components.SearchTopBar
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchEvent
@@ -31,30 +36,48 @@ fun SearchScreen(
                 searchQuery = state.searchQuery,
                 onQueryChange = { query -> onEvent(SearchEvent.QueryChanged(query)) },
                 onClearSearch = { onEvent(SearchEvent.ClearSearch) },
-                onNavigateBack = { onEvent(SearchEvent.BackClicked) }
+                onNavigateBack = { onEvent(SearchEvent.BackClicked) },
+                onSearchSubmitted = { onEvent(SearchEvent.SearchSubmitted) }
             )
         }
     ) { paddingValues ->
 
-        val searchResults = state.searchResults.collectAsLazyPagingItems()
+        val lazyMovieItems = state.searchResults.collectAsLazyPagingItems()
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Arama kutusu boşsa, kullanıcıya bir başlangıç mesajı gösteriyoruz.
-            if (state.showInitialPrompt) {
+            // Arama kutusu boşsa veya arama yapmak için yeterli karakter yoksa,
+            // kullanıcıya bir başlangıç mesajı gösteriyoruz.
+            if (state.showInitialPrompt || !state.canSearch) {
                 SearchInitialPrompt()
             } else {
-                // Arama yapıldıysa, sonuçları gösteriyoruz.
-                // MovieListContent, Paging'in kendi yükleme, hata ve boş durumlarını yönetir.
-                MovieListContent(
-                    lazyMovieItems = searchResults,
-                    onMovieClick = { movie ->
-                        onEvent(SearchEvent.MovieClicked(movie.id))
+                // Arama yapıldıysa, Paging'in durumunu kontrol ediyoruz.
+                when (val refreshState = lazyMovieItems.loadState.refresh) {
+                    is LoadState.Loading -> {
+                        LoadingScreen()
                     }
-                )
+
+                    is LoadState.Error -> {
+                        val appException = refreshState.error.toAppException()
+                        ErrorScreen(
+                            error = appException.toErrorInfo(),
+                            onRetry = { lazyMovieItems.retry() }
+                        )
+                    }
+
+                    is LoadState.NotLoading -> {
+                        // MovieListContent, kendi içinde boş liste durumunu da yönetir.
+                        MovieListContent(
+                            lazyMovieItems = lazyMovieItems,
+                            onMovieClick = { movie ->
+                                onEvent(SearchEvent.MovieClicked(movie.id))
+                            }
+                        )
+                    }
+                }
             }
         }
     }

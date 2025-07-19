@@ -34,7 +34,7 @@ import javax.inject.Inject
 class MovieListViewModel @Inject constructor(
     private val getMovieListUseCase: GetMovieListUseCase,
     private val languageRepository: LanguageRepository, // <-- 1. YENİ BAĞIMLILIK
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<MovieListUiState, MovieListEvent, MovieListEffect>(
     initialState = MovieListUiState()
 ) {
@@ -98,22 +98,4 @@ class MovieListViewModel @Inject constructor(
         }
     }
 
-    // şimdilik boş kalabilir veya basitçe mevcut state'i döndürebilir.
-    override fun handleError(error: AppException): MovieListUiState {
-        // Paging dışı bir hata olursa diye, bir snackbar gösterebiliriz.
-        sendEffect(
-            MovieListEffect.ShowSnackbar(
-                error.userMessage
-            )
-        )
-        return currentState
-    }
-
-    override fun setLoading(
-        loadingType: com.mustafakocer.core_android.presentation.LoadingType,
-        isLoading: Boolean,
-    ): MovieListUiState {
-        // Paging dışı bir işlem için (örn. favorilere ekleme) kullanılabilir.
-        return currentState.copy(isLoading = isLoading)
-    }
 }

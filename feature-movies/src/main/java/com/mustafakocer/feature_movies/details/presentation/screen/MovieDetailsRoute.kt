@@ -27,6 +27,7 @@ fun MovieDetailsRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     val snackbarErrorMessage: String = stringResource(R.string.error_share_movie)
+    val chooserTitle = stringResource(R.string.share_text_title)
 
     // Handle UI Effects (side effects)
     LaunchedEffect(Unit) {
@@ -41,11 +42,10 @@ fun MovieDetailsRoute(
                         val shareIntent = Intent().apply {
                             action = Intent.ACTION_SEND
                             type = "text/plain"
-                            putExtra(Intent.EXTRA_SUBJECT, effect.title)
                             putExtra(Intent.EXTRA_TEXT, effect.content)
                         }
 
-                        val chooserIntent = Intent.createChooser(shareIntent, effect.title)
+                        val chooserIntent = Intent.createChooser(shareIntent, chooserTitle)
                         context.startActivity(chooserIntent)
                     } catch (e: Exception) {
                         // ✅ ERROR: Show error snackbar if sharing fails

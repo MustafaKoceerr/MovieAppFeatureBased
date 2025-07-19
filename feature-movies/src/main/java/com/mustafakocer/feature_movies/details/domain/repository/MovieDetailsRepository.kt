@@ -1,14 +1,9 @@
 package com.mustafakocer.feature_movies.details.domain.repository
 
+import com.mustafakocer.core_common.util.Resource
 import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails
 import kotlinx.coroutines.flow.Flow
 
-/**
- * Movie details repository interface
- *
- * CLEAN ARCHITECTURE: Domain Layer
- * RESPONSIBILITY: Define movie details data operations contract
- */
 interface MovieDetailsRepository {
 
     /**
@@ -17,5 +12,5 @@ interface MovieDetailsRepository {
      * @param movieId The movie ID
      * @return Flow of UiState with movie details
      */
-    fun getMovieDetails(movieId: Int): Flow<MovieDetails>
+    fun getMovieDetails(movieId: Int): Flow<Resource<MovieDetails>>
 }
