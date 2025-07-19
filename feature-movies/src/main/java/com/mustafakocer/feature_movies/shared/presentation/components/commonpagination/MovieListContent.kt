@@ -13,10 +13,13 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
+import com.mustafakocer.core_common.exception.toAppException
 import com.mustafakocer.core_ui.component.error.ErrorScreen
+import com.mustafakocer.core_ui.component.error.toErrorInfo
 import com.mustafakocer.core_ui.component.loading.LoadingScreen
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import com.mustafakocer.feature_movies.R
+
 /**
  * Paging 3 ile gelen film listesini ve yükleme/hata durumlarını yöneten
  * yeniden kullanılabilir bir Composable.
@@ -30,14 +33,22 @@ fun MovieListContent(
     onMovieClick: (MovieListItem) -> Unit,
 ) {
     // Paging'in ana yükleme durumunu (ilk yükleme veya tam ekran yenileme) kontrol ediyoruz.
-    when (lazyMovieItems.loadState.refresh) {
+    when (val refreshState = lazyMovieItems.loadState.refresh) {
         // 1. TAM EKRAN YÜKLEME DURUMU
         is LoadState.Loading -> {
             LoadingScreen(message = stringResource(R.string.loading_movies))
         }
         // 2. TAM EKRAN HATA DURUMU
         is LoadState.Error -> {
+            // 1. Paging'in fırlattığı ham throwable'ı al
+            val throwableError = refreshState.error
+
+            //2. Onu, bizim merkezi merkezi sistemimizi kullanarak önce AppException'a,
+            // sonra da UI'ın anlayacağı ErrorInfo'ya çevir.
+            val appException = throwableError.toAppException()
+            val errorInfo = appException.toErrorInfo()
             ErrorScreen(
+                error = errorInfo,
                 onRetry = { lazyMovieItems.retry() }
             )
         }
@@ -70,10 +81,12 @@ fun MovieListContent(
                             // Sayfa sonunda dönen küçük spinner
                             item { PagingAppendIndicator() }
                         }
+
                         is LoadState.Error -> {
                             // Sayfa sonunda çıkan "Tekrar Dene" butonu
                             item { PagingAppendErrorIndicator(onRetry = { lazyMovieItems.retry() }) }
                         }
+
                         is LoadState.NotLoading -> {
                             // Hiçbir şey yapma
                         }

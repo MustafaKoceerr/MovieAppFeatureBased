@@ -65,7 +65,7 @@ class MovieListRemoteMediator(
         val connectionState = networkConnectivityMonitor.getCurrentConnectionState()
         if (!connectionState.isConnected) {
             // Return ERROR so UI shows retry button
-            return MediatorResult.Error(AppException.NetworkException.NoInternetConnection())
+            return MediatorResult.Error(AppException.Network.NoInternet())
         }
 
         return try {
