@@ -9,9 +9,13 @@ import com.mustafakocer.core_preferences.repository.LanguageRepository
 import com.mustafakocer.feature_movies.home.domain.usecase.GetMovieCategoryUseCase
 import com.mustafakocer.feature_movies.home.presentation.contract.*
 import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
+import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -47,53 +51,61 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
     private fun loadAllCategories(loadingType: LoadingType) {
-
-        // Sadece ilk yükleme (MAIN) ve cache boşsa tam ekran spinner göster.
-        if (loadingType == LoadingType.MAIN && currentState.categories.isEmpty()) {
-            setState { copy(isLoading = true, error = null) }
-        } else if (loadingType == LoadingType.REFRESH) {
-            setState { copy(isRefreshing = true, error = null) }
+        // Yükleme durumunu başlat ve önceki hataları temizle.
+        setState {
+            when (loadingType) {
+                LoadingType.MAIN -> copy(isLoading = true, error = null)
+                LoadingType.REFRESH -> copy(isRefreshing = true, error = null)
+            }
         }
         val categoriesToFetch = MovieCategory.getAllCategories()
 
         viewModelScope.launch(SupervisorJob()) {
-            categoriesToFetch.forEach { category ->
-                // Her kategori için ayrı bir "dinleyici" coroutine'i başlat.
-                launch {
-                    getMovieCategoryUseCase(category)
-                        .collect { resource ->
-                            when (resource) {
-                                is Resource.Success -> {
-                                    setState {
-                                        copy(
-                                            isLoading = false,
-                                            isRefreshing = false,
-                                            categories = currentState.categories + (category to resource.data),
-                                            error = null
-                                        )
-                                    }
-                                }
-
-                                is Resource.Error -> {
-                                    setState {
-                                        copy(
-                                            isLoading = false,
-                                            isRefreshing = false,
-                                            error = resource.exception
-                                        )
-                                    }
-                                }
-
-                                is Resource.Loading -> {
-                                    // Şimdilik, Success/Error gelene kadar beklemek daha temiz.
-                                }
-                            }
-                        }
+            // 1. her kategori için paralel bir 'async' görevi başlat.
+            // Bu, her bir görevin sonucunu (Resource) tutan bir "söz" (Deferred) döndürür.
+            val deferredResults = categoriesToFetch.map { category ->
+                async {
+                    getMovieCategoryUseCase(category).toList()
                 }
+            }
+
+            val resultsList = deferredResults.awaitAll()
+
+            val successfulCategories = categoriesToFetch.zip(resultsList)
+                .mapNotNull { (category, resources) ->
+                    // Bu listedeki, 'Success' olan SON değeri bul.
+                    // Bu, ağdan gelen en güncel veridir.
+                    val lastSuccessResource =
+                        resources.filterIsInstance<Resource.Success<List<MovieListItem>>>()
+                            .lastOrNull()
+
+                    if (lastSuccessResource != null && lastSuccessResource.data.isNotEmpty()) {
+                        category to lastSuccessResource.data
+                    } else {
+                        // Eğer hiç başarılı sonuç yoksa, bir hata olup olmadığını kontrol et.
+                        val errorResource =
+                            resources.filterIsInstance<Resource.Error>().firstOrNull()
+                        if (errorResource != null) {
+                            Log.e(
+                                "HomeViewModelDebug",
+                                "Kategori yüklenemedi: ${category.name}",
+                                errorResource.exception
+                            )
+                        }
+                        null
+                    }
+                }
+                .toMap()
+
+            setState {
+                copy(
+                    isLoading = false,
+                    isRefreshing = false,
+                    categories = successfulCategories,
+                    error = null
+                )
             }
         }
     }
-
 }
