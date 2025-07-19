@@ -95,5 +95,4 @@ class MovieDetailsViewModel @Inject constructor(
         setState { copy(isSharing = false) }
     }
 
-
 }
