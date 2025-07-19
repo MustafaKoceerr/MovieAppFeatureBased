@@ -3,7 +3,6 @@ package com.mustafakocer.feature_movies.search.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.mustafakocer.core_android.presentation.BaseViewModel
-import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.feature_movies.search.domain.usecase.SearchMoviesUseCase
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchEffect
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchEvent
@@ -62,6 +61,10 @@ class SearchViewModel @Inject constructor(
             is SearchEvent.BackClicked -> {
                 sendEffect(SearchEffect.NavigateBack)
             }
+
+            is SearchEvent.SearchSubmitted -> {
+                sendEffect(SearchEffect.HideKeyboard)
+            }
         }
     }
 
@@ -94,31 +97,8 @@ class SearchViewModel @Inject constructor(
      * Asıl arama işlemini gerçekleştirir ve Paging Flow'unu state'e koyar.
      */
     private fun performSearch(query: String) {
-        // Paging'in kendi yükleme durumu olduğu için, executeSafeOnce'a gerek yok.
-        // Paging Flow'unu oluşturup doğrudan state'e koyuyoruz.
         val searchResultsFlow = searchMoviesUseCase(query).cachedIn(viewModelScope)
-
         setState { copy(searchResults = searchResultsFlow) }
-
-        // Arama yapıldıktan sonra klavyeyi gizlemek iyi bir kullanıcı deneyimidir.
-        sendEffect(SearchEffect.HideKeyboard)
     }
 
-
-    // Paging kendi durumlarını yönettiği için şimdilik basit kalabilirler.
-    override fun handleError(error: AppException): SearchUiState {
-        sendEffect(
-            SearchEffect.ShowSnackbar(
-                error.userMessage
-            )
-        )
-        return currentState.copy(error = error)
-    }
-
-    override fun setLoading(
-        loadingType: com.mustafakocer.core_android.presentation.LoadingType,
-        isLoading: Boolean,
-    ): SearchUiState {
-        return currentState.copy(isLoading = isLoading)
-    }
 }

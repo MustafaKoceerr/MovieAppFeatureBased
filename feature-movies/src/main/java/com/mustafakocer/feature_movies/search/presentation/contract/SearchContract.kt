@@ -38,7 +38,7 @@ sealed interface SearchEvent : BaseUiEvent {
     object ClearSearch : SearchEvent
     data class MovieClicked(val movieId: Int) : SearchEvent
     object BackClicked : SearchEvent
-
+    object SearchSubmitted : SearchEvent
 }
 
 // ==================== EFFECT ====================
