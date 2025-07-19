@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="error_title_no_internet">No Internet Connection</string>
-    <string name="error_desc_no_internet">It seems you are offline. Please check your connection and try again.</string>
+    <string name="error_title_no_internet">İnternet Bağlantısı Yok</string>
+    <string name="error_desc_no_internet">Çevrimdışı görünüyorsunuz. Lütfen bağlantınızı kontrol edin ve tekrar deneyin.</string>
 
-    <string name="error_title_timeout">Request Timed Out</string>
-    <string name="error_desc_timeout">The server is taking too long to respond. This might be a temporary issue.</string>
+    <string name="error_title_timeout">İstek Zaman Aşımına Uğradı</string>
+    <string name="error_desc_timeout">Sunucu yanıt vermekte çok uzun sürüyor. Bu geçici bir sorun olabilir.</string>
 
-    <string name="error_title_unauthorized">Unauthorized</string>
-    <string name="error_desc_unauthorized">There was an authentication issue. Please try restarting the app.</string>
+    <string name="error_title_unauthorized">Yetkisiz</string>
+    <string name="error_desc_unauthorized">Bir kimlik doğrulama sorunu yaşandı. Lütfen uygulamayı yeniden başlatmayı deneyin.</string>
 
-    <string name="error_title_not_found">Not Found</string>
-    <string name="error_desc_not_found">We couldn\'t find the content you were looking for.</string>
+    <string name="error_title_not_found">Bulunamadı</string>
+    <string name="error_desc_not_found">Aradığınız içeriği bulamadık.</string>
 
-    <string name="error_title_server">Server Error</string>
-    <string name="error_desc_server">Our servers are experiencing some issues. Please try again in a few moments.</string>
+    <string name="error_title_server">Sunucu Hatası</string>
+    <string name="error_desc_server">Sunucularımız bazı sorunlar yaşıyor. Lütfen birkaç dakika sonra tekrar deneyin.</string>
 
-    <string name="error_title_unknown">An Unexpected Error</string>
-    <string name="error_desc_unknown">Something went wrong on our end. We are working to fix it!</string>
+    <string name="error_title_unknown">Beklenmedik Bir Hata</string>
+    <string name="error_desc_unknown">Bizim tarafımızda bir şeyler ters gitti. Düzeltmek için çalışıyoruz!</string>
 </resources>
