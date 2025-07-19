@@ -7,10 +7,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mustafakocer.core_ui.component.error.toErrorInfo
 import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsEffect
 import com.mustafakocer.feature_movies.settings.presentation.viewmodel.SettingsViewModel
 import com.mustafakocer.navigation_contracts.actions.FeatureMoviesNavActions
 import kotlinx.coroutines.flow.collectLatest
+import androidx.compose.material3.SnackbarDuration
+import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsEvent
 
 /**
  * Host (Barındırıcı) Eylemleri: Bunlar, bir özelliğin (feature) kendi başına yapamayacağı, sadece tüm uygulamanın sahibi olan Activity gibi bir üst bileşenin yapabileceği çok nadir ve özel eylemlerdir.
@@ -21,6 +24,8 @@ import kotlinx.coroutines.flow.collectLatest
  *
  *     Sistem ayarları ekranını açmak
  */
+// Dosya: settings/presentation/screen/SettingsRoute.kt
+
 @Composable
 fun SettingsRoute(
     navActions: FeatureMoviesNavActions,
@@ -30,27 +35,17 @@ fun SettingsRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Yan etkileri (Effect'leri) dinleyip yöneten bölüm.
+    // Route'un görevi artık sadece Effect'leri dinlemek.
     LaunchedEffect(key1 = true) {
         viewModel.uiEffect.collectLatest { effect ->
             when (effect) {
-                is SettingsEffect.NavigateBack -> {
-                    navActions.navigateUp()
-                }
-
-                is SettingsEffect.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(message = effect.message)
-                }
-
-                is SettingsEffect.RestartActivity -> {
-                    // ViewModel'den gelen sinyali yakala ve dışarıdan verilen callback'i tetikle.
-                    onLanguageChanged()
-                }
+                is SettingsEffect.NavigateBack -> navActions.navigateUp()
+                is SettingsEffect.RestartActivity -> onLanguageChanged()
             }
         }
     }
 
-    // Saf UI bileşenini çağırıyoruz.
+    // Hata gösterme mantığı artık Screen'in kendi içinde.
     SettingsScreen(
         state = state,
         onEvent = viewModel::onEvent,

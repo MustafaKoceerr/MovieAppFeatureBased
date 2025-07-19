@@ -11,13 +11,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_preferences.models.LanguagePreference
 import com.mustafakocer.core_preferences.models.ThemePreference
+import com.mustafakocer.core_ui.component.error.toErrorInfo
 import com.mustafakocer.feature_movies.settings.presentation.component.ComingSoonSection
 import com.mustafakocer.feature_movies.settings.presentation.component.LanguageSelectionSection
 import com.mustafakocer.feature_movies.settings.presentation.component.SettingsHeader
@@ -33,6 +36,21 @@ fun SettingsScreen(
     onEvent: (SettingsEvent) -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
+
+    state.error?.let { error ->
+        val errorInfo = error.toErrorInfo()
+        val message = "${errorInfo.title}: ${errorInfo.description}"
+
+        LaunchedEffect(error) {
+            snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short
+            )
+            // Hata gösterildikten sonra, state'i temizle.
+            onEvent(SettingsEvent.DismissError)
+        }
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
