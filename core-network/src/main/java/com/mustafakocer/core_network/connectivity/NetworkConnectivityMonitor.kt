@@ -13,47 +13,45 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// # Real-time connectivity
 /**
- * TEACHING MOMENT: Real-time Network Monitoring
+ * Cihazın ağ bağlantısı durumunu gerçek zamanlı olarak izler ve bunu
+ * zengin bir `ConnectivityStatus` akışı olarak yayınlar.
  *
- * ✅ Real-time connectivity updates
- * ✅ Network type detection (WiFi, Cellular)
- * ✅ Flow-based reactive approach
- * ✅ Automatic cleanup
+ * Clean Architecture: Altyapı Katmanı (Infrastructure)
+ * Sorumluluk: Android'in ConnectivityManager'ını soyutlayarak, uygulama geneli için
+ * reaktif ve anlaşılır bir ağ durumu bilgisi sağlamak.
  */
-
 @Singleton
 class NetworkConnectivityMonitor @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
-
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     /**
-     * Observe network connectivity changes in real-time
+     * Ağ bağlantısı durumundaki değişiklikleri gerçek zamanlı olarak Flow olarak yayınlar.
+     * Akış, yalnızca durum değiştiğinde yeni bir değer yayar.
      */
-    fun observeConnectivity(): Flow<ConnectionState> = callbackFlow {
+    fun observe(): Flow<ConnectivityStatus> = callbackFlow {
+        // Mevcut durumu hemen gönder
+        trySend(getCurrentConnectivityStatus())
 
-        val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
-                val networkType = getNetworkType(network)
-                trySend(ConnectionState(true, networkType))
+                // onAvailable tek başına internet olduğunu garanti etmez, onCapabilitiesChanged beklenmeli.
             }
 
             override fun onLost(network: Network) {
-                trySend(ConnectionState(false, NetworkType.NONE))
+                // Bir ağ kaybedildiğinde, genel durumu yeniden değerlendir.
+                trySend(getCurrentConnectivityStatus())
             }
 
             override fun onCapabilitiesChanged(
                 network: Network,
                 networkCapabilities: NetworkCapabilities,
             ) {
-                val networkType = getNetworkType(network)
-                val isConnected =
-                    networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                trySend(ConnectionState(isConnected, networkType))
+                // Bir ağın yetenekleri değiştiğinde (örn. internete bağlandığında), durumu gönder.
+                trySend(getStatusFromCapabilities(networkCapabilities))
             }
         }
 
@@ -61,43 +59,46 @@ class NetworkConnectivityMonitor @Inject constructor(
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             .build()
 
-        connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+        connectivityManager.registerNetworkCallback(networkRequest, callback)
 
-        // Send current state immediately
-        val currentState = getCurrentConnectionState()
-        trySend(currentState)
-
+        // Flow sonlandığında callback'i kaldır.
         awaitClose {
-            connectivityManager.unregisterNetworkCallback(networkCallback)
+            connectivityManager.unregisterNetworkCallback(callback)
         }
-    }.distinctUntilChanged()
+    }.distinctUntilChanged() // Yalnızca durum gerçekten değiştiğinde yeni değer yay.
 
     /**
-     * Get current connection state synchronously
+     * Mevcut ağ bağlantısı durumunu senkron olarak döndürür.
+     * Bu, anlık bir kontrol gerektiğinde kullanışlıdır (örneğin RemoteMediator'da).
      */
-    fun getCurrentConnectionState(): ConnectionState {
+    fun getCurrentConnectivityStatus(): ConnectivityStatus {
         val activeNetwork = connectivityManager.activeNetwork
-        val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
-
-        return if (networkCapabilities != null &&
-            networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-        ) {
-            val networkType = getNetworkType(activeNetwork)
-            ConnectionState(true, networkType)
-        } else {
-            ConnectionState(false, NetworkType.NONE)
-        }
+        val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
+        return getStatusFromCapabilities(capabilities)
     }
 
-    private fun getNetworkType(network: Network?): NetworkType {
-        if (network == null) return NetworkType.NONE
-
-        val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
-        return when {
-            networkCapabilities?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true -> NetworkType.WIFI
-            networkCapabilities?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true -> NetworkType.CELLULAR
-            networkCapabilities?.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) == true -> NetworkType.ETHERNET
-            else -> NetworkType.UNKNOWN
+    /**
+     * NetworkCapabilities nesnesini bizim anladığımız ConnectivityStatus'e çevirir.
+     */
+    private fun getStatusFromCapabilities(caps: NetworkCapabilities?): ConnectivityStatus {
+        if (caps == null) {
+            return ConnectivityStatus.Disconnected
         }
+
+        // İnternet erişimi var mı ve bu erişim doğrulanmış mı?
+        val hasInternet = caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        val isValidated = caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+
+        if (hasInternet && isValidated) {
+            // Bağlantı ücretli mi? (örn. mobil veri)
+            val isMetered = !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED)
+            return if (isMetered) {
+                ConnectivityStatus.Degraded(metered = true)
+            } else {
+                ConnectivityStatus.Connected
+            }
+        }
+
+        return ConnectivityStatus.Disconnected
     }
 }

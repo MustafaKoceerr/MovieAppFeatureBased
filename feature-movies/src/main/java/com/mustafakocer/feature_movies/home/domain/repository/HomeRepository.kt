@@ -4,7 +4,7 @@ import com.mustafakocer.core_common.util.Resource
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import kotlinx.coroutines.flow.Flow
 
-interface MovieRepository {
+interface HomeRepository {
 
     // ==================== MOVIE CATEGORIES ====================
     fun getNowPlayingMovies(page: Int = 1): Flow<Resource<List<MovieListItem>>>

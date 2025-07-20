@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_movies.home.data.local
+package com.mustafakocer.feature_movies.home.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Query

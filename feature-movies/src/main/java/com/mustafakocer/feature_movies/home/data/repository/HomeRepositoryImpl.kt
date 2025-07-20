@@ -3,8 +3,8 @@ package com.mustafakocer.feature_movies.home.data.repository
 import com.mustafakocer.core_common.util.Resource
 import com.mustafakocer.core_network.error.ErrorMapper
 import com.mustafakocer.core_preferences.provider.LanguageProvider
-import com.mustafakocer.feature_movies.home.data.local.HomeMovieDao
-import com.mustafakocer.feature_movies.home.domain.repository.MovieRepository
+import com.mustafakocer.feature_movies.home.data.local.dao.HomeMovieDao
+import com.mustafakocer.feature_movies.home.domain.repository.HomeRepository
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
 import com.mustafakocer.feature_movies.shared.data.mapper.toDomainList
 import com.mustafakocer.feature_movies.shared.data.mapper.toHomeMovieEntityList
@@ -21,11 +21,11 @@ import javax.inject.Singleton
 // Dosya: home/data/repository/MovieRepositoryImpl.kt
 
 @Singleton
-class MovieRepositoryImpl @Inject constructor(
+class HomeRepositoryImpl @Inject constructor(
     private val movieApiService: MovieApiService,
     private val homeMovieDao: HomeMovieDao,
     private val languageProvider: LanguageProvider,
-) : MovieRepository {
+) : HomeRepository {
 
     private fun getMovies(
         category: MovieCategory,
