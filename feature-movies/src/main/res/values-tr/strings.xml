@@ -83,4 +83,6 @@
     <string name="theme_follow_system">Sistem ayarlarını takip et</string>
     <string name="selected_text">Seçili</string>
     <string name="votes">(%1$s oy)</string>
+
+    <string name="no_movies_found">Film bulunamadı.</string>
 </resources>

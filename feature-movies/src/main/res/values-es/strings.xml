@@ -86,4 +86,7 @@
     <string name="theme_follow_system">Seguir configuración del sistema</string>
     <string name="selected_text">Seleccionado</string>
     <string name="votes">(%1$s votos)</string>
+
+    <string name="no_movies_found">No se encontraron películas.</string>
+
 </resources>

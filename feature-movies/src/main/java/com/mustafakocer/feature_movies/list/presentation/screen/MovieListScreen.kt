@@ -1,26 +1,32 @@
 package com.mustafakocer.feature_movies.list.presentation.screen
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.paging.LoadState
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.mustafakocer.core_common.exception.toAppException
-import com.mustafakocer.core_ui.component.error.ErrorScreen
-import com.mustafakocer.core_ui.component.error.toErrorInfo
-import com.mustafakocer.core_ui.component.loading.LoadingScreen
+import com.mustafakocer.feature_movies.R
 import com.mustafakocer.feature_movies.home.presentation.screen.toLocalizedTitle
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEvent
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListUiState
-import com.mustafakocer.feature_movies.shared.presentation.components.commonpagination.MovieListContent
-import com.mustafakocer.feature_movies.shared.presentation.components.commonpagination.MovieListTopAppBar
+import com.mustafakocer.feature_movies.shared.presentation.components.commonpagination.HandlePagingLoadState
+import com.mustafakocer.feature_movies.shared.presentation.components.list.PaginatedMovieList
 
+// MovieListTopAppBar artık private olduğu için bu dosyada tanımlanmalı
+// veya doğrudan Scaffold içinde yazılmalı. Temizlik için burada bırakalım.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieListScreen(
@@ -31,46 +37,58 @@ fun MovieListScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
+            // Bu TopAppBar artık bu ekrana özel.
             MovieListTopAppBar(
                 title = state.category?.toLocalizedTitle() ?: "",
                 onNavigateBack = { onEvent(MovieListEvent.BackClicked) },
             )
         }
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            val lazyMovieItems = state.movies.collectAsLazyPagingItems()
+        val lazyMovieItems = state.movies.collectAsLazyPagingItems()
 
-            // Paging 3'ün ana yükleme durumunu (ilk yükleme veya tam ekran yenileme) kontrol et.
-            when (val refreshState = lazyMovieItems.loadState.refresh) {
-                // 1. TAM EKRAN YÜKLEME DURUMU
-                is LoadState.Loading -> {
-                    LoadingScreen()
-                }
-                // 2. TAM EKRAN HATA DURUMU
-                is LoadState.Error -> {
-                    // Paging'in fırlattığı Throwable'ı bizim AppException'ımıza çeviriyoruz.
-                    val appException = refreshState.error.toAppException()
-                    ErrorScreen(
-                        error = appException.toErrorInfo(),
-                        onRetry = { lazyMovieItems.retry() }
-                    )
-                }
-                // 3. BAŞARILI VEYA BOŞ DURUM
-                is LoadState.NotLoading -> {
-                    // Veri varsa, MovieListContent'i göster.
-                    // MovieListContent, kendi içinde sayfa sonu yükleme/hata durumlarını zaten yönetiyor.
-                    MovieListContent(
-                        lazyMovieItems = lazyMovieItems,
-                        onMovieClick = { movie ->
-                            onEvent(MovieListEvent.MovieClicked(movie.id))
-                        }
-                    )
-                }
-            }
+        // Tam ekran yükleme/hata durumlarını merkezi bileşenle yönet.
+        HandlePagingLoadState(
+            lazyPagingItems = lazyMovieItems,
+            modifier = Modifier.fillMaxSize()
+        ) { items ->
+            // Başarılı durumda, sayfalanmış liste bileşenini göster.
+            PaginatedMovieList(
+                lazyPagingItems = items,
+                onMovieClick = { movie ->
+                    onEvent(MovieListEvent.MovieClicked(movie.id))
+                },
+                contentPadding = paddingValues
+            )
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MovieListTopAppBar(
+    title: String,
+    onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    CenterAlignedTopAppBar(
+        modifier = modifier,
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onNavigateBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.back)
+                )
+            }
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    )
 }
