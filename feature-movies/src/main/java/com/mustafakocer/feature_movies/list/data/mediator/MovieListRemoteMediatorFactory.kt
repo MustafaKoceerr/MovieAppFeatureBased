@@ -2,7 +2,6 @@ package com.mustafakocer.feature_movies.list.data.mediator
 
 import androidx.room.RoomDatabase
 import com.mustafakocer.core_database.dao.RemoteKeyDao
-import com.mustafakocer.core_network.connectivity.NetworkConnectivityMonitor
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
 import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
@@ -26,7 +25,6 @@ class MovieListRemoteMediatorFactory @Inject constructor(
     private val movieListDao: MovieListDao,
     private val remoteKeyDao: RemoteKeyDao,
     private val database: RoomDatabase,
-    private val networkConnectivityMonitor: NetworkConnectivityMonitor, // ✅ ADDED!
 ) {
     /**
      * Create RemoteMediator for specific category
@@ -43,7 +41,6 @@ class MovieListRemoteMediatorFactory @Inject constructor(
             movieListDao = movieListDao,
             remoteKeyDao = remoteKeyDao,
             database = database,
-            networkConnectivityMonitor = networkConnectivityMonitor, // ✅ INJECT!
             category = category,
             language = language
         )

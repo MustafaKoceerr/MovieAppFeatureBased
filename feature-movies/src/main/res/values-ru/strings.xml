@@ -86,4 +86,8 @@
     <string name="theme_follow_system">Следовать системным настройкам</string>
     <string name="selected_text">Выбрано</string>
     <string name="votes">(%1$s голосов)</string>
+
+    <string name="no_movies_found">Фильмы не найдены.</string>
+    <string name="scroll_to_top">Прокрутить наверх</string>
+
 </resources>

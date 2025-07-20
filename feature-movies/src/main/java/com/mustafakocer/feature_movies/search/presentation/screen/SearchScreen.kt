@@ -9,18 +9,13 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.mustafakocer.core_common.exception.toAppException
-import com.mustafakocer.core_ui.component.error.ErrorScreen
-import com.mustafakocer.core_ui.component.error.toErrorInfo
-import com.mustafakocer.core_ui.component.loading.LoadingScreen
 import com.mustafakocer.feature_movies.search.presentation.components.SearchInitialPrompt
 import com.mustafakocer.feature_movies.search.presentation.components.SearchTopBar
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchEvent
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchUiState
-import com.mustafakocer.feature_movies.shared.presentation.components.commonpagination.MovieListContent
-
+import com.mustafakocer.feature_movies.shared.presentation.components.commonpagination.HandlePagingLoadState
+import com.mustafakocer.feature_movies.shared.presentation.components.list.PaginatedMovieList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +36,6 @@ fun SearchScreen(
             )
         }
     ) { paddingValues ->
-
         val lazyMovieItems = state.searchResults.collectAsLazyPagingItems()
 
         Column(
@@ -49,34 +43,19 @@ fun SearchScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Arama kutusu boşsa veya arama yapmak için yeterli karakter yoksa,
-            // kullanıcıya bir başlangıç mesajı gösteriyoruz.
             if (state.showInitialPrompt || !state.canSearch) {
                 SearchInitialPrompt()
             } else {
-                // Arama yapıldıysa, Paging'in durumunu kontrol ediyoruz.
-                when (val refreshState = lazyMovieItems.loadState.refresh) {
-                    is LoadState.Loading -> {
-                        LoadingScreen()
-                    }
-
-                    is LoadState.Error -> {
-                        val appException = refreshState.error.toAppException()
-                        ErrorScreen(
-                            error = appException.toErrorInfo(),
-                            onRetry = { lazyMovieItems.retry() }
-                        )
-                    }
-
-                    is LoadState.NotLoading -> {
-                        // MovieListContent, kendi içinde boş liste durumunu da yönetir.
-                        MovieListContent(
-                            lazyMovieItems = lazyMovieItems,
-                            onMovieClick = { movie ->
-                                onEvent(SearchEvent.MovieClicked(movie.id))
-                            }
-                        )
-                    }
+                // Tam ekran yükleme/hata durumlarını merkezi bileşenle yönet.
+                HandlePagingLoadState(lazyPagingItems = lazyMovieItems) { items ->
+                    // Başarılı durumda, sayfalanmış liste bileşenini göster.
+                    PaginatedMovieList(
+                        lazyPagingItems = items,
+                        onMovieClick = { movie ->
+                            onEvent(SearchEvent.MovieClicked(movie.id))
+                        }
+                        // Arama ekranında ekstra padding'e gerek yok, Column zaten yönetiyor.
+                    )
                 }
             }
         }

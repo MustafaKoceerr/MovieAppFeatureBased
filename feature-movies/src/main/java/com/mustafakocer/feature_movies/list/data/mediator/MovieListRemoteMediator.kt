@@ -5,10 +5,8 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.mustafakocer.core_common.exception.AppException
 import com.mustafakocer.core_database.dao.RemoteKeyDao
 import com.mustafakocer.core_database.pagination.RemoteKey
-import com.mustafakocer.core_network.connectivity.NetworkConnectivityMonitor
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
 import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
@@ -34,7 +32,6 @@ class MovieListRemoteMediator(
     private val movieListDao: MovieListDao,
     private val remoteKeyDao: RemoteKeyDao,
     private val database: androidx.room.RoomDatabase,
-    private val networkConnectivityMonitor: NetworkConnectivityMonitor, // ✅ ADDED!
     private val category: MovieCategory,
     private val language: String,
 ) : RemoteMediator<Int, MovieListEntity>() {
@@ -60,13 +57,6 @@ class MovieListRemoteMediator(
     ): MediatorResult {
         // Silme ve ekleme işlemi için de aynı query'yi kullanıyoruz.
         val queryKey = RemoteKey.createCompositeKey("movies", category.apiEndpoint)
-
-        // ✅ CHECK CONNECTIVITY - RETURN ERROR FOR RETRY BUTTON!
-        val connectionState = networkConnectivityMonitor.getCurrentConnectionState()
-        if (!connectionState.isConnected) {
-            // Return ERROR so UI shows retry button
-            return MediatorResult.Error(AppException.Network.NoInternet())
-        }
 
         return try {
             delay(NETWORK_DELAY_MS)

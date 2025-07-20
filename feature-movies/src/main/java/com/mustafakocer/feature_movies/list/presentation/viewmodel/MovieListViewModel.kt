@@ -4,69 +4,49 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.mustafakocer.core_android.presentation.BaseViewModel
-import com.mustafakocer.core_common.exception.AppException
-import com.mustafakocer.core_preferences.repository.LanguageRepository
-import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.list.domain.usecase.GetMovieListUseCase
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEffect
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEvent
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListUiState
+import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.navigation_contracts.navigation.MovieListScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
  * Movie List ViewModel
  *
- * Clean architecture: Presentation Layer- State Management
- * Responsibility: Manage movie list UI state and user interactions
- *
- * PAGING3 INTEGRATION:
- * - cachedIn(viewModelScope) for configuration changes
- * - Flow<PagingData> for reactive pagination
- * - Automatic loading state management via Paging3
+ * Sorumlulukları:
+ * - Gerekli kategori bilgisini SavedStateHandle'dan alır.
+ * - Dil değişikliklerine duyarlı olan GetMovieListUseCase'i çağırır.
+ * - PagingData akışını `cachedIn` ile yönetir ve UI state'e koyar.
+ * - UI event'lerini (tıklama, geri gitme) ilgili Effect'lere dönüştürür.
  */
-
-
 @HiltViewModel
 class MovieListViewModel @Inject constructor(
     private val getMovieListUseCase: GetMovieListUseCase,
-    private val languageRepository: LanguageRepository, // <-- 1. YENİ BAĞIMLILIK
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<MovieListUiState, MovieListEvent, MovieListEffect>(
     initialState = MovieListUiState()
 ) {
-    private val categoryEndpoint: String? = savedStateHandle[MovieListScreen.KEY_CATEGORY_ENDPOINT]
-    private val category: MovieCategory? =
-        categoryEndpoint?.let { MovieCategory.fromApiEndpoint(it) }
+    // Kategori bilgisi navigasyon argümanından alınır.
+    private val categoryEndpoint: String = savedStateHandle[MovieListScreen.KEY_CATEGORY_ENDPOINT]
+        ?: throw IllegalStateException("Category endpoint is required for MovieListScreen")
 
+    init {
+        // Kategori endpoint'ini MovieCategory enum'una çevir.
+        val category = MovieCategory.fromApiEndpoint(categoryEndpoint)
 
-    private fun initScreen() {
         if (category == null) {
-            // Kategori bilgisi yoksa hata ver ve geri dön.
-            sendEffect(
-                MovieListEffect.ShowSnackbar(
-                    "Category isn't found."
-                )
-            ) // Bunu da UiText ile yapmalıyız :)
+            // Geçersiz bir kategori gelirse, hata mesajı göster ve ekranı kapat.
+            sendEffect(MovieListEffect.ShowSnackbar("Category not found."))
             sendEffect(MovieListEffect.NavigateBack)
         } else {
-            viewModelScope.launch {
-                languageRepository.languageFlow
-                    .distinctUntilChanged()
-                    .collect { language ->
-                        // Her dil değişikliğinde, yeni dil ve mevcut kategori ile filmleri yükle.
-                        loadMovies(category, language.apiParam)
-                    }
-            }
+            // Geçerli kategori ile film listesini yükle.
+            loadMovies(category)
         }
     }
 
-    init {
-        initScreen()
-    }
 
     override fun onEvent(event: MovieListEvent) {
         when (event) {
@@ -84,18 +64,19 @@ class MovieListViewModel @Inject constructor(
         }
     }
 
-    private fun loadMovies(category: MovieCategory, language: String) {
-        try {
-            val moviesPagingFlow = getMovieListUseCase(category, language).cachedIn(viewModelScope)
+    /**
+     * Belirtilen kategori için film listesini yükler.
+     * UseCase artık dil yönetimini kendi içinde yaptığı için dil parametresine gerek yoktur.
+     */
+    private fun loadMovies(category: MovieCategory) {
+        val moviesPagingFlow = getMovieListUseCase(category)
+            .cachedIn(viewModelScope) // Paging verisini ViewModel scope'unda önbelleğe al.
 
-            setState {
-                copy(
-                    movies = moviesPagingFlow,
-                    category = category
-                )
-            }
-        } catch (e: Exception) {
+        setState {
+            copy(
+                movies = moviesPagingFlow,
+                category = category
+            )
         }
     }
-
 }

@@ -1,7 +1,7 @@
 package com.mustafakocer.feature_movies.home.di
 
-import com.mustafakocer.feature_movies.home.data.repository.MovieRepositoryImpl
-import com.mustafakocer.feature_movies.home.domain.repository.MovieRepository
+import com.mustafakocer.feature_movies.home.data.repository.HomeRepositoryImpl
+import com.mustafakocer.feature_movies.home.domain.repository.HomeRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,6 +15,6 @@ abstract class RepositoryModule {
      @Binds
      @Singleton
      abstract fun bindMovieRepository(
-         movieRepositoryImpl: MovieRepositoryImpl
-     ): MovieRepository
+         movieRepositoryImpl: HomeRepositoryImpl
+     ): HomeRepository
 }

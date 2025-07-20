@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_preferences.models.LanguagePreference
 import com.mustafakocer.core_preferences.models.ThemePreference
 import com.mustafakocer.core_ui.component.error.toErrorInfo
-import com.mustafakocer.feature_movies.settings.presentation.component.ComingSoonSection
 import com.mustafakocer.feature_movies.settings.presentation.component.LanguageSelectionSection
 import com.mustafakocer.feature_movies.settings.presentation.component.SettingsHeader
 import com.mustafakocer.feature_movies.settings.presentation.component.SettingsTopBar
@@ -108,7 +107,6 @@ private fun SettingsContent(
             onLanguageSelected = onLanguageSelected
         )
 
-        ComingSoonSection()
 
         Spacer(modifier = Modifier.height(32.dp))
     }

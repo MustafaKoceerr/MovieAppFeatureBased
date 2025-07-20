@@ -8,54 +8,41 @@ import com.mustafakocer.feature_movies.search.presentation.contract.SearchEffect
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchEvent
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchMoviesUseCase: SearchMoviesUseCase,
 ) : BaseViewModel<SearchUiState, SearchEvent, SearchEffect>(
     SearchUiState()
 ) {
-
-    // Kullanıcının girdiği arama sorgusunu reaktif olarak işlemek için.
+    // Kullanıcının girdiği anlık sorguyu tutan StateFlow.
     private val searchQueryFlow = MutableStateFlow("")
 
     init {
+        // ViewModel oluşturulduğunda, arama sorgusu akışını dinlemeye başla.
         observeSearchQuery()
     }
 
     override fun onEvent(event: SearchEvent) {
         when (event) {
             is SearchEvent.QueryChanged -> {
-                // UI'ı anında güncelle ve reaktif akışı tetikle.
+                // UI state'ini anında güncelle ve arama akışını tetikle.
                 setState { copy(searchQuery = event.query) }
                 searchQueryFlow.value = event.query
             }
 
             is SearchEvent.ClearSearch -> {
-                // Arama kutusunu ve sonuçları temizle.
-                setState {
-                    copy(
-                        searchQuery = "",
-                        searchResults = emptyFlow()
-                    )
-                }
+                setState { copy(searchQuery = "") }
                 searchQueryFlow.value = ""
             }
 
             is SearchEvent.MovieClicked -> {
-                sendEffect(
-                    SearchEffect.NavigateToMovieDetail(
-                        event.movieId
-                    )
-                )
+                sendEffect(SearchEffect.NavigateToMovieDetail(event.movieId))
             }
 
             is SearchEvent.BackClicked -> {
@@ -69,36 +56,19 @@ class SearchViewModel @Inject constructor(
     }
 
     /**
-     * Arama sorgusu akışını dinler ve debounce/filter mantığını uygular.
+     * Arama sorgusu akışını dinler ve UseCase'i çağırarak arama sonuçlarını günceller.
      */
     @OptIn(FlowPreview::class)
     private fun observeSearchQuery() {
-        viewModelScope.launch {
-            searchQueryFlow
-                .debounce(500L) // Kullanıcı yazmayı bıraktıktan sonra 500ms bekle
-                .distinctUntilChanged() // Aynı sorguyu tekrar işleme
-                .collectLatest { query ->
-                    // Arama yapmak için yeterli uzunlukta mı diye kontrol et
-                    if (query.trim().length >= 3) {
-                        performSearch(query)
-                    } else {
-                        // Yeterli uzunlukta değilse, mevcut sonuçları temizle
-                        setState {
-                            copy(
-                                searchResults = emptyFlow()
-                            )
-                        }
-                    }
-                }
-        }
-    }
+        // UseCase artık hem dil hem de sorgu geçerliliği kontrolünü yaptığı için,
+        // ViewModel'in tek görevi sorgu akışını UseCase'e bağlamaktır.
+        val searchResultsFlow = searchMoviesUseCase(
+            queryFlow = searchQueryFlow
+                .debounce(500L) // Kullanıcı yazmayı bıraktıktan 500ms sonra arama yap.
+                .distinctUntilChanged() // Aynı sorguyu tekrar arama.
+        ).cachedIn(viewModelScope) // Sonuçları ViewModel scope'unda önbelleğe al.
 
-    /**
-     * Asıl arama işlemini gerçekleştirir ve Paging Flow'unu state'e koyar.
-     */
-    private fun performSearch(query: String) {
-        val searchResultsFlow = searchMoviesUseCase(query).cachedIn(viewModelScope)
+        // Sonuç akışını UI state'ine ata.
         setState { copy(searchResults = searchResultsFlow) }
     }
-
 }
