@@ -123,6 +123,7 @@ dependencies {
     // :app modülü, tüm feature ve core modüllerini bir araya getiren
     // en üst katman olduğu için, hepsine 'implementation' ile bağımlı olması normaldir.
     implementation(project(":feature-movies"))
+    implementation(project(":feature-auth"))
     implementation(project(":navigation-contracts"))
 
     // HILT

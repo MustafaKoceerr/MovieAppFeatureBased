@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.mustafakocer.feature_movies.navigation.moviesNavGraph
 import androidx.activity.compose.LocalActivity
+import com.mustafakocer.feature_auth.navigation.authNavGraph
 
 @Composable
 fun AppNavHost(
@@ -28,10 +29,11 @@ fun AppNavHost(
             onLanguageChanged = { activity?.recreate() }
         )
 
-        // Gelecekte bir :feature-profile eklendiğinde,
-        // buraya sadece tek bir satır daha eklenecek:
-        // profileNavGraph(navController)
+        authNavGraph(
+            navController = navController
+        )
 
+        // Gelecekte bir :feature-profile eklendiğinde,
         // Auth grafiği gibi app-level grafikler burada tanımlanabilir.
         // authNavGraph(navController)
     }
