@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_title">Добро пожаловать в\nMovie Discovery</string>
+    <string name="welcome_subtitle">Исследуйте тысячи фильмов и телешоу. Войдите, чтобы отслеживать избранное.</string>
+    <string name="login_with_tmdb">Войти через TMDB</string>
+    <string name="continue_as_guest">Продолжить как гость</string>
+    <string name="app_logo">Логотип приложения</string>
+</resources>

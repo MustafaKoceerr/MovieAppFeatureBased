@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_title">Willkommen bei\nMovie Discovery</string>
+    <string name="welcome_subtitle">Entdecke tausende von Filmen und TV-Serien. Melde dich an, um deine Favoriten zu verfolgen.</string>
+    <string name="login_with_tmdb">Mit TMDB anmelden</string>
+    <string name="continue_as_guest">Als Gast fortfahren</string>
+    <string name="app_logo">App Logo</string>
+</resources>
