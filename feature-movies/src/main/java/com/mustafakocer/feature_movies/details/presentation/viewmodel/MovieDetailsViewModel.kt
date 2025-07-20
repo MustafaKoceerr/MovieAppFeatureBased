@@ -11,6 +11,7 @@ import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetail
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsUiState
 import com.mustafakocer.navigation_contracts.navigation.MovieDetailsScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -25,6 +26,8 @@ class MovieDetailsViewModel @Inject constructor(
     private val movieId: Int = savedStateHandle.get<Int>(MovieDetailsScreen.KEY_MOVIE_ID)
         ?: throw IllegalStateException("movieId is required")
 
+    private var dataCollectionJob: Job? = null
+
     init {
         loadMovieDetails(loadingType = LoadingType.MAIN)
     }
@@ -33,36 +36,30 @@ class MovieDetailsViewModel @Inject constructor(
         when (event) {
             is MovieDetailsEvent.Refresh -> loadMovieDetails(loadingType = LoadingType.REFRESH)
             is MovieDetailsEvent.ShareMovie -> handleShareMovie(event.content)
-            is MovieDetailsEvent.BackPressed -> sendEffect(
-                MovieDetailsEffect.NavigateBack
-            )
-
-            is MovieDetailsEvent.DismissError -> setState {
-                copy(
-                    error = null
-                )
-            }
+            is MovieDetailsEvent.BackPressed -> sendEffect(MovieDetailsEffect.NavigateBack)
+            is MovieDetailsEvent.DismissError -> setState { copy(error = null) }
         }
     }
 
     private fun loadMovieDetails(loadingType: LoadingType) {
-        // executeSafeOnce yerine, Flow'u doğrudan dinliyoruz.
-        getMovieDetailsUseCase(movieId)
+        // Önceki veri dinleme işlemini iptal et.
+        dataCollectionJob?.cancel()
+
+        // UseCase'den gelen reaktif akışı dinlemeye başla.
+        dataCollectionJob = getMovieDetailsUseCase(movieId)
             .onEach { resource ->
-                // onEach, Flow'dan gelen her bir emit için bu bloğu çalıştırır.
                 val newState = when (resource) {
                     is Resource.Loading -> {
-                        // Yükleniyor durumunda, hangi tür yükleme olduğunu (ilk mi, yenileme mi)
-                        // state'e yansıt.
                         when (loadingType) {
-                            LoadingType.MAIN -> currentState.copy(isLoading = true)
-                            LoadingType.REFRESH -> currentState.copy(isRefreshing = true)
+                            LoadingType.MAIN -> currentState.copy(isLoading = true, error = null)
+                            LoadingType.REFRESH -> currentState.copy(
+                                isRefreshing = true,
+                                error = null
+                            )
                         }
                     }
 
                     is Resource.Success -> {
-                        // Başarı durumunda, veriyi state'e yaz ve tüm yükleme/hata
-                        // durumlarını temizle.
                         currentState.copy(
                             isLoading = false,
                             isRefreshing = false,
@@ -72,8 +69,6 @@ class MovieDetailsViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        // Hata durumunda, hatayı state'e yaz ve tüm yükleme
-                        // durumlarını temizle.
                         currentState.copy(
                             isLoading = false,
                             isRefreshing = false,
@@ -81,18 +76,16 @@ class MovieDetailsViewModel @Inject constructor(
                         )
                     }
                 }
-                // Hesaplanan yeni state'i tek bir yerden UI'a bildir.
                 setState { newState }
             }
-            .launchIn(viewModelScope) // Bu Flow'u viewModelScope'ta başlat ve dinle.
+            .launchIn(viewModelScope)
     }
 
     private fun handleShareMovie(shareContent: String) {
         setState { copy(isSharing = true) }
-
         sendEffect(MovieDetailsEffect.ShareContent(shareContent))
-
+        // Paylaşım işlemi anlık olduğu için, state'i hemen geri alabiliriz.
+        // Eğer uzun süren bir işlem olsaydı, bir callback mekanizması gerekirdi.
         setState { copy(isSharing = false) }
     }
-
 }
