@@ -88,4 +88,6 @@
     <string name="votes">(%1$s Stimmen)</string>
 
     <string name="no_movies_found">Keine Filme gefunden.</string>
+    <string name="scroll_to_top">Nach oben scrollen</string>
+
 </resources>

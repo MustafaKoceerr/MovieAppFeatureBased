@@ -88,5 +88,5 @@
     <string name="votes">(%1$s votes)</string>
 
     <string name="no_movies_found">Aucun film trouvé.</string>
-
+    <string name="scroll_to_top">Aller en haut</string>
 </resources>

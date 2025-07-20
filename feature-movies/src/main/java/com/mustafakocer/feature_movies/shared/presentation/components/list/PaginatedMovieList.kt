@@ -40,7 +40,17 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.paging.LoadState
+import androidx.compose.animation.*
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.runtime.*
+import kotlinx.coroutines.launch
 
+/**
+ * Paging 3 ile gelen film listesini ve "Yukarı Çık" butonunu gösteren ana Composable.
+ */
 @Composable
 fun PaginatedMovieList(
     lazyPagingItems: LazyPagingItems<MovieListItem>,
@@ -48,15 +58,32 @@ fun PaginatedMovieList(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
-    // Dışarıdan gelen `contentPadding`'i (örn. Scaffold'dan gelen) en dıştaki Box'a uygula.
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    // Butonun görünürlüğünü performanslı bir şekilde hesapla.
+    // Sadece boolean sonuç değiştiğinde recompose olur.
+    val showScrollToTopButton by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 5 // 5. öğeyi geçince butonu göster
+        }
+    }
+
     Box(modifier = modifier.padding(contentPadding)) {
         LazyColumn(
+            state = listState, // State'i LazyColumn'a bağla
             modifier = Modifier.fillMaxSize(),
-            // LazyColumn'un kendi iç padding'i.
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Liste içeriği
+            // Liste boşsa gösterilecek olan öğe
+            if (lazyPagingItems.loadState.refresh is LoadState.NotLoading && lazyPagingItems.itemCount == 0) {
+                item {
+                    EmptyListIndicator(modifier = Modifier.fillParentMaxSize())
+                }
+            }
+
+            // Film öğeleri
             items(
                 count = lazyPagingItems.itemCount,
                 key = lazyPagingItems.itemKey { it.id }
@@ -69,29 +96,57 @@ fun PaginatedMovieList(
                 }
             }
 
-            // Sayfa sonu göstergeleri
+            // Sayfa sonu yükleme/hata göstergesi
             item {
                 PagingAppendIndicator(lazyPagingItems = lazyPagingItems)
             }
-
-            // Yükleme bittiğinde ve liste tamamen boşsa, boş liste göstergesini göster.
-            if (lazyPagingItems.loadState.refresh is LoadState.NotLoading && lazyPagingItems.itemCount == 0) {
-                item {
-                    // EmptyListIndicator'ı LazyColumn'un bir öğesi olarak tam ekran kaplayacak şekilde ekliyoruz.
-                    EmptyListIndicator(
-                        modifier = Modifier
-                            .fillParentMaxSize() // LazyColumn'un tüm alanını kapla
-                            .padding(bottom = 100.dp) // Alttaki append indicator ile çakışmasın diye biraz boşluk
-                    )
-                }
-            }
         }
+
+        // "Yukarı Çık" Butonu
+        ScrollToTopButton(
+            isVisible = showScrollToTopButton,
+            onClick = {
+                coroutineScope.launch {
+                    listState.animateScrollToItem(0) // Animasyonla en üste kaydır
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        )
     }
 }
 
-// ... (dosyanın geri kalanı aynı)
-// ... (dosyanın geri kalanı aynı)
-// ---------- İÇ IMPLEMENTASYON (PRIVATE) ----------
+// ... (MovieRow, MovieInfo, PagingAppendIndicator, EmptyListIndicator fonksiyonları aynı kalacak)
+
+/**
+ * Animasyonlu bir şekilde görünüp kaybolan "Yukarı Çık" FloatingActionButton'u.
+ */
+@Composable
+private fun ScrollToTopButton(
+    isVisible: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
+        exit = fadeOut() + slideOutVertically(targetOffsetY = { it / 2 }),
+        modifier = modifier
+    ) {
+        FloatingActionButton(
+            onClick = onClick,
+            shape = CircleShape,
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        ) {
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowUp,
+                contentDescription = stringResource(R.string.scroll_to_top)
+            )
+        }
+    }
+}
 
 @Composable
 private fun MovieRow(

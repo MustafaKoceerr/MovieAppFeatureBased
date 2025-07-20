@@ -88,5 +88,6 @@
     <string name="votes">(%1$s votes)</string>
 
     <string name="no_movies_found">No movies found.</string>
+    <string name="scroll_to_top">Scroll to top</string>
 
 </resources>
