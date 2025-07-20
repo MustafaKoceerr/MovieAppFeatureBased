@@ -27,74 +27,58 @@ class HomeRepositoryImpl @Inject constructor(
     private val languageProvider: LanguageProvider,
 ) : HomeRepository {
 
-    private fun getMovies(
-        category: MovieCategory,
-        apiCall: suspend () -> Response<PaginatedResponseDto<MovieDto>>,
-    ): Flow<Resource<List<MovieListItem>>> = flow {
+    override fun getMoviesForCategory(category: MovieCategory): Flow<Resource<List<MovieListItem>>> =
+        flow {
+            // 1. Yüklemenin başladığını bildir.
+            emit(Resource.Loading)
 
-        // 1. Akış başladığında yükleniyor durumunu yayınla
-        emit(Resource.Loading)
+            val language = languageProvider.getLanguageParam()
+            val categoryKey = category.apiEndpoint
 
-        val language = languageProvider.getLanguageParam()
-        val categoryKey = category.apiEndpoint
+            try {
+                // 2. Önbellekteki veriyi al ve hemen yayınla.
+                // Bu, kullanıcıya anında bir UI gösterir.
+                val cachedMovies = homeMovieDao.getMoviesForCategory(categoryKey, language)
+                emit(Resource.Success(cachedMovies.toDomainList()))
 
-        // 2. Cache'deki mevcut veriyi al.
-        val cachedMovies = homeMovieDao.getMoviesForCategory(categoryKey, language)
+                // 3. Ağdan yeni veriyi çek.
+                val response = fetchMoviesFromApi(category)
 
-        // 3. Cache'deki veriyi ilk olarak yayınca. UI anında güncellensin.
-        emit(Resource.Success(cachedMovies.toDomainList()))
+                if (response.isSuccessful && response.body() != null) {
+                    val moviesDto = response.body()!!.results ?: emptyList()
 
-        // 4. Ağdan yeni veriyi çekmeyi dene
-        try {
-            val response = apiCall()
+                    // 4. Önbelleği yeni veriyle güncelle (atomik işlem).
+                    // Önce eski veriyi sil, sonra yenisini ekle.
+                    homeMovieDao.deleteMoviesForCategory(categoryKey, language)
+                    val movieEntities = moviesDto.toHomeMovieEntityList(categoryKey, language)
+                    homeMovieDao.upsertAll(movieEntities)
 
-            if (response.isSuccessful && response.body() != null) {
-                val moviesDto = response.body()!!.results ?: emptyList()
-
-                // 5. Veritabanını yeni veriyle güncelle.
-                val moviesEntities = moviesDto.toHomeMovieEntityList(categoryKey, language)
-                homeMovieDao.deleteMoviesForCategory(categoryKey, language)
-                homeMovieDao.upsertAll(moviesEntities)
-
-                // 6. Veritabanını güncelledikten sonra, en güncel veriyi tekrar yayınla.
-                // Not: Burada veri tabanına yazdığımız veriyi, elimizde dto'lar olmasına rağmen Single Source of Truth prensibine uymak için veritabanından okuyoruz.
-                val updatedCache = homeMovieDao.getMoviesForCategory(categoryKey, language)
-                emit(Resource.Success(updatedCache.toDomainList()))
-            } else {
-                // Ağdan hata geldiyse, bunu bir AppException'a çevirip Error olarak yayınla.
-                // Kullanıcı hale cache'deki veriyi görmeye devam eder, ama viewModel hatadan haberdar olur.
-                val exception = ErrorMapper.mapHttpErrorResponseToAppException(response)
+                    // 5. Güncellenmiş önbelleği Tek Gerçek Kaynağı (Single Source of Truth) olarak tekrar yayınla.
+                    val updatedCache = homeMovieDao.getMoviesForCategory(categoryKey, language)
+                    emit(Resource.Success(updatedCache.toDomainList()))
+                } else {
+                    // Ağdan yanıt alınamadı veya yanıt başarısız oldu.
+                    // Hata yayınla, ancak UI'da hala eski önbellek verisi gösteriliyor olacak.
+                    val exception = ErrorMapper.mapHttpErrorResponseToAppException(response)
+                    emit(Resource.Error(exception))
+                }
+            } catch (e: Exception) {
+                // Ağ isteği sırasında bir istisna oluştu (örn. internet yok).
+                // Hatayı bizim anladığımız dile çevir ve yayınla.
+                val exception = ErrorMapper.mapThrowableToAppException(e)
                 emit(Resource.Error(exception))
             }
-        } catch (e: Exception) {
-            // Ağ isteği tamamen çökerse (örn: internet yok), bunu da Error olarak yayınla.
-            val exception = ErrorMapper.mapThrowableToAppException(e)
-            emit(Resource.Error(exception))
+        }
+
+    /**
+     * Kategoriye göre ilgili API endpoint'ini çağıran özel yardımcı fonksiyon.
+     */
+    private suspend fun fetchMoviesFromApi(category: MovieCategory): Response<PaginatedResponseDto<MovieDto>> {
+        return when (category) {
+            MovieCategory.NOW_PLAYING -> movieApiService.getNowPlayingMovies()
+            MovieCategory.POPULAR -> movieApiService.getPopularMovies()
+            MovieCategory.TOP_RATED -> movieApiService.getTopRatedMovies()
+            MovieCategory.UPCOMING -> movieApiService.getUpcomingMovies()
         }
     }
-
-    override fun getNowPlayingMovies(page: Int): Flow<Resource<List<MovieListItem>>> {
-        return getMovies(MovieCategory.NOW_PLAYING) { movieApiService.getNowPlayingMovies(page) }
-    }
-
-    override fun getPopularMovies(page: Int): Flow<Resource<List<MovieListItem>>> {
-        return getMovies(MovieCategory.POPULAR) { movieApiService.getPopularMovies(page) }
-    }
-
-    override fun getTopRatedMovies(page: Int): Flow<Resource<List<MovieListItem>>> {
-        return getMovies(MovieCategory.TOP_RATED) { movieApiService.getTopRatedMovies(page) }
-    }
-
-    override fun getUpcomingMovies(page: Int): Flow<Resource<List<MovieListItem>>> {
-        return getMovies(MovieCategory.UPCOMING) { movieApiService.getUpcomingMovies(page) }
-    }
 }
-
-/**
- * Bu Yeni Yapı Nasıl Çalışır?
- * ViewModel bu Flow'u dinlemeye başlar.
- * Anında: Resource.Loading gelir. ViewModel, state.isLoading = true yapar.
- * Hemen Ardından: Resource.Success (cache'deki veriyle) gelir. ViewModel, state.isLoading = false ve state.categories = ... yapar. Kullanıcı, internet olmasa bile anında eski veriyi görür.
- * Biraz Sonra (Ağ Başarılıysa): Tekrar Resource.Success (yeni veriyle) gelir. ViewModel, state.categories'i yeni veriyle günceller. UI, taze veriyle kendini yeniler.
- * Biraz Sonra (Ağ Başarısızsa): Resource.Error gelir. ViewModel, state.error = ... yapar. UI, bir Snackbar gösterebilir, ama state.categories'deki eski veri hala durduğu için içerik kaybolmaz.
- */
