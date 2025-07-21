@@ -14,10 +14,10 @@ data class WelcomeUiState(
 sealed interface WelcomeEvent : BaseUiEvent {
     object LoginClicked : WelcomeEvent
     object GuestClicked : WelcomeEvent
+    object DismissError : WelcomeEvent // Hata mesajını kapatmak için
 }
 
 sealed interface WelcomeEffect : BaseUiEffect {
     object NavigateToHome : WelcomeEffect
-    // Gelecekte buraya web tarayıcısını açmak için bir effect ekleyeceğiz.
-    // data class NavigateToTmdbLogin(val url: String) : WelcomeEffect
+    data class NavigateToTmdbLogin(val url: String) : WelcomeEffect
 }
