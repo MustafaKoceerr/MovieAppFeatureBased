@@ -32,6 +32,7 @@ fun HomeRoute(
 
                 is HomeEffect.NavigateToSettings -> navActions.navigateToSettings()
                 is HomeEffect.NavigateToSearch -> navActions.navigateToSearch()
+                is HomeEffect.NavigateToAccount -> navActions.navigateToAccount()
                 is HomeEffect.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(
                         message = effect.message,

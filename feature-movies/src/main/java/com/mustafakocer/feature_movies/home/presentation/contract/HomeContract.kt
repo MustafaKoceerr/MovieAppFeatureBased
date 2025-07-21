@@ -29,8 +29,9 @@ sealed interface HomeEvent : BaseUiEvent {
     object Refresh : HomeEvent
     data class MovieClicked(val movieId: Int) : HomeEvent
     data class ViewAllClicked(val category: MovieCategory) : HomeEvent
-    object ProfileClicked : HomeEvent
+    object SettingsClicked : HomeEvent
     object SearchClicked : HomeEvent
+    object AccountClicked : HomeEvent
 }
 
 // ==================== EFFECT ====================
@@ -39,5 +40,6 @@ sealed interface HomeEffect : BaseUiEffect {
     data class NavigateToMovieList(val categoryEndpoint: String) : HomeEffect
     object NavigateToSettings : HomeEffect
     object NavigateToSearch : HomeEffect
+    object NavigateToAccount : HomeEffect
     data class ShowSnackbar(val message: String) : HomeEffect
 }

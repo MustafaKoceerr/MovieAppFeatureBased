@@ -32,8 +32,10 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.Refresh -> loadData(LoadingType.REFRESH)
             is HomeEvent.MovieClicked -> sendEffect(HomeEffect.NavigateToMovieDetails(event.movieId))
             is HomeEvent.ViewAllClicked -> sendEffect(HomeEffect.NavigateToMovieList(event.category.apiEndpoint))
-            is HomeEvent.ProfileClicked -> sendEffect(HomeEffect.NavigateToSettings)
+            is HomeEvent.SettingsClicked -> sendEffect(HomeEffect.NavigateToSettings)
+            is HomeEvent.AccountClicked -> sendEffect(HomeEffect.NavigateToAccount)
             is HomeEvent.SearchClicked -> sendEffect(HomeEffect.NavigateToSearch)
+
         }
     }
 
@@ -70,6 +72,7 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             }
+
             is Resource.Success -> {
                 setState {
                     copy(
@@ -80,6 +83,7 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
             is Resource.Error -> {
                 setState {
                     copy(
