@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Theaters
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,13 +25,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
 import com.mustafakocer.feature_auth.R
-import com.mustafakocer.feature_auth.presentation.welcome.contract.WelcomeEvent
 import com.mustafakocer.feature_auth.presentation.welcome.contract.WelcomeUiState
 import com.mustafakocer.feature_auth.presentation.welcome.screen.WelcomeScreen
 
 
 @Composable
 fun WelcomeContent(
+    state: WelcomeUiState,
     onLoginClick: () -> Unit,
     onGuestClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -62,9 +63,16 @@ fun WelcomeContent(
         Spacer(modifier = Modifier.height(64.dp))
 
         // Action Buttons
-        LoginButton(onClick = onLoginClick)
+// Action Buttons
+        LoginButton(
+            onClick = onLoginClick,
+            isLoading = state.isLoading
+        )
         Spacer(modifier = Modifier.height(16.dp))
-        GuestButton(onClick = onGuestClick)
+        GuestButton(
+            onClick = onGuestClick,
+            isLoading = state.isLoading
+        )
     }
 }
 
@@ -81,30 +89,41 @@ private fun AppLogo(modifier: Modifier = Modifier) {
 @Composable
 private fun LoginButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    isLoading: Boolean, // Yükleme durumunu al
+    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = onClick,
+        enabled = !isLoading, // Yükleniyorsa butonu devre dışı bırak
         modifier = modifier
             .fillMaxWidth()
             .height(50.dp),
         shape = MaterialTheme.shapes.medium
     ) {
-        Text(
-            text = stringResource(R.string.login_with_tmdb),
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Bold
-        )
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        } else {
+            Text(
+                text = stringResource(R.string.login_with_tmdb),
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 
 @Composable
 private fun GuestButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    isLoading: Boolean, // Yükleme durumunu al
+    modifier: Modifier = Modifier,
 ) {
     TextButton(
         onClick = onClick,
+        enabled = !isLoading, // Yükleniyorsa butonu devre dışı bırak
         modifier = modifier.fillMaxWidth()
     ) {
         Text(

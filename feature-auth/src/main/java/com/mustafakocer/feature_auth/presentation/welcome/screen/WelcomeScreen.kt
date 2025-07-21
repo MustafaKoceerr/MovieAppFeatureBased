@@ -18,6 +18,7 @@ fun WelcomeScreen(
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         WelcomeContent(
+            state = state,
             onLoginClick = { onEvent(WelcomeEvent.LoginClicked) },
             onGuestClick = { onEvent(WelcomeEvent.GuestClicked) },
             modifier = Modifier
