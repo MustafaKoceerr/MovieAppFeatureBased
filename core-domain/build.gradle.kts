@@ -4,11 +4,10 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
 
-    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
-    namespace = "com.mustafakocer.core_common"
+    namespace = "com.mustafakocer.core_domain"
     compileSdk = 35
 
     defaultConfig {
@@ -38,7 +37,6 @@ android {
 
 dependencies {
     api(libs.kotlinx.coroutines.core)
-    api(libs.kotlinx.serialization.json)
     // TESTING
     testImplementation(libs.junit)
 }
