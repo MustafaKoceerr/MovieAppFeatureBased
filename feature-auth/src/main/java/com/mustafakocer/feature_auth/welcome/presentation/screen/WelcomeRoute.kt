@@ -8,14 +8,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.feature_auth.welcome.presentation.viewmodel.WelcomeViewModel
-import com.mustafakocer.navigation_contracts.actions.FeatureAuthNavActions
 import com.mustafakocer.feature_auth.welcome.presentation.contract.WelcomeEffect
 import androidx.compose.runtime.getValue
+import com.mustafakocer.navigation_contracts.actions.auth.WelcomeNavActions
 
 
 @Composable
 fun WelcomeRoute(
-    navActions: FeatureAuthNavActions,
+    navActions: WelcomeNavActions,
     viewModel: WelcomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()

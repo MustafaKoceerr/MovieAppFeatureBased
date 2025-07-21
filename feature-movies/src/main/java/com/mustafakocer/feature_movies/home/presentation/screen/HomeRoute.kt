@@ -9,12 +9,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.feature_movies.home.presentation.contract.HomeEffect
 import com.mustafakocer.feature_movies.home.presentation.viewmodel.HomeViewModel
-import com.mustafakocer.navigation_contracts.actions.FeatureMoviesNavActions
+import com.mustafakocer.navigation_contracts.actions.movies.HomeNavActions
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeRoute(
-    navActions: FeatureMoviesNavActions,
+    navActions: HomeNavActions,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()

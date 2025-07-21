@@ -14,12 +14,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.feature_movies.R
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEffect
 import com.mustafakocer.feature_movies.details.presentation.viewmodel.MovieDetailsViewModel
-import com.mustafakocer.navigation_contracts.actions.FeatureMoviesNavActions
+import com.mustafakocer.navigation_contracts.actions.movies.MovieDetailsNavActions
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun MovieDetailsRoute(
-    navActions: FeatureMoviesNavActions,
+    navActions: MovieDetailsNavActions,
     viewModel: MovieDetailsViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current

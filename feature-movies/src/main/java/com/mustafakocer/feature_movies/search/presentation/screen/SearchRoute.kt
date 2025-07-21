@@ -11,14 +11,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.feature_movies.search.presentation.contract.SearchEffect
 import com.mustafakocer.feature_movies.search.presentation.viewmodel.SearchViewModel
-import com.mustafakocer.navigation_contracts.actions.FeatureMoviesNavActions
 import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.runtime.getValue
+import com.mustafakocer.navigation_contracts.actions.movies.SearchNavActions
 
 
 @Composable
 fun SearchRoute(
-    navActions: FeatureMoviesNavActions,
+    navActions: SearchNavActions,
     viewModel: SearchViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
