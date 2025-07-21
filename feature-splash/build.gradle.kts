@@ -1,7 +1,13 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
+
 
 android {
     namespace = "com.mustafakocer.feature_splash"
@@ -33,11 +39,38 @@ android {
 }
 
 dependencies {
+    // --- CORE MODÜL BAĞIMLILIKLARI ---
+    implementation(project(":core-ui"))
+    implementation(project(":core-network"))
+    implementation(project(":core-database"))
+    implementation(project(":core-preferences"))
+    implementation(project(":core-android"))
+    implementation(project(":core-domain"))
+    implementation(project(":navigation-contracts"))
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+
+    // --- HILT ---
+    // Bu modül @HiltViewModel, @Inject, @Module kullandığı için zorunlu.
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
+
+    // --- COMPOSE & UI ---
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    implementation(libs.gson)
+
+    // --- TEST ---
     testImplementation(libs.junit)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }
