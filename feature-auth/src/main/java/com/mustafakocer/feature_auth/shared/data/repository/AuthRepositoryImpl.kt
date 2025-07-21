@@ -1,7 +1,7 @@
 package com.mustafakocer.feature_auth.shared.data.repository
 
-import com.mustafakocer.core_common.provider.SessionProvider
-import com.mustafakocer.core_common.util.Resource
+import com.mustafakocer.core_domain.provider.SessionProvider
+import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.core_network.util.safeApiCall
 import com.mustafakocer.feature_auth.account.domain.repository.AccountRepository
 import com.mustafakocer.feature_auth.shared.data.api.AuthApiService

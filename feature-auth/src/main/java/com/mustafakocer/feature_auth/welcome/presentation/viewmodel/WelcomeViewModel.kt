@@ -2,7 +2,7 @@ package com.mustafakocer.feature_auth.welcome.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mustafakocer.core_android.presentation.BaseViewModel
-import com.mustafakocer.core_common.util.Resource
+import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.feature_auth.shared.util.AuthConstants
 import com.mustafakocer.feature_auth.welcome.domain.provider.AuthCallbackProvider
 import com.mustafakocer.feature_auth.welcome.domain.usecase.CreateRequestTokenUseCase

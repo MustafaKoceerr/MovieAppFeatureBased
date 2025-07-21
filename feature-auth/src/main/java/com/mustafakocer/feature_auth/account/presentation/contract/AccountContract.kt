@@ -1,9 +1,9 @@
 package com.mustafakocer.feature_auth.account.presentation.contract
 
-import com.mustafakocer.core_common.exception.AppException
-import com.mustafakocer.core_common.presentation.BaseUiEffect
-import com.mustafakocer.core_common.presentation.BaseUiEvent
-import com.mustafakocer.core_common.presentation.BaseUiState
+import com.mustafakocer.core_domain.exception.AppException
+import com.mustafakocer.core_domain.presentation.BaseUiEffect
+import com.mustafakocer.core_domain.presentation.BaseUiEvent
+import com.mustafakocer.core_domain.presentation.BaseUiState
 
 data class AccountUiState(
     val isLoggedIn: Boolean = false,

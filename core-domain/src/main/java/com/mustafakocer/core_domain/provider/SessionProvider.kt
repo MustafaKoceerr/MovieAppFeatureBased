@@ -1,4 +1,4 @@
-package com.mustafakocer.core_common.provider
+package com.mustafakocer.core_domain.provider
 
 import kotlinx.coroutines.flow.Flow
 

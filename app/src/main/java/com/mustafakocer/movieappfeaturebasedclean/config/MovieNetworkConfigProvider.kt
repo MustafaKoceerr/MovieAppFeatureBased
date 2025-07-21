@@ -1,7 +1,7 @@
 package com.mustafakocer.movieappfeaturebasedclean.config
 
 import android.content.Context
-import com.mustafakocer.core_common.config.NetworkConfigProvider
+import com.mustafakocer.core_domain.config.NetworkConfigProvider
 import com.mustafakocer.movieappfeaturebasedclean.BuildConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File

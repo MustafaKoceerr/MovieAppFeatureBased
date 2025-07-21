@@ -1,10 +1,10 @@
 package com.mustafakocer.feature_movies.search.presentation.contract
 
 import androidx.paging.PagingData
-import com.mustafakocer.core_common.exception.AppException
-import com.mustafakocer.core_common.presentation.BaseUiEffect
-import com.mustafakocer.core_common.presentation.BaseUiEvent
-import com.mustafakocer.core_common.presentation.BaseUiState
+import com.mustafakocer.core_domain.exception.AppException
+import com.mustafakocer.core_domain.presentation.BaseUiEffect
+import com.mustafakocer.core_domain.presentation.BaseUiEvent
+import com.mustafakocer.core_domain.presentation.BaseUiState
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow

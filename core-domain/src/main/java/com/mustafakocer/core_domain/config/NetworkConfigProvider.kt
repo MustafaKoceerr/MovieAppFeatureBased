@@ -1,4 +1,4 @@
-package com.mustafakocer.core_common.config
+package com.mustafakocer.core_domain.config
 
 interface NetworkConfigProvider {
     val baseUrl: String

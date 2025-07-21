@@ -1,6 +1,6 @@
 package com.mustafakocer.core_network.error
 
-import com.mustafakocer.core_common.exception.AppException
+import com.mustafakocer.core_domain.exception.AppException
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException

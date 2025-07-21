@@ -1,6 +1,6 @@
-package com.mustafakocer.core_common.util
+package com.mustafakocer.core_domain.util
 
-import com.mustafakocer.core_common.exception.AppException
+import com.mustafakocer.core_domain.exception.AppException
 
 /**
  * Bir veri isteğinin durumunu temsil eden sarmalayıcı sınıf.

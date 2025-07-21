@@ -1,6 +1,6 @@
 package com.mustafakocer.feature_auth.account.domain.usecase
 
-import com.mustafakocer.core_common.provider.SessionProvider
+import com.mustafakocer.core_domain.provider.SessionProvider
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

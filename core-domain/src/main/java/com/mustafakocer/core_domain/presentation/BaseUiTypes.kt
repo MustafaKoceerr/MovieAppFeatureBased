@@ -1,6 +1,6 @@
-package com.mustafakocer.core_common.presentation
+package com.mustafakocer.core_domain.presentation
 
-import com.mustafakocer.core_common.exception.AppException
+import com.mustafakocer.core_domain.exception.AppException
 
 interface BaseUiState {
     val isLoading: Boolean

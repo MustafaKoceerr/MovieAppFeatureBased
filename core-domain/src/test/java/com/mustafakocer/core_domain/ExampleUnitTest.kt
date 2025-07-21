@@ -1,4 +1,4 @@
-package com.mustafakocer.core_common
+package com.mustafakocer.core_domain
 
 import org.junit.Test
 

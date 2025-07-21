@@ -2,7 +2,7 @@ package com.mustafakocer.feature_splash.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mustafakocer.core_android.presentation.BaseViewModel
-import com.mustafakocer.core_common.provider.SessionProvider
+import com.mustafakocer.core_domain.provider.SessionProvider
 import com.mustafakocer.feature_splash.presentation.contract.SplashEffect
 import com.mustafakocer.feature_splash.presentation.contract.SplashEvent
 import com.mustafakocer.feature_splash.presentation.contract.SplashUiState

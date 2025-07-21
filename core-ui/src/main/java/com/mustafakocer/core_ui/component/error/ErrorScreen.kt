@@ -40,7 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mustafakocer.core_common.exception.AppException
+import com.mustafakocer.core_domain.exception.AppException
 import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
 
 /**

@@ -1,6 +1,6 @@
 package com.mustafakocer.feature_movies.home.domain.usecase
 
-import com.mustafakocer.core_common.util.Resource
+import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.core_preferences.repository.LanguageRepository
 import com.mustafakocer.feature_movies.home.domain.repository.HomeRepository
 import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
@@ -8,9 +8,7 @@ import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 

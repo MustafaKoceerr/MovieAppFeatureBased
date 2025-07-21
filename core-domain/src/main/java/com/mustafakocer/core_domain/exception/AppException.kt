@@ -1,4 +1,4 @@
-package com.mustafakocer.core_common.exception
+package com.mustafakocer.core_domain.exception
 
 import java.io.IOException
 

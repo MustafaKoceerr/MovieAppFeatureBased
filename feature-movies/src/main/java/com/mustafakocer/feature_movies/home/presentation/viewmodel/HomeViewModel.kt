@@ -3,7 +3,7 @@ package com.mustafakocer.feature_movies.home.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.mustafakocer.core_android.presentation.BaseViewModel
 import com.mustafakocer.core_android.presentation.LoadingType
-import com.mustafakocer.core_common.util.Resource
+import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.feature_movies.home.domain.usecase.GetHomeScreenDataUseCase
 import com.mustafakocer.feature_movies.home.presentation.contract.HomeEffect
 import com.mustafakocer.feature_movies.home.presentation.contract.HomeEvent

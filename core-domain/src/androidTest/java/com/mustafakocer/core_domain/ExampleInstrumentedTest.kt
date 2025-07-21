@@ -1,4 +1,4 @@
-package com.mustafakocer.core_common
+package com.mustafakocer.core_domain
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

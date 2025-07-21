@@ -1,4 +1,4 @@
-package com.mustafakocer.core_common.presentation
+package com.mustafakocer.core_domain.presentation
 
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow

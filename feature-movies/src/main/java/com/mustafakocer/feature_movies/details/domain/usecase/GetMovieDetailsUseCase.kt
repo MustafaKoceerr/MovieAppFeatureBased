@@ -1,6 +1,6 @@
 package com.mustafakocer.feature_movies.details.domain.usecase
 
-import com.mustafakocer.core_common.util.Resource
+import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.core_preferences.repository.LanguageRepository
 import com.mustafakocer.feature_movies.details.domain.repository.MovieDetailsRepository
 import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails

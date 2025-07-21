@@ -1,6 +1,6 @@
 package com.mustafakocer.core_network.di
 
-import com.mustafakocer.core_common.config.NetworkConfigProvider
+import com.mustafakocer.core_domain.config.NetworkConfigProvider
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
