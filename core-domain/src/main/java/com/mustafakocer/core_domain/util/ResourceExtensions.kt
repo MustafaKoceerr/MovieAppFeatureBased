@@ -12,7 +12,7 @@ package com.mustafakocer.core_domain.util
  * @param transform Başarılı veri üzerinde uygulanacak dönüşüm fonksiyonu.
  * @return Dönüştürülmüş veriyi içeren yeni bir Resource<R> nesnesi.
  */
-fun <T, R> Resource<T>.map(transform: (T) -> R): Resource<R> {
+fun <T, R> Resource<T>.mapSuccess(transform: (T) -> R): Resource<R> {
     return when (this) {
         is Resource.Success -> Resource.Success(transform(data))
         is Resource.Error -> this
