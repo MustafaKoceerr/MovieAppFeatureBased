@@ -1,6 +1,7 @@
 package com.mustafakocer.feature_movies.details.data.repository
 
 import com.mustafakocer.core_domain.util.Resource
+import com.mustafakocer.core_domain.util.mapSuccess
 import com.mustafakocer.core_network.util.safeApiCall
 import com.mustafakocer.feature_movies.details.domain.repository.MovieDetailsRepository
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
@@ -24,16 +25,9 @@ class MovieDetailsRepositoryImpl @Inject constructor(
         }.map { resource ->
             // safeApiCall'dan gelen Resource<MovieDetailsDto>'yu alıp,
             // onu Resource<MovieDetails>'e dönüştürüyoruz.
-            when (resource) {
-                is Resource.Success -> {
-                    // Başarı durumunda, içindeki DTO'yu domain modeline çevir.
-                    val domainModel = resource.data.toDomain()
-                    Resource.Success(domainModel)
-                }
-                // Hata ve Yükleniyor durumlarında, içlerinde veri olmadığı için
-                // olduğu gibi geri döndür.
-                is Resource.Error -> resource
-                is Resource.Loading -> resource
+            // Manuel "when" bloğu yerine merkezi "map" fonksiyonu kullanıyoruz.
+            resource.mapSuccess { movieDetailsDto ->
+                movieDetailsDto.toDomain()
             }
         }
 

@@ -10,6 +10,7 @@ import com.mustafakocer.feature_auth.shared.data.model.SessionRequestDto
 import com.mustafakocer.feature_auth.shared.data.preferences.SessionManager
 import com.mustafakocer.feature_auth.welcome.domain.repository.LoginRepository
 import kotlinx.coroutines.flow.Flow
+import com.mustafakocer.core_domain.util.mapSuccess
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -26,7 +27,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun createRequestToken(): Flow<Resource<String>> {
         return safeApiCall { authApiService.createRequestToken() }
-            .map { resource -> resource.map { it.requestToken } }
+            .map { resource -> resource.mapSuccess { it.requestToken } }
     }
 
     override fun createSession(requestToken: String): Flow<Resource<String>> {
@@ -36,7 +37,7 @@ class AuthRepositoryImpl @Inject constructor(
                     sessionManager.saveSessionId(resource.data.sessionId)
                 }
             }
-            .map { resource -> resource.map { it.sessionId } }
+            .map { resource -> resource.mapSuccess { it.sessionId } }
     }
 
     // --- AccountRepository & SessionProvider Fonksiyonları ---
@@ -63,11 +64,3 @@ class AuthRepositoryImpl @Inject constructor(
     }
 }
 
-// Resource<T> üzerinde çalışan küçük bir yardımcı extension
-private fun <T, R> Resource<T>.map(transform: (T) -> R): Resource<R> {
-    return when (this) {
-        is Resource.Success -> Resource.Success(transform(data))
-        is Resource.Error -> this
-        is Resource.Loading -> Resource.Loading
-    }
-}
