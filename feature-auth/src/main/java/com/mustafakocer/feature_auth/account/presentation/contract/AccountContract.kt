@@ -8,7 +8,7 @@ import com.mustafakocer.core_common.presentation.BaseUiState
 data class AccountUiState(
     val isLoggedIn: Boolean = false,
     // Gelecekte vuraya kullanıcı adı, avatar gibi bilgiler eklenebilir.
-    // val usernaem: String? = null
+    // val username: String? = null
 
 ) : BaseUiState {
     override val isLoading: Boolean = false
