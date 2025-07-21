@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.mustafakocer.feature_auth.presentation.welcome.screen.WelcomeRoute
+import com.mustafakocer.feature_auth.welcome.presentation.screen.WelcomeRoute
 import com.mustafakocer.navigation_contracts.actions.FeatureAuthNavActions
 import com.mustafakocer.navigation_contracts.navigation.AuthFeatureGraph
 import com.mustafakocer.navigation_contracts.navigation.MoviesFeatureGraph
