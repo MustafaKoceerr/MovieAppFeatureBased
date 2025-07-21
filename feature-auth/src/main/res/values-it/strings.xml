@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="welcome_title">Bienvenue sur\nMovie Discovery</string>
-    <string name="welcome_subtitle">Explorez des milliers de films et séries TV. Connectez-vous pour suivre vos favoris.</string>
-    <string name="login_with_tmdb">Se connecter avec TMDB</string>
-    <string name="continue_as_guest">Continuer en tant qu\'invité</string>
-    <string name="app_logo">Logo de l\'app</string>
+    <string name="welcome_title">Benvenuto in\nScoperta Film</string>
+    <string name="welcome_subtitle">Esplora migliaia di film e serie TV. Accedi per tenere traccia dei tuoi preferiti.</string>
+    <string name="login_with_tmdb">Accedi con TMDB</string>
+    <string name="continue_as_guest">Continua come ospite</string>
+    <string name="app_logo">Logo dell\'app</string>
+
+    <!-- ... altre stringhe ... -->
+    <string name="account_title">Account</string>
+    <string name="account_icon">Icona account</string>
+    <string name="logged_in_message">Hai effettuato l\'accesso.</string>
+    <string name="guest_message">Stai navigando come ospite.</string>
+    <string name="logout_button">Disconnetti</string>
+    <string name="login_button">Accedi</string>
 </resources>

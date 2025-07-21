@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="welcome_title">Bienvenido a\nMovie Discovery</string>
-    <string name="welcome_subtitle">Explora miles de películas y series de TV. Inicia sesión para seguir tus favoritas.</string>
+    <string name="welcome_title">Bienvenido a\nDescubrimiento de Películas</string>
+    <string name="welcome_subtitle">Explora miles de películas y series de TV. Inicia sesión para seguir tus favoritos.</string>
     <string name="login_with_tmdb">Iniciar sesión con TMDB</string>
     <string name="continue_as_guest">Continuar como invitado</string>
-    <string name="app_logo">Logo de la app</string>
+    <string name="app_logo">Logo de la aplicación</string>
+
+    <!-- ... otros strings ... -->
+    <string name="account_title">Cuenta</string>
+    <string name="account_icon">Icono de cuenta</string>
+    <string name="logged_in_message">Has iniciado sesión.</string>
+    <string name="guest_message">Estás navegando como invitado.</string>
+    <string name="logout_button">Cerrar sesión</string>
+    <string name="login_button">Iniciar sesión</string>
 </resources>
