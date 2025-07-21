@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_title">Bienvenue dans\nDécouverte de Films</string>
+    <string name="welcome_subtitle">Explorez des milliers de films et séries TV. Connectez-vous pour suivre vos favoris.</string>
+    <string name="login_with_tmdb">Se connecter avec TMDB</string>
+    <string name="continue_as_guest">Continuer en tant qu\'invité</string>
+    <string name="app_logo">Logo de l\'application</string>
+
+    <!-- ... autres chaînes ... -->
+    <string name="account_title">Compte</string>
+    <string name="account_icon">Icône de compte</string>
+    <string name="logged_in_message">Vous êtes connecté.</string>
+    <string name="guest_message">Vous naviguez en tant qu\'invité.</string>
+    <string name="logout_button">Se déconnecter</string>
+    <string name="login_button">Se connecter</string>
+    <string name="back_button_desc">Retour</string>
+
+</resources>

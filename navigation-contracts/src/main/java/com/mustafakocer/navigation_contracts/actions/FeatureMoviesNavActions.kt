@@ -17,4 +17,7 @@ interface FeatureMoviesNavActions : CommonNavActions {
 
     // Home ekranından -> Ayarlar ekranına
     fun navigateToSettings()
+
+    // Home ekranından -> Account ekranına.
+    fun navigateToAccount()
 }

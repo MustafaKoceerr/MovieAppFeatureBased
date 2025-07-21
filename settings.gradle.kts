@@ -1,6 +1,7 @@
 import org.gradle.api.initialization.resolve.RepositoriesMode.FAIL_ON_PROJECT_REPOS
 
-include(":core-android")
+include(":feature-splash")
+
 
 
 pluginManagement {
@@ -33,3 +34,5 @@ include(":feature-movies")
 include(":core-database")
 include(":navigation-contracts")
 include(":core-preferences")
+include(":feature-auth")
+include(":core-android")

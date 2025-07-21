@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_title">Film Keşfi\'ne\nHoş Geldiniz</string>
+    <string name="welcome_subtitle">Binlerce film ve TV dizisini keşfedin. Favorilerinizi takip etmek için giriş yapın.</string>
+    <string name="login_with_tmdb">TMDB ile Giriş Yap</string>
+    <string name="continue_as_guest">Misafir Olarak Devam Et</string>
+    <string name="app_logo">Uygulama Logosu</string>
+
+    <!-- ... diğer string'ler ... -->
+    <string name="account_title">Hesap</string>
+    <string name="account_icon">Hesap İkonu</string>
+    <string name="logged_in_message">Giriş yapmış durumdasınız.</string>
+    <string name="guest_message">Misafir olarak geziniyorsunuz.</string>
+    <string name="logout_button">Çıkış Yap</string>
+    <string name="login_button">Giriş Yap</string>
+    <string name="back_button_desc">Geri git</string>
+</resources>

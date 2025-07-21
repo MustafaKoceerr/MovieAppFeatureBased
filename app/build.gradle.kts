@@ -65,39 +65,39 @@ android {
             buildConfigField("Boolean", "ENABLE_LOGGING", "true")
         }
     }
-    // ✅ YENİ: Product Flavors
-    flavorDimensions += "version"
-    productFlavors {
-        create("free") {
-            dimension = "version"
-            applicationIdSuffix = ".free"
-            versionNameSuffix = "-free"
-
-            // Free version BuildConfig
-            buildConfigField("Boolean", "IS_PREMIUM", "false")
-            buildConfigField("String", "VERSION_TYPE", "\"Free\"")
-            buildConfigField("Boolean", "ENABLE_ADS", "true")
-            buildConfigField("Boolean", "ENABLE_OFFLINE_MODE", "false")
-
-            // Free version app name
-            resValue("string", "app_name", "Movie App Free")
-        }
-
-        create("premium") {
-            dimension = "version"
-            applicationIdSuffix = ".premium"
-            versionNameSuffix = "-premium"
-
-            // Premium version BuildConfig
-            buildConfigField("Boolean", "IS_PREMIUM", "true")
-            buildConfigField("String", "VERSION_TYPE", "\"Premium\"")
-            buildConfigField("Boolean", "ENABLE_ADS", "false")
-            buildConfigField("Boolean", "ENABLE_OFFLINE_MODE", "true")
-
-            // Premium version app name
-            resValue("string", "app_name", "Movie App Premium")
-        }
-    }
+//    // ✅ YENİ: Product Flavors
+//    flavorDimensions += "version"
+//    productFlavors {
+//        create("free") {
+//            dimension = "version"
+//            applicationIdSuffix = ".free"
+//            versionNameSuffix = "-free"
+//
+//            // Free version BuildConfig
+//            buildConfigField("Boolean", "IS_PREMIUM", "false")
+//            buildConfigField("String", "VERSION_TYPE", "\"Free\"")
+//            buildConfigField("Boolean", "ENABLE_ADS", "true")
+//            buildConfigField("Boolean", "ENABLE_OFFLINE_MODE", "false")
+//
+//            // Free version app name
+//            resValue("string", "app_name", "Movie App Free")
+//        }
+//
+//        create("premium") {
+//            dimension = "version"
+//            applicationIdSuffix = ".premium"
+//            versionNameSuffix = "-premium"
+//
+//            // Premium version BuildConfig
+//            buildConfigField("Boolean", "IS_PREMIUM", "true")
+//            buildConfigField("String", "VERSION_TYPE", "\"Premium\"")
+//            buildConfigField("Boolean", "ENABLE_ADS", "false")
+//            buildConfigField("Boolean", "ENABLE_OFFLINE_MODE", "true")
+//
+//            // Premium version app name
+//            resValue("string", "app_name", "Movie App Premium")
+//        }
+//    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -123,6 +123,8 @@ dependencies {
     // :app modülü, tüm feature ve core modüllerini bir araya getiren
     // en üst katman olduğu için, hepsine 'implementation' ile bağımlı olması normaldir.
     implementation(project(":feature-movies"))
+    implementation(project(":feature-auth"))
+    implementation(project(":feature-splash"))
     implementation(project(":navigation-contracts"))
 
     // HILT

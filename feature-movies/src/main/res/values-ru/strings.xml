@@ -89,5 +89,6 @@
 
     <string name="no_movies_found">Фильмы не найдены.</string>
     <string name="scroll_to_top">Прокрутить наверх</string>
+    <string name="account">Аккаунт</string>
 
 </resources>

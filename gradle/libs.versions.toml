@@ -1,6 +1,6 @@
 [versions]
 # Android & Kotlin
-agp = "8.8.2"
+agp = "8.9.2"
 
 kotlin = "2.1.0"
 compose-bom = "2025.06.01"

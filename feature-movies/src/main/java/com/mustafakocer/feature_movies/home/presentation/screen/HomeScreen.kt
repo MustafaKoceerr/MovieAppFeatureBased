@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -45,7 +46,14 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text(text = stringResource(R.string.app_name)) },
                 actions = {
-                    IconButton(onClick = { onEvent(HomeEvent.ProfileClicked) }) {
+                    // YENİ HESAP BUTONU
+                    IconButton(onClick = { onEvent(HomeEvent.AccountClicked) }) {
+                        Icon(
+                            Icons.Default.Person,
+                            contentDescription = stringResource(R.string.account)
+                        )
+                    }
+                    IconButton(onClick = { onEvent(HomeEvent.SettingsClicked) }) {
                         Icon(
                             Icons.Default.Settings,
                             contentDescription = stringResource(R.string.settings)

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_title">Welcome to\nMovie Discovery</string>
+    <string name="welcome_subtitle">Explore thousands of movies and TV shows. Sign in to track your favorites.</string>
+    <string name="login_with_tmdb">Login with TMDB</string>
+    <string name="continue_as_guest">Continue as Guest</string>
+    <string name="app_logo">App Logo</string>
+
+    <!-- ... diğer string'ler ... -->
+    <string name="account_title">Account</string>
+    <string name="account_icon">Account Icon</string>
+    <string name="logged_in_message">You are logged in.</string>
+    <string name="guest_message">You are browsing as a guest.</string>
+    <string name="logout_button">Logout</string>
+    <string name="login_button">Login</string>
+
+    <string name="back_button_desc">Go back</string>
+
+</resources>

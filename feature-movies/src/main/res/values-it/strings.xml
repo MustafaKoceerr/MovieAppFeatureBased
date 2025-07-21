@@ -89,4 +89,7 @@
 
     <string name="no_movies_found">Nessun film trovato.</string>
     <string name="scroll_to_top">Scorri in alto</string>
+
+    <string name="account">Profilo</string>
+
 </resources>
