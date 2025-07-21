@@ -4,9 +4,8 @@ import com.mustafakocer.core_common.provider.SessionProvider
 import com.mustafakocer.core_common.util.Resource
 import kotlinx.coroutines.flow.Flow
 
-interface AuthRepository : SessionProvider {
+interface LoginRepository : SessionProvider {
     fun createRequestToken(): Flow<Resource<String>>
     fun createSession(requestToken: String): Flow<Resource<String>>
 
-    suspend fun clearSession()
 }

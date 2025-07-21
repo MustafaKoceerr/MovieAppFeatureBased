@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_auth.welcome.data.preferences
+package com.mustafakocer.feature_auth.shared.data.preferences
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

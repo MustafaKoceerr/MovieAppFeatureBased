@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_auth.welcome.di
+package com.mustafakocer.feature_auth.di
 
 import com.mustafakocer.feature_auth.welcome.data.handler.AuthCallbackHandler
 import com.mustafakocer.feature_auth.welcome.domain.provider.AuthCallbackProvider

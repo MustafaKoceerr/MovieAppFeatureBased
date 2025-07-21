@@ -1,6 +1,6 @@
-package com.mustafakocer.feature_auth.welcome.di
+package com.mustafakocer.feature_auth.di
 
-import com.mustafakocer.feature_auth.welcome.data.api.AuthApiService
+import com.mustafakocer.feature_auth.shared.data.api.AuthApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

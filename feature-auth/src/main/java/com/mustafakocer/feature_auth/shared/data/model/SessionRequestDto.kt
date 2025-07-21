@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_auth.welcome.data.model
+package com.mustafakocer.feature_auth.shared.data.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

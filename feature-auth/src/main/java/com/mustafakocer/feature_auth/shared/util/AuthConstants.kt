@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_auth.welcome.util
+package com.mustafakocer.feature_auth.shared.util
 
 object AuthConstants {
     /**
