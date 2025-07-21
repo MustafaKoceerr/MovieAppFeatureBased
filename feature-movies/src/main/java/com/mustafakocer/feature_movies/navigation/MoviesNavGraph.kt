@@ -38,6 +38,10 @@ fun NavGraphBuilder.moviesNavGraph(
             navController.navigate(SettingsScreen)
         }
 
+        override fun navigateToAccount() {
+            navController.navigate(AccountScreen)
+        }
+
         override fun navigateUp() {
             navController.navigateUp()
         }
