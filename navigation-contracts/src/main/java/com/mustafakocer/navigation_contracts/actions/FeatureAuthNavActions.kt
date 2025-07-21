@@ -8,5 +8,6 @@ package com.mustafakocer.navigation_contracts.actions
 interface FeatureAuthNavActions : CommonNavActions {
 
     fun navigateToHome()
+    fun navigateToWelcome()
 
 }

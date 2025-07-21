@@ -10,3 +10,5 @@ object AuthFeatureGraph // Bu, tüm feature'ın kök rotası olacak
 @Serializable
 object WelcomeScreen
 
+@Serializable
+object AccountScreen
