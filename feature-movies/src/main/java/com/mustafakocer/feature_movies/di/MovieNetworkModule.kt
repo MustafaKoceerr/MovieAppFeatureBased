@@ -1,4 +1,5 @@
-package com.mustafakocer.feature_movies.shared.di
+package com.mustafakocer.feature_movies.di
+
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
 import dagger.Module
 import dagger.Provides
@@ -6,6 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
+
 /**
  * CONSOLIDATED: Single network module for all movie API services
  *
