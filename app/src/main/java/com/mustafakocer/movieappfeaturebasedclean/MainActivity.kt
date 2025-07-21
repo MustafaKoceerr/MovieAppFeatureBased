@@ -24,6 +24,7 @@ import com.mustafakocer.core_android.util.updateLocale
 import com.mustafakocer.core_preferences.repository.LanguageRepository
 import com.mustafakocer.movieappfeaturebasedclean.navigation.AppNavHost
 import com.mustafakocer.movieappfeaturebasedclean.presentation.viewmodel.MainViewModel
+import com.mustafakocer.navigation_contracts.navigation.AuthFeatureGraph
 import com.mustafakocer.navigation_contracts.navigation.MoviesFeatureGraph
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -119,6 +120,7 @@ class MainActivity : ComponentActivity() {
         // For now, always start with Movies since auth is not implemented
         // Later: Check user auth state and return AuthGraph or MoviesGraph
 
+        return AuthFeatureGraph
         return MoviesFeatureGraph
 
         // Future implementation:

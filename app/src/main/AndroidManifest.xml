@@ -24,6 +24,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <!-- YENİ, GÖRÜNMEZ AUTH CALLBACK ACTIVITY'Sİ -->
+        <activity
+            android:name=".AuthCallbackActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.Transparent">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Deep Link adresimiz: movieapp://auth -->
+                <data
+                    android:host="auth"
+                    android:scheme="movieapp" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
