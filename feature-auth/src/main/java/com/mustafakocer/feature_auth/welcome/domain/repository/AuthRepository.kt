@@ -1,0 +1,12 @@
+package com.mustafakocer.feature_auth.welcome.domain.repository
+
+import com.mustafakocer.core_common.provider.SessionProvider
+import com.mustafakocer.core_common.util.Resource
+import kotlinx.coroutines.flow.Flow
+
+interface AuthRepository : SessionProvider {
+    fun createRequestToken(): Flow<Resource<String>>
+    fun createSession(requestToken: String): Flow<Resource<String>>
+
+    suspend fun clearSession()
+}
