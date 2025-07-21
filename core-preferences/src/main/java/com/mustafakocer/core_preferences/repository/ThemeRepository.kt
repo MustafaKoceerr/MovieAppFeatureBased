@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Sorumluluğu: Uygulamanın genelini ilgilendiren, tüm özellikler (features) tarafından paylaşılan bir kullanıcı tercihini (tema seçimi) yönetmek.
+ */
 @Singleton
 class ThemeRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>, // ← From core-preferences
