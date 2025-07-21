@@ -36,7 +36,6 @@ dependencies {
     api(project(":core-domain"))
 
     api(libs.androidx.lifecycle.viewmodel.ktx)
-    api(libs.androidx.appcompat)
 
     // Test
     testImplementation(libs.junit)
