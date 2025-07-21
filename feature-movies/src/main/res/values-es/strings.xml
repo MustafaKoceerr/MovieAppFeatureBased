@@ -89,5 +89,6 @@
 
     <string name="no_movies_found">No se encontraron películas.</string>
     <string name="scroll_to_top">Ir arriba</string>
+    <string name="account">Cuenta</string>
 
 </resources>

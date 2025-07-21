@@ -13,4 +13,6 @@
     <string name="guest_message">Vous naviguez en tant qu\'invité.</string>
     <string name="logout_button">Se déconnecter</string>
     <string name="login_button">Se connecter</string>
+    <string name="back_button_desc">Retour</string>
+
 </resources>

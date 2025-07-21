@@ -13,4 +13,7 @@
     <string name="guest_message">You are browsing as a guest.</string>
     <string name="logout_button">Logout</string>
     <string name="login_button">Login</string>
+
+    <string name="back_button_desc">Go back</string>
+
 </resources>

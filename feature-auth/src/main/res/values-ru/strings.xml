@@ -13,4 +13,6 @@
     <string name="guest_message">Вы просматриваете как гость.</string>
     <string name="logout_button">Выйти</string>
     <string name="login_button">Войти</string>
+    <string name="back_button_desc">Назад</string>
+
 </resources>

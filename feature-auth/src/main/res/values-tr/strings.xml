@@ -13,4 +13,5 @@
     <string name="guest_message">Misafir olarak geziniyorsunuz.</string>
     <string name="logout_button">Çıkış Yap</string>
     <string name="login_button">Giriş Yap</string>
+    <string name="back_button_desc">Geri git</string>
 </resources>

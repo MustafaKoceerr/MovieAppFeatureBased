@@ -90,4 +90,6 @@
     <string name="no_movies_found">No movies found.</string>
     <string name="scroll_to_top">Scroll to top</string>
 
+    <string name="account">Account</string>
+
 </resources>

@@ -13,4 +13,7 @@
     <string name="guest_message">Stai navigando come ospite.</string>
     <string name="logout_button">Disconnetti</string>
     <string name="login_button">Accedi</string>
+    <string name="back_button_desc">Torna indietro</string>
+
+
 </resources>

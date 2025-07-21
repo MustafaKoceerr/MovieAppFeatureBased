@@ -13,4 +13,7 @@
     <string name="guest_message">Sie surfen als Gast.</string>
     <string name="logout_button">Abmelden</string>
     <string name="login_button">Anmelden</string>
+    <string name="back_button_desc">Zurückgehen</string>
+
+
 </resources>

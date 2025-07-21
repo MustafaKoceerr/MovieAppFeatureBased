@@ -86,4 +86,5 @@
 
     <string name="no_movies_found">Film bulunamadı.</string>
     <string name="scroll_to_top">Yukarı çık</string>
+    <string name="account">Hesap</string>
 </resources>
