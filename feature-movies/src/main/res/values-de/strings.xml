@@ -91,4 +91,8 @@
     <string name="scroll_to_top">Nach oben scrollen</string>
 
     <string name="account">Konto</string>
+    <plurals name="movie_runtime_in_minutes">
+        <item quantity="one">%d Min</item>
+        <item quantity="other">%d Min</item>
+    </plurals>
 </resources>

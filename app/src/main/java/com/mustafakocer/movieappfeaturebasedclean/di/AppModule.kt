@@ -1,7 +1,7 @@
 package com.mustafakocer.movieappfeaturebasedclean.di
 
 
-import com.mustafakocer.core_common.config.NetworkConfigProvider
+import com.mustafakocer.core_domain.config.NetworkConfigProvider
 import com.mustafakocer.movieappfeaturebasedclean.config.MovieNetworkConfigProvider
 import dagger.Binds
 import dagger.Module

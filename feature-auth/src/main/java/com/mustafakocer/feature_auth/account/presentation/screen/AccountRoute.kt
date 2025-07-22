@@ -7,11 +7,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.feature_auth.account.presentation.contract.AccountEffect
 import com.mustafakocer.feature_auth.account.presentation.viewmodel.AccountViewModel
-import com.mustafakocer.navigation_contracts.actions.FeatureAuthNavActions
+import com.mustafakocer.navigation_contracts.actions.auth.AccountNavActions
 
 @Composable
 fun AccountRoute(
-    navActions: FeatureAuthNavActions,
+    navActions: AccountNavActions,
     viewModel: AccountViewModel = hiltViewModel(),
 ) {
     // ViewModel'den gelen canlı state'i dinliyoruz.

@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.mustafakocer.core_android.presentation.BaseViewModel
 import com.mustafakocer.core_android.presentation.LoadingType
-import com.mustafakocer.core_common.util.Resource
+import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.feature_movies.details.domain.usecase.GetMovieDetailsUseCase
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEffect
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEvent

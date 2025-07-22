@@ -15,7 +15,7 @@
         android:theme="@style/Theme.MovieAppFeatureBasedClean"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.MovieAppFeatureBasedClean">
             <intent-filter>
@@ -28,7 +28,7 @@
 
         <!-- YENİ, GÖRÜNMEZ AUTH CALLBACK ACTIVITY'Sİ -->
         <activity
-            android:name=".AuthCallbackActivity"
+            android:name=".presentation.AuthCallbackActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/Theme.Transparent">

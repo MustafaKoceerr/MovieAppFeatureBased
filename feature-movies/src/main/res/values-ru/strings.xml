@@ -91,4 +91,11 @@
     <string name="scroll_to_top">Прокрутить наверх</string>
     <string name="account">Аккаунт</string>
 
+    <plurals name="movie_runtime_in_minutes">
+        <item quantity="one">%d мин</item>
+        <item quantity="few">%d мин</item>
+        <item quantity="many">%d мин</item>
+        <item quantity="other">%d мин</item>
+    </plurals>
+
 </resources>

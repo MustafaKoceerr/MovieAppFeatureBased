@@ -8,7 +8,7 @@ import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.mustafakocer.core_common.exception.AppException
+import com.mustafakocer.core_domain.exception.AppException
 import com.mustafakocer.core_ui.R // :core-ui modülünün kendi R dosyası
 
 /**

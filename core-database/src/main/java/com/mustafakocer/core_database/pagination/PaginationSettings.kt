@@ -33,8 +33,6 @@ data class PaginationSettings(
         enum class PaginationUseCase {
             CATALOG_BROWSE,    // Film listesi, kategori browse
             SEARCH_RESULTS,    // Arama sonuçları
-            INFINITE_SCROLL,   // Sonsuz scroll
-            DETAILED_LIST      // Detaylı liste görünümü
         }
 
         /**
@@ -52,18 +50,6 @@ data class PaginationSettings(
                     pageSize = 10,
                     prefetchDistance = 3,
                     initialLoadSize = 20,
-                    enablePlaceholders = false
-                )
-                PaginationUseCase.INFINITE_SCROLL -> PaginationSettings(
-                    pageSize = 15,
-                    prefetchDistance = 8,
-                    initialLoadSize = 30,
-                    enablePlaceholders = true
-                )
-                PaginationUseCase.DETAILED_LIST -> PaginationSettings(
-                    pageSize = 25,
-                    prefetchDistance = 10,
-                    initialLoadSize = 50,
                     enablePlaceholders = false
                 )
             }

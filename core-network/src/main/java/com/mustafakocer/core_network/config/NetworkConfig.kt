@@ -18,16 +18,5 @@ object NetworkConfig {
 
     // ==================== CACHE SETTINGS ====================
     const val CACHE_SIZE = 10 * 1024 * 1024L // 10 MB
-    const val CACHE_MAX_AGE = 60 // 1 minute
-    const val CACHE_MAX_STALE = 60 * 60 * 24 * 7 // 1 week
 
-    // ==================== CONNECTION LIMITS ====================
-    const val MAX_REQUESTS_PER_HOST = 5
-    const val MAX_IDLE_CONNECTIONS = 5
-    const val KEEP_ALIVE_DURATION = 5L // minutes
-
-    // ==================== RETRY SETTINGS ====================
-    const val MAX_RETRY_ATTEMPTS = 3
-    const val RETRY_DELAY_MS = 1000L
-    const val BACKOFF_MULTIPLIER = 2.0
 }

@@ -4,31 +4,19 @@ import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import java.util.Locale
 
 // ===== MOVIE UI EXTENSIONS =====
+// ÖNERİ: core-android/util/ImageUrlBuilder.kt
+object ImageUrlBuilder {
+    private const val BASE_URL = "https://image.tmdb.org/t/p/"
 
-/**
- * Get TMDB poster URL for Movie
- *
- * @param size Image size (w92, w154, w185, w342, w500, w780, original)
- * @return Full poster URL or null if posterPath is null
- */
-fun MovieListItem.getPosterUrl(size: String = "w342"): String? {
-    val url = posterUrl?.let { path ->
-        "https://image.tmdb.org/t/p/$size$path"
+    fun build(path: String?, size: ImageSize): String? {
+        return path?.let { "$BASE_URL${size.path}$it" }
     }
-    println(url)
-    return url
 }
 
-/**
- * Get TMDB backdrop URL for Movie
- *
- * @param size Image size (w300, w780, w1280, original)
- * @return Full backdrop URL or null if backdropPath is null
- */
-fun MovieListItem.getBackdropUrl(size: String = "w780"): String? {
-    return getBackdropUrl()?.let {
-        "https://image.tmdb.org/t/p/$size$it"
-    }
+enum class ImageSize(val path: String) {
+    POSTER_W342("w342"),
+    BACKDROP_W780("w780"),
+    ORIGINAL("original")
 }
 
 /**

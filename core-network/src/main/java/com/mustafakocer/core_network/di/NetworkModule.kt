@@ -2,7 +2,7 @@ package com.mustafakocer.core_network.di
 
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.mustafakocer.core_common.config.NetworkConfigProvider
+import com.mustafakocer.core_domain.config.NetworkConfigProvider
 import com.mustafakocer.core_network.config.NetworkConfig
 import dagger.Module
 import dagger.Provides

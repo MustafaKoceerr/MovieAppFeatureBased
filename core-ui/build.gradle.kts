@@ -41,9 +41,8 @@ android {
 
 dependencies {
     api(project(":core-domain"))
-
     // MovieDiscoveryTheme, ThemePreference enum'ını kullanıyor.
-    implementation(project(":core-preferences"))
+    api(project(":core-preferences"))
 
     // --- COMPOSE KÜTÜPHANELERİ ---
     // Bu modülün temel amacı Compose olduğu için, bu bağımlılıklar 'api' olmalı
@@ -54,10 +53,6 @@ dependencies {
     api(libs.androidx.ui.tooling.preview)
     api(libs.androidx.material3)
     api(libs.androidx.material.icons.extended)
-
-    // --- GÖRSELLEŞTİRME ---
-    api(libs.coil.compose)
-    api(libs.coil.network.okhttp)
 
     // --- TEST ---
     testImplementation(libs.junit)

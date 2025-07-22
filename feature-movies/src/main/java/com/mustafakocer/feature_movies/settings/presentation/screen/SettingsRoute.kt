@@ -10,10 +10,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.core_ui.component.error.toErrorInfo
 import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsEffect
 import com.mustafakocer.feature_movies.settings.presentation.viewmodel.SettingsViewModel
-import com.mustafakocer.navigation_contracts.actions.FeatureMoviesNavActions
 import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.material3.SnackbarDuration
 import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsEvent
+import com.mustafakocer.navigation_contracts.actions.movies.SettingsNavActions
 
 /**
  * Host (Barındırıcı) Eylemleri: Bunlar, bir özelliğin (feature) kendi başına yapamayacağı, sadece tüm uygulamanın sahibi olan Activity gibi bir üst bileşenin yapabileceği çok nadir ve özel eylemlerdir.
@@ -28,7 +28,7 @@ import com.mustafakocer.feature_movies.settings.presentation.contract.SettingsEv
 
 @Composable
 fun SettingsRoute(
-    navActions: FeatureMoviesNavActions,
+    navActions: SettingsNavActions,
     onLanguageChanged: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {

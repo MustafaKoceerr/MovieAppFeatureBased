@@ -13,9 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mustafakocer.feature_movies.details.util.fullBackdropUrl
-import com.mustafakocer.feature_movies.details.util.fullPosterUrl
 import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails
+import com.mustafakocer.feature_movies.shared.util.ImageSize
+import com.mustafakocer.feature_movies.shared.util.ImageUrlBuilder
 
 /**
  * Ana içerik ve yenileme göstergesi için bir sarmalayıcı (wrapper).
@@ -33,8 +33,14 @@ fun MovieDetailsContent(
                 .verticalScroll(rememberScrollState())
         ) {
             MovieHeroSection(
-                backdropUrl = movie.fullBackdropUrl(),
-                posterUrl = movie.fullPosterUrl(),
+                backdropUrl = ImageUrlBuilder.build(
+                    path = movie.backdropUrl,
+                    size = ImageSize.BACKDROP_W780
+                ) ?: "",
+                posterUrl = ImageUrlBuilder.build(
+                    path = movie.posterUrl,
+                    size = ImageSize.POSTER_W342
+                ) ?: "",
                 title = movie.title,
                 tagline = if (movie.hasTagline) movie.tagline else null
             )

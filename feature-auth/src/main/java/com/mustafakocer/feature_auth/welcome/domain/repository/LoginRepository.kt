@@ -1,7 +1,7 @@
 package com.mustafakocer.feature_auth.welcome.domain.repository
 
-import com.mustafakocer.core_common.provider.SessionProvider
-import com.mustafakocer.core_common.util.Resource
+import com.mustafakocer.core_domain.provider.SessionProvider
+import com.mustafakocer.core_domain.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface LoginRepository : SessionProvider {

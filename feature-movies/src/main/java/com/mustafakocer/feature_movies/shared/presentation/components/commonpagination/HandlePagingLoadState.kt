@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import com.mustafakocer.core_common.exception.toAppException
+import com.mustafakocer.core_domain.exception.toAppException
 import com.mustafakocer.core_ui.component.error.ErrorScreen
 import com.mustafakocer.core_ui.component.error.toErrorInfo
 import com.mustafakocer.core_ui.component.loading.LoadingScreen

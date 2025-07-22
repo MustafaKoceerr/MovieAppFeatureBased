@@ -90,5 +90,8 @@
     <string name="no_movies_found">No se encontraron películas.</string>
     <string name="scroll_to_top">Ir arriba</string>
     <string name="account">Cuenta</string>
-
+    <plurals name="movie_runtime_in_minutes">
+        <item quantity="one">%d min</item>
+        <item quantity="other">%d min</item>
+    </plurals>
 </resources>

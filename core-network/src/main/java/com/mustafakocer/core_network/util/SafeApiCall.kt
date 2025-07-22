@@ -1,7 +1,7 @@
 package com.mustafakocer.core_network.util
 
-import com.mustafakocer.core_common.exception.AppException
-import com.mustafakocer.core_common.util.Resource
+import com.mustafakocer.core_domain.exception.AppException
+import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.core_network.error.ErrorMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

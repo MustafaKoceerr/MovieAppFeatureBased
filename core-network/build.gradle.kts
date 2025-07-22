@@ -40,21 +40,21 @@ android {
 
 dependencies {
     api(project(":core-domain"))
-
-    // LanguageProvider'a erişim için.
     implementation(project(":core-preferences"))
 
-    // --- HILT ---
-    // Bu modül @Inject, @Module, @Singleton kullandığı için Hilt'e ihtiyacı var.
+    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    // --- AĞ KÜTÜPHANELERİ ---
-    api(libs.retrofit.core)
-    api(libs.retrofit.kotlinx.serialization.converter)
+    // Retrofit & OkHttp
+    api(libs.retrofit.core) // 'Response' tipi public olduğu için 'api' olarak kalmalı
+    implementation(libs.retrofit.kotlinx.serialization.converter)
     implementation(libs.okhttp.logging)
 
-    // --- TEST ---
+    // EKSİK OLAN BAĞIMLILIK BURAYA EKLENİYOR
+    implementation(libs.kotlinx.serialization.json)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

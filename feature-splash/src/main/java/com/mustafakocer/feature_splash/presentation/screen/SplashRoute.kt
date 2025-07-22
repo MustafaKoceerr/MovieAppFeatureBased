@@ -5,11 +5,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mustafakocer.feature_splash.presentation.contract.SplashEffect
 import com.mustafakocer.feature_splash.presentation.viewmodel.SplashViewModel
-import com.mustafakocer.navigation_contracts.actions.FeatureSplashNavActions
+import com.mustafakocer.navigation_contracts.actions.splash.SplashNavActions
 
 @Composable
 fun SplashRoute(
-    navActions: FeatureSplashNavActions,
+    navActions: SplashNavActions,
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {

@@ -9,7 +9,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.mustafakocer.feature_movies.shared.util.MovieConstants
+import com.mustafakocer.feature_movies.shared.util.ImageSize
+import com.mustafakocer.feature_movies.shared.util.ImageUrlBuilder
 
 /**
  * Film afişini gösteren, yeniden kullanılabilir atomik bir bileşen.
@@ -23,11 +24,14 @@ fun MoviePoster(
     posterPath: String?,
     contentDescription: String,
     modifier: Modifier = Modifier,
-    size: PosterSize = PosterSize.Medium
+    size: PosterSize = PosterSize.Medium,
 ) {
     // Not: Coil'in yeni versiyonlarında (coil3) model direkt URL bekler.
     // Bu yüzden base URL'i burada birleştiriyoruz.
-    val fullPosterUrl = posterPath?.let { "${MovieConstants.IMAGE_BASE_URL}${MovieConstants.POSTER_SIZE}$it" }
+    val fullPosterUrl = ImageUrlBuilder.build(
+        path = posterPath,
+        size = ImageSize.POSTER_W342  // veya ihtiyacınıza göre farklı bir ImageSize
+    )
 
     AsyncImage(
         model = fullPosterUrl,

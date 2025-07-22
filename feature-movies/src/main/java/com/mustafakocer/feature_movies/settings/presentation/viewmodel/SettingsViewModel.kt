@@ -2,7 +2,7 @@ package com.mustafakocer.feature_movies.settings.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mustafakocer.core_android.presentation.BaseViewModel
-import com.mustafakocer.core_common.exception.toAppException
+import com.mustafakocer.core_domain.exception.toAppException
 import com.mustafakocer.core_preferences.models.LanguagePreference
 import com.mustafakocer.core_preferences.models.ThemePreference
 import com.mustafakocer.core_preferences.repository.LanguageRepository

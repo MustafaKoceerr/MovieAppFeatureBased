@@ -2,12 +2,10 @@ package com.mustafakocer.core_android.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mustafakocer.core_common.exception.AppException
-import com.mustafakocer.core_common.exception.toAppException
-import com.mustafakocer.core_common.presentation.BaseUiEffect
-import com.mustafakocer.core_common.presentation.BaseUiEvent
-import com.mustafakocer.core_common.presentation.BaseUiState
-import com.mustafakocer.core_common.presentation.UiContract
+import com.mustafakocer.core_domain.presentation.BaseUiEffect
+import com.mustafakocer.core_domain.presentation.BaseUiEvent
+import com.mustafakocer.core_domain.presentation.BaseUiState
+import com.mustafakocer.core_domain.presentation.UiContract
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 

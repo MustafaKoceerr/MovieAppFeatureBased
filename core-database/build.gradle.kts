@@ -40,21 +40,17 @@ dependencies {
     api(project(":core-domain"))
 
     // --- VERİTABANI KÜTÜPHANELERİ ---
-    api(libs.room.runtime)
-    api(libs.room.ktx)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
     ksp(libs.room.compiler) // Sadece bu modülün kendi @Dao/@Entity'lerini derlemesi için.
 
     // --- PAGING 3 KÜTÜPHANELERİ ---
 
     api(libs.paging.runtime)
     api(libs.room.paging)
-    // Bu, UI katmanına ait bir bağımlılık gibi görünse de, PagingSource'un
-    // kendisi genellikle UI'a kadar taşındığı için burada 'api' olarak tutmak pratiktir.
-    api(libs.paging.compose)
 
     // --- TEST ---
     testImplementation(libs.junit)
-    testImplementation(libs.testng)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

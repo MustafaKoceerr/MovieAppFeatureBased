@@ -20,7 +20,7 @@ import com.mustafakocer.feature_movies.details.presentation.components.ShareFloa
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsEvent
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsUiState
 import com.mustafakocer.feature_movies.R
-import com.mustafakocer.feature_movies.details.util.formatShareContent
+import com.mustafakocer.feature_movies.details.presentation.components.formatShareContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

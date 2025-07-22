@@ -2,7 +2,7 @@ package com.mustafakocer.feature_movies.search.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.mustafakocer.core_common.exception.toAppException
+import com.mustafakocer.core_domain.exception.toAppException
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
 import com.mustafakocer.feature_movies.shared.data.mapper.toDomainList
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem

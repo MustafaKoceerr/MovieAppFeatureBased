@@ -9,12 +9,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEffect
 import com.mustafakocer.feature_movies.list.presentation.viewmodel.MovieListViewModel
-import com.mustafakocer.navigation_contracts.actions.FeatureMoviesNavActions
+import com.mustafakocer.navigation_contracts.actions.movies.MovieListNavActions
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun MovieListRoute(
-    navActions: FeatureMoviesNavActions,
+    navActions: MovieListNavActions,
     viewModel: MovieListViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
