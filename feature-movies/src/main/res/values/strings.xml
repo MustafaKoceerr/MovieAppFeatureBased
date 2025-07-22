@@ -92,4 +92,8 @@
 
     <string name="account">Account</string>
 
+    <plurals name="movie_runtime_in_minutes">
+        <item quantity="one">%d min</item>
+        <item quantity="other">%d min</item>
+    </plurals>
 </resources>

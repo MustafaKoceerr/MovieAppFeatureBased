@@ -1,6 +1,7 @@
 package com.mustafakocer.feature_movies.details.presentation.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails
 import androidx.compose.ui.res.stringResource
 import com.mustafakocer.feature_movies.R
@@ -23,8 +24,13 @@ fun formatShareContent(movie: MovieDetails): String {
         }
         append("⭐ $textRating: ${movie.voteAverage.formattedRating}/10\n")
         append("📅 $textRelease: ${movie.releaseDate}\n")
-        if (movie.runtime.isNotEmpty()) {
-            append("⏱️ $textRuntime: ${movie.runtime}\n")
+        if (movie.runtime > 0) {
+            val formattedRuntime = LocalContext.current.resources.getQuantityString(
+                R.plurals.movie_runtime_in_minutes,
+                movie.runtime,
+                movie.runtime
+            )
+            append("⏱️ $textRuntime: $formattedRuntime\n")
         }
         if (movie.genres.isNotEmpty()) {
             append("🎭 $textGenres: ${movie.genres.joinToString { it.name }}\n")

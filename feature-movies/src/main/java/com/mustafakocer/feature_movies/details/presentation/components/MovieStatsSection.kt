@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -30,8 +31,8 @@ import com.mustafakocer.feature_movies.shared.util.formattedRating
 fun MovieStatsSection(
     voteAverage: Double,
     releaseDate: String,
-    runtime: String?, // Süre bilgisi her zaman gelmeyebilir, bu yüzden nullable.
-    modifier: Modifier = Modifier
+    runtime: Int?, // Süre bilgisi her zaman gelmeyebilir, bu yüzden nullable.
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -54,11 +55,16 @@ fun MovieStatsSection(
         )
 
         // Süre Kartı (sadece süre bilgisi varsa gösterilir)
-        runtime?.let {
+        runtime?.let { runtimeInMinutes ->
+            val formattedRuntime = LocalContext.current.resources.getQuantityString(
+                R.plurals.movie_runtime_in_minutes, // 1. Plural resource ID'si
+                runtimeInMinutes,                   // 2. Hangi quantity'nin seçileceğini belirleyen miktar
+                runtimeInMinutes                    // 3. Metindeki %d'nin yerine geçecek olan değer
+            )
             MovieStatItem(
                 icon = Icons.Default.Schedule,
                 label = stringResource(R.string.runtime),
-                value = it,
+                value = formattedRuntime,
                 modifier = Modifier.weight(1f)
             )
         }

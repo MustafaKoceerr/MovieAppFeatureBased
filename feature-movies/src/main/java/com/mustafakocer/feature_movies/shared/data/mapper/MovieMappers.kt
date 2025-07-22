@@ -91,10 +91,7 @@ fun MovieDetailsDto.toDomain(): MovieDetails {
         } ?: "",
         releaseDate = releaseDate?.takeIf { it.isNotBlank() } ?: "",
         voteAverage = voteAverage ?: 0.0,
-        runtime = when {
-            runtime == null || runtime <= 0 -> ""
-            else -> "$runtime min"
-        },
+        runtime = runtime?.toInt() ?: 0,
         tagline = tagline?.takeIf { it.isNotBlank() } ?: "",
         genres = genres?.mapNotNull { genreDto ->
             genreDto.name?.takeIf { it.isNotBlank() }?.let { name ->

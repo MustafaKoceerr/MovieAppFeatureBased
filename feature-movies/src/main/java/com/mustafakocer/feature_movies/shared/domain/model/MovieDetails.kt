@@ -13,7 +13,7 @@ data class MovieDetails(
     val releaseDate: String, // Tam tarih, örn: "2025-07-01"
     val voteAverage: Double,
     // UI'da doğrudan gösterilecek, formatlanmış veri.
-    val runtime: String, // Örn: "1h 47m"
+    val runtime: Int, // Örn: "1h 47m"
     val tagline: String,
     val genres: List<Genre>
 ) {
