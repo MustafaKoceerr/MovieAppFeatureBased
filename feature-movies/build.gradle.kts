@@ -67,9 +67,14 @@ dependencies {
 
     // --- PAGING 3 ---
     // :core-database'den 'api' ile geldiği için bu satıra gerek kalmaz.
+    // Room
+    implementation(libs.room.ktx)
+    // Paging collectAsLazyPagingItems compose
+    implementation(libs.paging.compose)
 
     // --- GÖRSELLEŞTİRME ---
-    // Coil core kütüphanelerinden gelir.
+    implementation(libs.coil.network.okhttp)
+    implementation(libs.coil.compose)
 
     // --- VERİ DÖNÜŞÜMÜ ---
     // MovieConverters'da kullanılıyor.

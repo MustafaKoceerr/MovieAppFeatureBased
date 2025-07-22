@@ -41,8 +41,6 @@ android {
 dependencies {
     // --- CORE MODÜL BAĞIMLILIKLARI ---
     implementation(project(":core-ui"))
-    implementation(project(":core-network"))
-    implementation(project(":core-database"))
     implementation(project(":core-preferences"))
     implementation(project(":core-android"))
     implementation(project(":core-domain"))
@@ -52,15 +50,12 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     // --- HILT ---
-    // Bu modül @HiltViewModel, @Inject, @Module kullandığı için zorunlu.
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
     // --- COMPOSE & UI ---
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-
-    implementation(libs.gson)
 
     // --- TEST ---
     testImplementation(libs.junit)

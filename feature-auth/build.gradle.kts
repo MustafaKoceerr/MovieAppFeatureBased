@@ -39,7 +39,6 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 }
 
@@ -47,7 +46,6 @@ dependencies {
     // --- CORE MODÜL BAĞIMLILIKLARI ---
     implementation(project(":core-ui"))
     implementation(project(":core-network"))
-    implementation(project(":core-database"))
     implementation(project(":core-preferences"))
     implementation(project(":core-android"))
     implementation(project(":core-domain"))
@@ -56,24 +54,13 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.compose)
 
-    // --- HILT ---
-    // Bu modül @HiltViewModel, @Inject, @Module kullandığı için zorunlu.
+    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
-    // --- COMPOSE & UI ---
+    // Compose & UI
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-
-    // --- PAGING 3 ---
-    // :core-database'den 'api' ile geldiği için bu satıra gerek kalmaz.
-
-    // --- GÖRSELLEŞTİRME ---
-    // Coil core kütüphanelerinden gelir.
-
-    // --- VERİ DÖNÜŞÜMÜ ---
-    // MovieConverters'da kullanılıyor.
-    implementation(libs.gson)
 
     // --- TEST ---
     testImplementation(libs.junit)

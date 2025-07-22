@@ -113,6 +113,7 @@ android {
 }
 
 dependencies {
+    // Core Modüller
     implementation(project(":core-ui"))
     implementation(project(":core-android"))
     implementation(project(":core-network"))
@@ -120,30 +121,24 @@ dependencies {
     implementation(project(":core-preferences"))
     implementation(project(":core-domain"))
 
-    // :app modülü, tüm feature ve core modüllerini bir araya getiren
-    // en üst katman olduğu için, hepsine 'implementation' ile bağımlı olması normaldir.
+    // Feature Modülleri
     implementation(project(":feature-movies"))
     implementation(project(":feature-auth"))
     implementation(project(":feature-splash"))
     implementation(project(":navigation-contracts"))
 
-    // HILT
-    // :app modülü @AndroidEntryPoint ve @HiltAndroidApp kullandığı için zorunlu.
+    // Hilt (Uygulama seviyesi)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
-    // ANDROIDX & UI
-    // MainActivity ve temel UI işlemleri için.
+    // AndroidX & UI (Sadece 'app' modülünün ihtiyaç duydukları)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.appcompat) // attachBaseContext ve AppCompatDelegate için.
-
-    // NAVIGATION
-    // NavHost ve NavController için.
+    implementation(libs.androidx.appcompat) // Genellikle Activity temaları için hala gereklidir
     implementation(libs.androidx.navigation.compose)
 
     // ROOM
-    // AppDatabase'i derleyebilmek için KSP burada da gerekli.
+    implementation(libs.room.runtime)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
