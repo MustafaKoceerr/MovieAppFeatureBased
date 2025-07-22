@@ -1,4 +1,4 @@
-package com.mustafakocer.feature_movies.details.util
+package com.mustafakocer.feature_movies.details.presentation.components
 
 import androidx.compose.runtime.Composable
 import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails

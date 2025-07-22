@@ -48,7 +48,6 @@ class AuthCallbackActivity : ComponentActivity() {
             }
         } else {
             Log.e("AuthCallbackActivity", "Invalid URI received for auth callback: $uri")
-
         }
 
         // Bu Activity'nin görevi bitti, ana uygulamaya dön ve kendini kapat.

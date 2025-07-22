@@ -20,8 +20,9 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import com.mustafakocer.feature_movies.shared.util.formattedRating
-import com.mustafakocer.feature_movies.shared.util.getPosterUrl
 import com.mustafakocer.feature_movies.R
+import com.mustafakocer.feature_movies.shared.util.ImageSize
+import com.mustafakocer.feature_movies.shared.util.ImageUrlBuilder
 
 /**
  * TEACHING MOMENT: Clean MovieCard with Utils
@@ -46,7 +47,10 @@ fun MovieCard(
         Column {
             // Real Movie Poster with Extension
             AsyncImage(
-                model = movie.getPosterUrl(), // ✅ Extension kullanıyor
+                model = ImageUrlBuilder.build(
+                    path = movie.posterUrl,
+                    size = ImageSize.POSTER_W342
+                ),
                 contentDescription = stringResource(R.string.poster_description),
                 modifier = Modifier
                     .fillMaxWidth()
