@@ -1,4 +1,4 @@
-package com.mustafakocer.movieappfeaturebasedclean
+package com.mustafakocer.movieappfeaturebasedclean.presentation
 
 import android.content.Context
 import android.os.Bundle

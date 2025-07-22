@@ -1,4 +1,4 @@
-package com.mustafakocer.movieappfeaturebasedclean.data.local
+package com.mustafakocer.movieappfeaturebasedclean.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

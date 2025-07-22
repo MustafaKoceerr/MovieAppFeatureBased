@@ -11,6 +11,7 @@ import com.mustafakocer.feature_auth.welcome.presentation.viewmodel.WelcomeViewM
 import com.mustafakocer.feature_auth.welcome.presentation.contract.WelcomeEffect
 import androidx.compose.runtime.getValue
 import com.mustafakocer.navigation_contracts.actions.auth.WelcomeNavActions
+import androidx.core.net.toUri
 
 
 @Composable
@@ -31,7 +32,7 @@ fun WelcomeRoute(
 
                 is WelcomeEffect.NavigateToTmdbLogin -> {
                     // Cihazın varsayılan internet tarayıcısını açmak için bir intent oluştur.
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
+                    val intent = Intent(Intent.ACTION_VIEW, effect.url.toUri())
                     context.startActivity(intent)
                 }
             }

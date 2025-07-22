@@ -7,6 +7,6 @@ class LogoutUseCase @Inject constructor(
     private val accountRepository: AccountRepository,
 ) {
     suspend operator fun invoke() {
-        accountRepository.clearSession()
+        accountRepository.logout()
     }
 }

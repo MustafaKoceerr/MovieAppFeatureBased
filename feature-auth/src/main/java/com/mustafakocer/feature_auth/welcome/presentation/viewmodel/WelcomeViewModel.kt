@@ -1,10 +1,12 @@
+// GÜNCELLENMİŞ VE EN İDEAL DOSYA
+
 package com.mustafakocer.feature_auth.welcome.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.mustafakocer.core_android.presentation.BaseViewModel
 import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.feature_auth.shared.util.AuthConstants
-import com.mustafakocer.feature_auth.welcome.domain.provider.AuthCallbackProvider
+import com.mustafakocer.feature_auth.welcome.domain.handler.AuthCallbackHandler
 import com.mustafakocer.feature_auth.welcome.domain.usecase.CreateRequestTokenUseCase
 import com.mustafakocer.feature_auth.welcome.domain.usecase.CreateSessionUseCase
 import com.mustafakocer.feature_auth.welcome.presentation.contract.WelcomeEffect
@@ -20,12 +22,13 @@ import javax.inject.Inject
 class WelcomeViewModel @Inject constructor(
     private val createRequestTokenUseCase: CreateRequestTokenUseCase,
     private val createSessionUseCase: CreateSessionUseCase,
-    private val authCallbackProvider: AuthCallbackProvider,
+    private val authCallbackHandler: AuthCallbackHandler, // <-- Artık somut sınıfı enjekte ediyoruz
 ) : BaseViewModel<WelcomeUiState, WelcomeEvent, WelcomeEffect>(
     initialState = WelcomeUiState()
 ) {
 
     init {
+        // Tarayıcıdan dönebilecek onaylanmış token'ı dinlemeye başla.
         listenForAuthCallback()
     }
 
@@ -37,50 +40,58 @@ class WelcomeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Kullanıcı "Login" butonuna tıkladığında tetiklenir.
+     * Önce bir request token alır, sonra kullanıcıyı TMDB'nin onay sayfasına yönlendirir.
+     */
     private fun handleLoginClick() {
-        handleResource(
-            resourceFlow = createRequestTokenUseCase(),
-            onSuccess = { requestToken ->
-                val tmdbAuthUrl = "${AuthConstants.TMDB_AUTHENTICATION_URL}$requestToken?redirect_to=${AuthConstants.REDIRECT_URL}"
-                sendEffect(WelcomeEffect.NavigateToTmdbLogin(url = tmdbAuthUrl))
-            }
-        )
-    }
-
-    private fun listenForAuthCallback() {
-        authCallbackProvider.tokenFlow.onEach { approvedToken ->
-            // Onaylanmış token geldi, şimdi bu token ile session oluştur.
-            handleResource(
-                resourceFlow = createSessionUseCase(approvedToken),
-                onSuccess = {
-                    // Başarılı! Home ekranına yönlendir.
-                    sendEffect(WelcomeEffect.NavigateToHome)
+        createRequestTokenUseCase()
+            .handleResource(
+                onSuccess = { requestToken ->
+                    val tmdbAuthUrl = "${AuthConstants.TMDB_AUTHENTICATION_URL}$requestToken?redirect_to=${AuthConstants.REDIRECT_URL}"
+                    sendEffect(WelcomeEffect.NavigateToTmdbLogin(url = tmdbAuthUrl))
                 }
             )
-        }.launchIn(viewModelScope)
     }
 
     /**
-     * Resource akışlarını işlemek için merkezi bir yardımcı fonksiyon.
+     * AuthCallbackHandler'dan gelen onaylanmış token'ları dinler.
+     * Bir token geldiğinde, onunla bir session oluşturmaya çalışır.
+     */
+    private fun listenForAuthCallback() {
+        authCallbackHandler.tokenFlow
+            .onEach { approvedToken ->
+                // Onaylanmış token geldi, şimdi bu token ile session oluştur.
+                createSessionUseCase(approvedToken)
+                    .handleResource(
+                        onSuccess = {
+                            // Başarılı! Home ekranına yönlendir.
+                            sendEffect(WelcomeEffect.NavigateToHome)
+                        }
+                    )
+            }
+            .launchIn(viewModelScope)
+    }
+
+    /**
+     * Resource akışlarını işlemek için merkezi bir yardımcı extension fonksiyon.
      * Bu, 'when' bloğunu ve state güncellemelerini tek bir yerde toplayarak kod tekrarını önler.
      *
      * @param T Resource içindeki başarılı veri tipi.
-     * @param resourceFlow İşlenecek olan Flow<Resource<T>>.
      * @param onSuccess Kaynak başarılı olduğunda çalıştırılacak olan eylem.
      */
-    private fun <T> handleResource(
-        resourceFlow: Flow<Resource<T>>,
+    private fun <T> Flow<Resource<T>>.handleResource(
         onSuccess: (data: T) -> Unit
     ) {
-        resourceFlow.onEach { resource ->
+        this.onEach { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     setState { copy(isLoading = true, error = null) }
                 }
-                is Resource.Success<*> -> {
+                is Resource.Success -> {
                     setState { copy(isLoading = false) }
-                    // Smart cast'in çalışması için veriyi güvenli bir şekilde alıyoruz.
-                    (resource.data as? T)?.let(onSuccess)
+                    // Başarı durumunda, verilen lambda'yı çalıştır.
+                    onSuccess(resource.data)
                 }
                 is Resource.Error -> {
                     setState { copy(isLoading = false, error = resource.exception) }

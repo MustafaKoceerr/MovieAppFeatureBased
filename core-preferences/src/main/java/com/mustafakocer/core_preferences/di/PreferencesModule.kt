@@ -4,8 +4,11 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.mustafakocer.core_domain.provider.SessionProvider
+import com.mustafakocer.core_preferences.provider.DefaultSessionProvider
 import com.mustafakocer.core_preferences.repository.LanguageRepository
 import com.mustafakocer.core_preferences.repository.ThemeRepository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,18 +31,17 @@ object PreferencesModule {
     @Provides
     @Singleton
     fun provideDataStore(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): DataStore<Preferences> {
         return context.dataStore
     }
-
 
     @Provides
     @Singleton
     fun provideThemeRepository(
         // Hilt, bu DataStore'u bir önceki adımda oluşturduğumuz
         // DataStoreModule'den alacağını biliyor.
-        dataStore: DataStore<Preferences>
+        dataStore: DataStore<Preferences>,
     ): ThemeRepository {
         return ThemeRepository(dataStore)
     }
@@ -49,5 +51,6 @@ object PreferencesModule {
     fun provideLanguageRepository(dataStore: DataStore<Preferences>): LanguageRepository {
         return LanguageRepository(dataStore)
     }
+
     // Gelecekte eklenecek diğer ortak repository'ler de buraya gelecek...
 }

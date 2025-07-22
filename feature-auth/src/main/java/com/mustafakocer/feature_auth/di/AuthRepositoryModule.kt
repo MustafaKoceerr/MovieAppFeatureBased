@@ -26,13 +26,4 @@ abstract class AuthRepositoryModule {
         impl: AuthRepositoryImpl,
     ): AccountRepository
 
-    // YENİ BINDING:
-    // Birisi SessionProvider istediğinde, AuthRepository implementasyonunu ver.
-    @Binds
-    @Singleton
-    abstract fun bindSessionProvider(
-        impl: AuthRepositoryImpl,
-    ): SessionProvider
-
-
 }

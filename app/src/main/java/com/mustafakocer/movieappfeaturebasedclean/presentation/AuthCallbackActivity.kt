@@ -1,10 +1,10 @@
-package com.mustafakocer.movieappfeaturebasedclean
+package com.mustafakocer.movieappfeaturebasedclean.presentation
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import com.mustafakocer.feature_auth.welcome.data.handler.AuthCallbackHandler
+import com.mustafakocer.feature_auth.welcome.domain.handler.AuthCallbackHandler
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -53,7 +53,7 @@ class AuthCallbackActivity : ComponentActivity() {
 
         // Bu Activity'nin görevi bitti, ana uygulamaya dön ve kendini kapat.
         val mainIntent = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
         startActivity(mainIntent)
         finish()
