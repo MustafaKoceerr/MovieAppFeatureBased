@@ -2,74 +2,49 @@ package com.mustafakocer.core_ui.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Light Theme Colors
-// Primary
-val LightPrimary = Color(0xFF2C3E50)
-val LightOnPrimary = Color(0xFFFFFFFF)
-val LightPrimaryContainer = Color(0xFF7EA6E0)
-val LightOnPrimaryContainer = Color(0xFF0A1929)
+// Ana Marka ve Vurgu Renkleri
+val BrandGold =
+    Color(0xFFFFC107)      // Altın Sarısı: Rating yıldızları, premium özellikler, ana butonlar için
+val BrandBlue = Color(0xFF0D47A1)      // Derin Mavi: Linkler, ikincil butonlar için
 
-// Secondary
-val LightSecondary = Color(0xFFE74C3C)
-val LightOnSecondary = Color(0xFFFFFFFF)
-val LightSecondaryContainer = Color(0xFFFFDAD4)
-val LightOnSecondaryContainer = Color(0xFF410001)
+// Dark Theme (Sinematik Gece)
+val DarkPrimary = Color(0xFF1A2C42)         // Ana Renk: Gece Mavisi
+val DarkOnPrimary = Color(0xFFFFFFFF)       // Ana Renk Üzeri: Beyaz
+val DarkPrimaryContainer = Color(0xFF2C3E50) // Ana Konteyner: Biraz daha açık mavi-gri
+val DarkOnPrimaryContainer = Color(0xFFE0E0E0) // Konteyner Üzeri: Açık Gri
 
-// Tertiary
-val LightTertiary = Color(0xFFF39C12)
-val LightOnTertiary = Color(0xFFFFFFFF)
-val LightTertiaryContainer = Color(0xFFFFE0B2)
-val LightOnTertiaryContainer = Color(0xFF3E2E00)
+val DarkSecondary = BrandGold               // İkincil Renk: Marka Altın Sarısı
+val DarkOnSecondary = Color(0xFF000000)     // İkincil Renk Üzeri: Siyah (kontrast için)
+val DarkSecondaryContainer = Color(0x33FFC107) // %20 Opaklıkta Altın Sarısı (vurgu için)
+val DarkOnSecondaryContainer = BrandGold    // Konteyner Üzeri: Marka Altın Sarısı
 
-// Error
-val LightError = Color(0xFFFF5252)
-val LightOnError = Color(0xFFFFFFFF)
-val LightErrorContainer = Color(0xFFFFCDD2)
-val LightOnErrorContainer = Color(0xFF410002)
+val DarkBackground = Color(0xFF0F172A)      // Zemin: Neredeyse siyah, hafif mavi tonlu
+val DarkOnBackground = Color(0xFFE2E8F0)    // Zemin Üzeri Metin: Çok açık gri
+val DarkSurface = Color(0xFF1E293B)         // Yüzey (Kartlar): Koyu Kurşun Rengi
+val DarkOnSurface = Color(0xFFCBD5E1)       // Yüzey Üzeri Metin: Açık gri
+val DarkSurfaceVariant = Color(0xFF334155)  // Yüzey Varyantı: Daha açık kurşun rengi
+val DarkOnSurfaceVariant = Color(0xFF94A3B8) // Yüzey Varyantı Üzeri Metin: Soluk gri
 
-// Neutral
-val LightBackground = Color(0xFFF5F5F5)
-val LightOnBackground = Color(0xFF1C1B1F)
-val LightSurface = Color(0xFFFFFFFF)
-val LightOnSurface = Color(0xFF1C1B1F)
+val DarkError = Color(0xFFEF4444)           // Hata: Canlı Kırmızı
+val DarkOnError = Color(0xFFFFFFFF)         // Hata Üzeri: Beyaz
 
-// Neutral Variant
-val LightSurfaceVariant = Color(0xFFE7E0EC)
-val LightOnSurfaceVariant = Color(0xFF49454F)
-val LightOutline = Color(0xFF79747E)
+// Light Theme (Temiz Stüdyo Işığı)
+val LightPrimary = Color(0xFF2C3E50)         // Ana Renk: Koyu Mavi-Gri
+val LightOnPrimary = Color(0xFFFFFFFF)      // Ana Renk Üzeri: Beyaz
+val LightPrimaryContainer = Color(0xFFD6EAF8) // Ana Konteyner: Çok açık mavi
+val LightOnPrimaryContainer = Color(0xFF1A2C42) // Konteyner Üzeri: Gece Mavisi
 
-// Dark Theme Colors
-// Primary
-val DarkPrimary = Color(0xFF93B5DF)
-val DarkOnPrimary = Color(0xFF0B2641)
-val DarkPrimaryContainer = Color(0xFF1E4D78)
-val DarkOnPrimaryContainer = Color(0xFFD6E3FF)
+val LightSecondary = BrandGold              // İkincil Renk: Marka Altın Sarısı
+val LightOnSecondary = Color(0xFF000000)     // İkincil Renk Üzeri: Siyah
+val LightSecondaryContainer = Color(0x33FFC107) // %20 Opaklıkta Altın Sarısı
+val LightOnSecondaryContainer = Color(0xFFB8860B) // Konteyner Üzeri: Koyu Altın
 
-// Secondary
-val DarkSecondary = Color(0xFFFF8A80)
-val DarkOnSecondary = Color(0xFF680000)
-val DarkSecondaryContainer = Color(0xFFAC2F24)
-val DarkOnSecondaryContainer = Color(0xFFFFDAD4)
+val LightBackground = Color(0xFFF8FAFC)     // Zemin: Çok çok açık gri
+val LightOnBackground = Color(0xFF0F172A)   // Zemin Üzeri Metin: Gece Mavisi
+val LightSurface = Color(0xFFFFFFFF)        // Yüzey (Kartlar): Beyaz
+val LightOnSurface = Color(0xFF1E293B)      // Yüzey Üzeri Metin: Koyu Kurşun Rengi
+val LightSurfaceVariant = Color(0xFFE2E8F0) // Yüzey Varyantı: Açık Gri
+val LightOnSurfaceVariant = Color(0xFF475569) // Yüzey Varyantı Üzeri Metin: Orta Gri
 
-// Tertiary
-val DarkTertiary = Color(0xFFFFCC80)
-val DarkOnTertiary = Color(0xFF5D3F00)
-val DarkTertiaryContainer = Color(0xFFB37300)
-val DarkOnTertiaryContainer = Color(0xFFFFE0B2)
-
-// Error
-val DarkError = Color(0xFFFF8A80)
-val DarkOnError = Color(0xFF680000)
-val DarkErrorContainer = Color(0xFFB00020)
-val DarkOnErrorContainer = Color(0xFFFFCDD2)
-
-// Neutral
-val DarkBackground = Color(0xFF121212)
-val DarkOnBackground = Color(0xFFE3E3E3)
-val DarkSurface = Color(0xFF1E1E1E)
-val DarkOnSurface = Color(0xFFE3E3E3)
-
-// Neutral Variant
-val DarkSurfaceVariant = Color(0xFF2F2F2F)
-val DarkOnSurfaceVariant = Color(0xFFCACACA)
-val DarkOutline = Color(0xFF8E8E8E)
+val LightError = Color(0xFFB91C1C)           // Hata: Koyu Kırmızı
+val LightOnError = Color(0xFFFFFFFF)        // Hata Üzeri: Beyaz
