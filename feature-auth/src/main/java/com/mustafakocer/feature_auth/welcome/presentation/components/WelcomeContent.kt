@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -33,13 +32,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mustafakocer.core_ui.R.drawable.img_app_logo as appLogo
 import com.mustafakocer.core_ui.component.util.bounceClick
 import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
 import com.mustafakocer.feature_auth.R
 import com.mustafakocer.feature_auth.welcome.presentation.contract.WelcomeUiState
 import com.mustafakocer.feature_auth.welcome.presentation.screen.WelcomeScreen
-import com.mustafakocer.core_ui.R.drawable.img_app_logo as appLogo
 
+/**
+ * The main content layout for the Welcome screen.
+ *
+ * @param state The current UI state, used here to determine the loading status of buttons.
+ * @param onLoginClick A lambda to be invoked when the login button is clicked.
+ * @param onGuestClick A lambda to be invoked when the "continue as guest" button is clicked.
+ * @param modifier The modifier to be applied to the main column.
+ *
+ * Architectural Note:
+ * This is a "dumb" component responsible for the visual layout and animations of the welcome
+ * content. It is driven by external state and delegates all user actions, making it highly
+ * reusable and easy to preview in isolation.
+ */
 @Composable
 fun WelcomeContent(
     state: WelcomeUiState,
@@ -49,12 +61,11 @@ fun WelcomeContent(
 ) {
     var startAnimation by remember { mutableStateOf(false) }
 
-    // Ekrana giriş animasyonlarını tetikle
+    // Trigger the entrance animations when the composable first appears.
     LaunchedEffect(Unit) {
         startAnimation = true
     }
 
-    // ANİMASYON DEĞERLERİ BURADA TANIMLANIYOR
     val scale by animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0.8f,
         animationSpec = tween(durationMillis = 800, easing = EaseOutCubic),
@@ -71,7 +82,6 @@ fun WelcomeContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // App Logo (Animasyon modifier'ları ile birlikte)
         AppLogo(
             modifier = Modifier
                 .scale(scale)
@@ -79,9 +89,8 @@ fun WelcomeContent(
         )
         Spacer(modifier = Modifier.height(48.dp))
 
-        // Title and Subtitle (Bunları da ayrıca anime edebiliriz)
         Column(
-            modifier = Modifier.alpha(alpha), // Metin grubuna da fade-in uygulayalım
+            modifier = Modifier.alpha(alpha),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -100,9 +109,8 @@ fun WelcomeContent(
         }
         Spacer(modifier = Modifier.height(64.dp))
 
-        // Action Buttons (Bunları da ayrıca anime edebiliriz)
         Column(
-            modifier = Modifier.alpha(alpha) // Buton grubuna da fade-in uygulayalım
+            modifier = Modifier.alpha(alpha)
         ) {
             LoginButton(
                 onClick = onLoginClick,
@@ -119,30 +127,33 @@ fun WelcomeContent(
     }
 }
 
+/**
+ * A private helper composable for displaying the application logo.
+ */
 @Composable
 private fun AppLogo(modifier: Modifier = Modifier) {
     Image(
         painter = painterResource(id = appLogo),
         contentDescription = stringResource(R.string.app_logo),
-        // Dışarıdan gelen modifier'ı (scale, alpha) kendi boyut modifier'ımızla birleştiriyoruz.
-        modifier = modifier.
-        size(200.dp)
+        modifier = modifier.size(200.dp)
     )
 }
 
+/**
+ * A private helper composable for the main login button.
+ */
 @Composable
 private fun LoginButton(
     onClick: () -> Unit,
-    isLoading: Boolean, // Yükleme durumunu al
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = onClick,
-        enabled = !isLoading, // Yükleniyorsa butonu devre dışı bırak
+        enabled = !isLoading,
         modifier = modifier
             .fillMaxWidth()
-            .height(50.dp)
-            .bounceClick(),
+            .height(50.dp),
         shape = MaterialTheme.shapes.medium
     ) {
         if (isLoading) {
@@ -160,18 +171,19 @@ private fun LoginButton(
     }
 }
 
+/**
+ * A private helper composable for the "continue as guest" text button.
+ */
 @Composable
 private fun GuestButton(
     onClick: () -> Unit,
-    isLoading: Boolean, // Yükleme durumunu al
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
 ) {
     TextButton(
         onClick = onClick,
-        enabled = !isLoading, // Yükleniyorsa butonu devre dışı bırak
-        modifier = modifier
-            .fillMaxWidth()
-            .bounceClick()
+        enabled = !isLoading,
+        modifier = modifier.fillMaxWidth()
     ) {
         Text(
             text = stringResource(R.string.continue_as_guest),
@@ -184,9 +196,7 @@ private fun GuestButton(
 @Preview(showBackground = true)
 @Composable
 private fun WelcomeScreenPreview() {
-
     MovieDiscoveryTheme {
         WelcomeScreen(WelcomeUiState(), {})
     }
 }
-

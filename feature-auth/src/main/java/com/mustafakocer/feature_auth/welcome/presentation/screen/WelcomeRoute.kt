@@ -1,19 +1,32 @@
 package com.mustafakocer.feature_auth.welcome.presentation.screen
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mustafakocer.feature_auth.welcome.presentation.viewmodel.WelcomeViewModel
 import com.mustafakocer.feature_auth.welcome.presentation.contract.WelcomeEffect
-import androidx.compose.runtime.getValue
+import com.mustafakocer.feature_auth.welcome.presentation.viewmodel.WelcomeViewModel
 import com.mustafakocer.navigation_contracts.actions.auth.WelcomeNavActions
-import androidx.core.net.toUri
 
-
+/**
+ * The main entry point and controller for the Welcome screen feature.
+ *
+ * @param navActions An implementation of [WelcomeNavActions] for triggering navigation.
+ * @param viewModel The ViewModel responsible for the Welcome screen's logic.
+ *
+ * Architectural Note:
+ * This Composable acts as the "route" or controller for the feature. It is responsible for
+ * orchestrating interactions between the ViewModel and the outside world.
+ * - It observes `uiState` to drive the UI.
+ * - It uses a `LaunchedEffect` to handle one-time side effects (`uiEffect`), such as
+ *   triggering navigation via the `navActions` contract or launching an external browser.
+ * - Using `LocalContext` here to start an `Intent` is appropriate, as this is a UI-layer
+ *   concern, keeping the ViewModel free of Android framework dependencies.
+ */
 @Composable
 fun WelcomeRoute(
     navActions: WelcomeNavActions,
@@ -22,16 +35,14 @@ fun WelcomeRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    // Effect'leri dinle.
     LaunchedEffect(Unit) {
         viewModel.uiEffect.collect { effect ->
             when (effect) {
                 is WelcomeEffect.NavigateToHome -> {
                     navActions.navigateToHome()
                 }
-
                 is WelcomeEffect.NavigateToTmdbLogin -> {
-                    // Cihazın varsayılan internet tarayıcısını açmak için bir intent oluştur.
+                    // Create an intent to open the device's default web browser for authentication.
                     val intent = Intent(Intent.ACTION_VIEW, effect.url.toUri())
                     context.startActivity(intent)
                 }
@@ -43,5 +54,4 @@ fun WelcomeRoute(
         state = state,
         onEvent = viewModel::onEvent,
     )
-
 }

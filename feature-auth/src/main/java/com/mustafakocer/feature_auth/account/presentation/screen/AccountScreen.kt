@@ -1,7 +1,16 @@
 package com.mustafakocer.feature_auth.account.presentation.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -9,7 +18,15 @@ import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +39,17 @@ import com.mustafakocer.feature_auth.R
 import com.mustafakocer.feature_auth.account.presentation.contract.AccountEvent
 import com.mustafakocer.feature_auth.account.presentation.contract.AccountUiState
 
+/**
+ * A purely visual, "dumb" component that displays the user's account information or a guest view.
+ *
+ * @param state The current UI state to render.
+ * @param onEvent A lambda to propagate user interactions up to the ViewModel.
+ *
+ * Architectural Note:
+ * This Composable is responsible only for the presentation of the Account screen. It is driven
+ * entirely by the `AccountUiState` and communicates user actions via the `onEvent` callback.
+ * This makes it stateless, easy to preview, and decoupled from business logic.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountScreen(
@@ -49,10 +77,8 @@ fun AccountScreen(
                 .padding(paddingValues)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            // İçeriği dikeyde ortalamak yerine, biraz yukarıda başlatmak daha iyi görünebilir.
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
         ) {
-            // Duruma göre Profil Kartını veya Misafir Kartını göster
             if (state.isLoggedIn) {
                 LoggedInProfileCard()
                 Spacer(modifier = Modifier.height(16.dp))
@@ -64,6 +90,9 @@ fun AccountScreen(
     }
 }
 
+/**
+ * A private helper composable that displays the view for a non-authenticated (guest) user.
+ */
 @Composable
 private fun GuestProfileCard(onLoginClick: () -> Unit) {
     Column(
@@ -96,6 +125,9 @@ private fun GuestProfileCard(onLoginClick: () -> Unit) {
     }
 }
 
+/**
+ * A private helper composable that displays the view for an authenticated user.
+ */
 @Composable
 private fun LoggedInProfileCard() {
     Column(
@@ -121,6 +153,9 @@ private fun LoggedInProfileCard() {
     }
 }
 
+/**
+ * A private helper composable for the logout button.
+ */
 @Composable
 private fun LogoutButton(onLogoutClick: () -> Unit) {
     Button(
