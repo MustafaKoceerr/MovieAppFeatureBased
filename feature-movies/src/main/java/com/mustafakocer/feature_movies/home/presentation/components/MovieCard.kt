@@ -24,21 +24,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.mustafakocer.core_ui.component.util.bounceClick
-import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
-import com.mustafakocer.feature_movies.shared.util.formattedRating
 import com.mustafakocer.feature_movies.R
+import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import com.mustafakocer.feature_movies.shared.util.ImageSize
 import com.mustafakocer.feature_movies.shared.util.ImageUrlBuilder
+import com.mustafakocer.feature_movies.shared.util.formattedRating
 
 /**
- * TEACHING MOMENT: Clean MovieCard with Utils
+ * A composable that displays a movie's poster, title, and rating in a card format.
  *
- * ✅ IMPROVEMENTS:
- * - Uses getPosterUrl() extension
- * - Uses formattedRating extension
- * - Added TextOverflow.Ellipsis
- * - Removed unused imports
- * - Clean code with utils
+ * @param movie The [MovieListItem] data to display.
+ * @param onClick The callback to be invoked when this card is clicked.
+ * @param modifier The modifier to be applied to the Card.
  */
 @Composable
 fun MovieCard(
@@ -53,7 +50,6 @@ fun MovieCard(
             .bounceClick()
     ) {
         Box {
-            // Real Movie Poster with Extension
             AsyncImage(
                 model = ImageUrlBuilder.build(
                     path = movie.posterUrl,
@@ -64,9 +60,12 @@ fun MovieCard(
                     .fillMaxWidth()
                     .height(200.dp)
                     .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop // Crop ensures the image fills the space without distortion.
             )
-            // OKUNABİLİRLİK İÇİN GRADYAN
+
+            // UI/UX Decision: A vertical gradient is drawn over the bottom of the poster.
+            // This ensures that the text (title and rating) remains legible regardless of the
+            // poster's colors, by providing a semi-opaque dark background for the text to sit on.
             Box(
                 modifier = Modifier
                     .matchParentSize()
@@ -80,6 +79,7 @@ fun MovieCard(
                         )
                     )
             )
+
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
@@ -91,7 +91,7 @@ fun MovieCard(
                     color = Color.White,
                     maxLines = 2,
                     minLines = 2,
-                    overflow = TextOverflow.Ellipsis // ✅ Ellipsis eklendi
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
@@ -103,4 +103,3 @@ fun MovieCard(
         }
     }
 }
-

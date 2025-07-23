@@ -17,17 +17,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.feature_movies.R
-import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 
 /**
- * Ana ekranda tek bir film kategorisini (örn. "Popüler Filmler") ve
- * filmlerini yatay bir listede gösteren, yeniden kullanılabilir Composable.
+ * A reusable composable that displays a single movie category (e.g., "Popular Movies")
+ * with a horizontal list of its associated movies.
  *
- * @param category Gösterilecek kategorinin enum'u (başlık için kullanılır).
- * @param movies O kategoriye ait film listesi.
- * @param onMovieClick Bir filme tıklandığında tetiklenecek olay. Filmin ID'sini döndürür.
- * @param onViewAllClick "Hepsini Gör" butonuna tıklandığında tetiklenecek olay.
+ * @param categoryTitle The title of the category to be displayed.
+ * @param movies The list of movies belonging to this category.
+ * @param onMovieClick A callback invoked when a movie card is clicked, returning the movie's ID.
+ * @param onViewAllClick A callback invoked when the "View All" button is clicked.
+ * @param modifier The modifier to be applied to the root Column of the section.
  */
 @Composable
 fun MovieCategorySection(
@@ -37,11 +37,12 @@ fun MovieCategorySection(
     onViewAllClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Liste boşsa, bu bölümü hiç gösterme.
+    // Architectural Decision: If the movie list for a category is empty, we render nothing.
+    // This is a clean way to handle conditional UI, preventing empty sections from cluttering the screen
+    // without requiring complex visibility logic in the parent composable.
     if (movies.isEmpty()) return
 
     Column(modifier = modifier) {
-        // Başlık ve "Hepsini Gör" Butonu
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -49,23 +50,26 @@ fun MovieCategorySection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = categoryTitle, // MovieCategory enum'unun bir 'title' alanı olduğunu varsayıyoruz.
+                text = categoryTitle,
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f) // Ensures the title takes available space, pushing the button to the end.
             )
             TextButton(onClick = onViewAllClick) {
                 Text(stringResource(R.string.view_all))
             }
         }
 
-        // Filmlerin Yatay Listesi (LazyRow)
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(
                 items = movies,
-                key = { movie -> movie.id } // Performans için her öğeye benzersiz bir anahtar veriyoruz.
+                // Performance Optimization: Providing a stable and unique key for each item
+                // allows Jetpack Compose to intelligently handle recompositions. It can identify
+                // specific items that have changed, moved, or been removed, preventing unnecessary
+                // recomposition of the entire list.
+                key = { movie -> movie.id }
             ) { movie ->
                 MovieCard(
                     movie = movie,

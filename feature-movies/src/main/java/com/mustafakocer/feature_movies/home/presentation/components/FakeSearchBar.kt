@@ -23,27 +23,36 @@ import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_ui.component.util.bounceClick
 import com.mustafakocer.feature_movies.R
 
-// MovieCard, FakeSearchBar gibi tekrar kullanılabilir küçük composable bileşenler burada yer alır.
+/**
+ * This file contains small, reusable composable components specific to the home feature,
+ * such as list items or decorative elements.
+ */
 
+/**
+ * A non-functional, decorative search bar that navigates to a dedicated search screen on click.
+ *
+ * @param onClick The lambda function to be invoked when the card is clicked.
+ * @param modifier The modifier to be applied to the search bar Card.
+ *
+ * Architectural Decision: This component acts as a "fake" search bar, a common UI pattern
+ * seen in apps like YouTube or Netflix. Instead of handling text input directly, its sole
+ * purpose is to serve as a large, tappable entry point to a separate, dedicated search screen.
+ * This simplifies the home screen's state management by deferring all search-related logic
+ * and state to the search feature itself.
+ */
 @Composable
 fun FakeSearchBar(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    /**
-     * Teaching Moment: Fake Search Bar
-     *
-     * Netflix/YouTube style - görünümde search bar ama tap'e search screen'e yönlendiriyor
-     * Gerçek input handling home'da yok, search screen'de olacak
-     */
     Card(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .height(56.dp)
-            .bounceClick(), // <-- EKLENDİ
-        shape = CircleShape, // <-- DAHA MODERN
+            .bounceClick(),
+        shape = CircleShape,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
         ),

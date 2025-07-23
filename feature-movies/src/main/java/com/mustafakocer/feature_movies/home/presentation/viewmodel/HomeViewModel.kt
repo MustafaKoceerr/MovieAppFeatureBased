@@ -13,12 +13,22 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+/**
+ * Manages the UI state and business logic for the home screen.
+ *
+ * This ViewModel is responsible for orchestrating the fetching of home screen data,
+ * handling user interactions, and emitting UI state updates and one-off side effects.
+ */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getHomeScreenDataUseCase: GetHomeScreenDataUseCase,
 ) : BaseViewModel<HomeUiState, HomeEvent, HomeEffect>(
     HomeUiState()
 ) {
+    // A reference to the current data collection job.
+    // This is used to cancel any ongoing data fetch operations when a new one is initiated,
+    // preventing race conditions and redundant network calls, especially on configuration changes
+    // or rapid user interactions (e.g., pull-to-refresh).
     private var dataCollectionJob: Job? = null
 
     init {
@@ -36,8 +46,18 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Fetches the home screen data from the domain layer.
+     *
+     * It distinguishes between an initial load and a user-initiated refresh to provide
+     * appropriate visual feedback (full-screen loader vs. swipe-to-refresh indicator).
+     *
+     * @param isRefresh Indicates if the data load was triggered by a pull-to-refresh action.
+     */
     private fun loadData(isRefresh: Boolean) {
-        // Eğer bu bir "pull-to-refresh" ise, animasyonu hemen başlat.
+        // Architectural Decision: We immediately show the refresh animation for a better
+        // user experience on pull-to-refresh, providing instant feedback.
+        // The animation is stopped when the data stream emits a final state (Success or Error).
         if (isRefresh) {
             setState { copy(isRefreshing = true) }
         }
@@ -45,12 +65,11 @@ class HomeViewModel @Inject constructor(
         dataCollectionJob?.cancel()
         dataCollectionJob = getHomeScreenDataUseCase(isRefresh = isRefresh)
             .onEach { resource ->
-                // Sadece nihai sonuçlar (Success veya Error) geldiğinde
-                // veya ilk yükleme (isLoading) sırasında state'i güncelle.
                 when (resource) {
                     is Resource.Loading -> {
-                        // Sadece ilk yükleme ise (ekranda hiç kategori yoksa)
-                        // tam ekran yükleme göstergesini aç.
+                        // We only show the full-screen loading indicator on the initial app start
+                        // when there is no data to display. For subsequent automatic refreshes
+                        // or background updates, we don't want to block the UI.
                         if (uiState.value.categories.isEmpty()) {
                             setState { copy(isLoading = true, error = null) }
                         }
@@ -60,7 +79,7 @@ class HomeViewModel @Inject constructor(
                         setState {
                             copy(
                                 isLoading = false,
-                                isRefreshing = false, // <-- Animasyonu burada bitir
+                                isRefreshing = false,
                                 categories = resource.data,
                                 error = null
                             )
@@ -71,7 +90,7 @@ class HomeViewModel @Inject constructor(
                         setState {
                             copy(
                                 isLoading = false,
-                                isRefreshing = false, // <-- Animasyonu burada bitir
+                                isRefreshing = false,
                                 error = resource.exception
                             )
                         }
@@ -80,5 +99,4 @@ class HomeViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
     }
-
 }

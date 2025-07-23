@@ -36,6 +36,20 @@ import com.mustafakocer.feature_movies.home.presentation.components.MovieCategor
 import com.mustafakocer.feature_movies.home.presentation.contract.*
 import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 
+/**
+ * A purely visual, "dumb" component that displays the UI for the Home screen.
+ *
+ * @param state The current UI state to render.
+ * @param onEvent A lambda to propagate user interactions up to the ViewModel.
+ * @param snackbarHostState The state manager for displaying Snackbars.
+ *
+ * Architectural Note:
+ * This Composable is responsible for the overall structure of the screen using `Scaffold`.
+ * It uses `Crossfade` to smoothly transition between full-screen loading/error states and
+ * the main content. The `PullToRefreshBox` is integrated here to provide the pull-to-refresh
+ * functionality, wrapping the main content when data is available. This component is stateless
+ * and is driven entirely by its inputs, making it easy to preview and test.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -49,7 +63,6 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text(text = stringResource(R.string.app_name)) },
                 actions = {
-                    // YENİ HESAP BUTONU
                     IconButton(
                         onClick = { onEvent(HomeEvent.AccountClicked) },
                         modifier = Modifier.bounceClick()
@@ -72,14 +85,11 @@ fun HomeScreen(
             )
         }
     ) { paddingValues ->
-
-        // Ana kutu, tam ekran Yükleme veya Hata durumlarını yönetir.
         Box(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-        )
-        {
+        ) {
             Crossfade(
                 targetState = state.showFullScreenLoading || state.showFullScreenError,
                 animationSpec = tween(500),
@@ -108,6 +118,9 @@ fun HomeScreen(
     }
 }
 
+/**
+ * Displays the main content of the Home screen, including search bar and movie categories.
+ */
 @Composable
 private fun HomeContent(state: HomeUiState, onEvent: (HomeEvent) -> Unit) {
     Column(
@@ -119,8 +132,8 @@ private fun HomeContent(state: HomeUiState, onEvent: (HomeEvent) -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Döngü, state'deki Map üzerinden kuruluyor.
-        // Sıralama, enum'daki tanım sırasına göre otomatik olarak gelir.
+        // Iterate through movie categories and display them.
+        // The order is determined by the enum's declaration order.
         state.categories.forEach { (category, movies) ->
             MovieCategorySection(
                 categoryTitle = category.toLocalizedTitle(),
@@ -134,6 +147,9 @@ private fun HomeContent(state: HomeUiState, onEvent: (HomeEvent) -> Unit) {
     }
 }
 
+/**
+ * An extension function to provide a localized title for each [MovieCategory].
+ */
 @Composable
 fun MovieCategory.toLocalizedTitle(): String {
     return when (this) {
