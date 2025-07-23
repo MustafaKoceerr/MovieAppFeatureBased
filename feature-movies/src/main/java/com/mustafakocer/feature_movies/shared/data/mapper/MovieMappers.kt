@@ -9,6 +9,8 @@ import com.mustafakocer.feature_movies.shared.data.model.MovieDto
 import com.mustafakocer.feature_movies.shared.domain.model.Genre
 import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
+import com.mustafakocer.feature_movies.shared.util.ImageSize
+import com.mustafakocer.feature_movies.shared.util.ImageUrlBuilder
 
 // ============================================
 // 1. ENTITY -> DOMAIN MAPPERS
@@ -20,7 +22,7 @@ fun MovieListEntity.toDomainList(): MovieListItem {
         id = id,
         title = title?.takeIf { it.isNotBlank() } ?: "Unknown Title",
         overview = overview?.takeIf { it.isNotBlank() } ?: "No overview available",
-        posterUrl = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" },
+        posterUrl = ImageUrlBuilder.build(posterPath, ImageSize.POSTER_W342),
         releaseYear = releaseDate?.takeIf { it.isNotBlank() }?.let { date ->
             try {
                 date.substring(0, 4)
@@ -32,6 +34,7 @@ fun MovieListEntity.toDomainList(): MovieListItem {
         voteCount = voteCount ?: 0
     )
 }
+
 
 
 // HomeMovieEntity -> MovieListItem (Domain)
@@ -40,7 +43,7 @@ fun HomeMovieEntity.toDomainList(): MovieListItem {
         id = id,
         title = title?.takeIf { it.isNotBlank() } ?: "Unknown Title",
         overview = overview?.takeIf { it.isNotBlank() } ?: "No overview available",
-        posterUrl = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" },
+        posterUrl = ImageUrlBuilder.build(posterPath, ImageSize.POSTER_W342),
         releaseYear = releaseDate?.takeIf { it.isNotBlank() }?.let { date ->
             try {
                 date.substring(0, 4)
@@ -52,6 +55,7 @@ fun HomeMovieEntity.toDomainList(): MovieListItem {
         voteCount = voteCount ?: 0
     )
 }
+
 
 
 // ============================================
@@ -64,7 +68,7 @@ fun MovieDto.toDomainList(): MovieListItem {
         id = id,
         title = title?.takeIf { it.isNotBlank() } ?: "Unknown Title",
         overview = overview?.takeIf { it.isNotBlank() } ?: "No overview available",
-        posterUrl = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" },
+        posterUrl = ImageUrlBuilder.build(posterPath, ImageSize.POSTER_W342),
         releaseYear = releaseDate?.takeIf { it.isNotBlank() }?.let { date ->
             try {
                 date.substring(0, 4)
@@ -77,18 +81,15 @@ fun MovieDto.toDomainList(): MovieListItem {
     )
 }
 
+
 // MovieDetailsDto -> MovieDetails (Domain)
 fun MovieDetailsDto.toDomain(): MovieDetails {
     return MovieDetails(
         id = id.toInt(),
         title = title?.takeIf { it.isNotBlank() } ?: "",
         overview = overview?.takeIf { it.isNotBlank() } ?: "",
-        posterUrl = posterPath?.takeIf { it.isNotBlank() }?.let {
-            "https://image.tmdb.org/t/p/w500$it"
-        } ?: "",
-        backdropUrl = backdropPath?.takeIf { it.isNotBlank() }?.let {
-            "https://image.tmdb.org/t/p/w1280$it"
-        } ?: "",
+        posterUrl = ImageUrlBuilder.build(posterPath, ImageSize.POSTER_W342) ?: "",
+        backdropUrl = ImageUrlBuilder.build(backdropPath, ImageSize.BACKDROP_W780) ?: "",
         releaseDate = releaseDate?.takeIf { it.isNotBlank() } ?: "",
         voteAverage = voteAverage ?: 0.0,
         runtime = runtime?.toInt() ?: 0,
@@ -100,6 +101,7 @@ fun MovieDetailsDto.toDomain(): MovieDetails {
         } ?: listOf()
     )
 }
+
 
 
 // ============================================
@@ -133,7 +135,7 @@ fun MovieDto.toEntity(
         page = page,
         position = position,
         language = language,
-        cacheMetadata = CacheMetadata.create(CacheDuration.HOURS_24)
+        cacheMetadata = CacheMetadata.create(CacheDuration.TWENTY_FOUR_HOURS_MS)
     )
 }
 
@@ -159,7 +161,7 @@ fun MovieDto.toHomeMovieEntity(
         originalLanguage = originalLanguage,
         originalTitle = originalTitle,
         video = video,
-        cacheMetadata = CacheMetadata.create(CacheDuration.HOURS_24)
+        cacheMetadata = CacheMetadata.create(CacheDuration.TWENTY_FOUR_HOURS_MS)
     )
 }
 

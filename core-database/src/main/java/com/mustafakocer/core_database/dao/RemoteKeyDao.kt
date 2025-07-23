@@ -5,43 +5,29 @@ import androidx.room.Query
 import com.mustafakocer.core_database.pagination.RemoteKey
 
 /**
- * Core RemoteKey DAO for pagination state management
+ * A Data Access Object (DAO) for managing [RemoteKey] entities, which are essential for
+ * handling pagination state with Jetpack's Paging 3 library.
  *
- * CLEAN ARCHITECTURE: Infrastructure Layer - Core Data Access
- * RESPONSIBILITY: Manage pagination state across all features
+ * Architectural Note:
+ * This DAO is a core component of the pagination system. It allows the `RemoteMediator` to
+ * persist and retrieve the next page key for a given data query, enabling seamless loading
+ * of subsequent pages. It is designed to be feature-agnostic by using a `query` string as
+ * a unique identifier for different paginated lists.
  */
 @Dao
 interface RemoteKeyDao : BaseDao<RemoteKey> {
 
-    /**
-     * Get remote key by query
-     * Used by RemoteMediator to determine pagination state
-     */
     @Query("SELECT * FROM remote_keys WHERE `query` = :query AND `language` = :language")
     suspend fun getRemoteKey(query: String, language: String): RemoteKey?
 
-    /**
-     * Delete remote key by query
-     * Used during refresh operations
-     */
     @Query("DELETE FROM remote_keys WHERE `query` = :query AND `language` = :language")
     suspend fun deleteRemoteKey(query: String, language: String): Int
 
-    /**
-     * Delete all remote keys
-     * Used for complete data reset
-     */
     @Query("DELETE FROM remote_keys")
     suspend fun clearAllRemoteKeys(): Int
 
-    /**
-     * Delete expired remote keys
-     * Automatic cleanup based on core database expiration
-     */
     @Query("DELETE FROM remote_keys WHERE cache_expires_at <= :expirationTime")
     suspend fun deleteExpiredRemoteKeys(
-        expirationTime: Long = System.currentTimeMillis()
+        expirationTime: Long = System.currentTimeMillis(),
     ): Int
-
-
 }

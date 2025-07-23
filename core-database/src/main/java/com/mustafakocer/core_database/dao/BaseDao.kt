@@ -1,55 +1,41 @@
 package com.mustafakocer.core_database.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Update
+import androidx.room.Upsert
 
 /**
- * Base DAO implementation with common CRUD operations
+ * A generic Data Access Object (DAO) that defines a contract for common database operations.
  *
- * CLEAN ARCHITECTURE: Infrastructure Layer - Core Data Access
- * RESPONSIBILITY: Provide common database operations for all entities
+ * @param T The entity type this DAO operates on.
+ *
+ * Architectural Note:
+ * By creating a generic `BaseDao`, we establish a consistent API for all data access operations
+ * across the application. Concrete DAOs can inherit from this interface to eliminate boilerplate
+ * code for standard Create, Read, Update, Delete (CRUD) actions. This promotes code reuse and
+ * simplifies the persistence layer.
  */
 @Dao
 interface BaseDao<T> {
 
-    /**
-     * Insert single entity
-     * @return Generated ID
-     */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(entity: T): Long
 
-    /**
-     * Insert multiple entities
-     * @return List of generated IDs
-     */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(entities: List<T>): List<Long>
 
-    /**
-     * Update single entity
-     * @return Number of rows updated
-     */
     @Update
     suspend fun update(entity: T): Int
 
-    /**
-     * Delete single entity
-     * @return Number of rows deleted
-     */
     @Delete
     suspend fun delete(entity: T): Int
 
-    /**
-     * Upsert single entity (Insert or Update)
-     * Modern Room approach for conflict handling
-     */
     @Upsert
     suspend fun upsert(entity: T)
 
-    /**
-     * Upsert multiple entities
-     * Efficient batch operation
-     */
     @Upsert
     suspend fun upsertAll(entities: List<T>)
 }

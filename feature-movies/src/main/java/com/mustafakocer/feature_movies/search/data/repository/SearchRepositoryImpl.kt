@@ -31,7 +31,7 @@ class SearchRepositoryImpl @Inject constructor(
 
     override fun searchMovies(query: SearchQuery): Flow<PagingData<MovieListItem>> {
         return Pager(
-            config = PaginationSettings.search.toPagingConfig(),
+            config = PaginationSettings.forSearch.toPagingConfig(),
             pagingSourceFactory = {
                 SearchPagingSource(
                     movieApiService = movieApiService,

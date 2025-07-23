@@ -3,12 +3,18 @@ package com.mustafakocer.core_database.cache
 import androidx.room.ColumnInfo
 
 /**
- * Basit cache metadata - sadece gerekli alanlar
+ * A reusable data class holding metadata for cached entities.
  *
- * Amaç: Entity'lerin ne zaman cache'lendiğini ve ne zaman expire olacağını saklamak
- * Kullanım: @Embedded olarak entity'lere gömülür.
+ * Architectural Note:
+ * This class is designed to be embedded directly into Room entities using the `@Embedded`
+ * annotation. This approach standardizes cache management across all tables and cleanly
+ * separates caching-related fields (like timestamps) from the core data model of the entity.
+ *
+ * @property cachedAt The timestamp (in milliseconds) when the entity was saved.
+ * @property expiresAt The timestamp (in milliseconds) when the entity should be considered stale.
+ * @property cacheVersion A version number for invalidating data if the schema changes.
+ * @property isPersistent A flag to prevent data from being automatically cleared.
  */
-
 data class CacheMetadata(
     @ColumnInfo(name = "cached_at")
     val cachedAt: Long,
@@ -24,16 +30,11 @@ data class CacheMetadata(
 ) {
     companion object {
 
-        /**
-         * Yeni cache metadata oluştur
-         */
         fun create(durationMillis: Long): CacheMetadata {
             val now = System.currentTimeMillis()
             return CacheMetadata(
                 cachedAt = now,
-                expiresAt = now + durationMillis,
-                cacheVersion = 1,
-                isPersistent = false
+                expiresAt = now + durationMillis
             )
         }
     }

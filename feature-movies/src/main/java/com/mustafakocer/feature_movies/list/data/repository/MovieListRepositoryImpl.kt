@@ -31,7 +31,7 @@ class MovieListRepositoryImpl @Inject constructor(
     ): Flow<PagingData<MovieListItem>> {
 
         // Use simple pagination settings
-        val paginationSettings = PaginationSettings.movieList
+        val paginationSettings = PaginationSettings.forCatalog
 
         return Pager(
             config = paginationSettings.toPagingConfig(),
