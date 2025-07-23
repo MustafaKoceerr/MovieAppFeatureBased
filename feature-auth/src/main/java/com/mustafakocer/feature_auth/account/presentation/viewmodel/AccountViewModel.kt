@@ -8,6 +8,7 @@ import com.mustafakocer.feature_auth.account.presentation.contract.AccountEffect
 import com.mustafakocer.feature_auth.account.presentation.contract.AccountEvent
 import com.mustafakocer.feature_auth.account.presentation.contract.AccountUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -24,13 +25,15 @@ class AccountViewModel @Inject constructor(
         // ViewModel oluşturulduğunda, kullanıcının oturum durumunu dinlemeye başla.
         observeSessionState()
     }
-
+    // Oturum durumunu dinleyen coroutine işini (Job) tutmak için bir değişken.
+    private var sessionObserverJob: Job? = null
     /**
      * Oturum durumundaki değişiklikleri reaktif olarak dinler ve UI state'ini günceller.
      */
     private fun observeSessionState() {
-        observeSessionUseCase().onEach { sessionId ->
-            // Session ID'nin varlığına (null veya boş olmamasına) göre isLoggedIn durumunu ayarla.
+        // Eğer zaten bir dinleyici çalışıyorsa, yenisini başlatmadan önce eskisini iptal et.
+        sessionObserverJob?.cancel()
+        sessionObserverJob = observeSessionUseCase().onEach { sessionId ->
             setState { copy(isLoggedIn = !sessionId.isNullOrBlank()) }
         }.launchIn(viewModelScope)
     }
@@ -38,24 +41,26 @@ class AccountViewModel @Inject constructor(
     override fun onEvent(event: AccountEvent) {
         when (event) {
             is AccountEvent.LogoutClicked -> {
-                // Logout işlemi bir suspend fonksiyon olduğu için coroutine içinde çağrılmalı.
-                viewModelScope.launch {
-                    logoutUseCase()
-                    // Çıkış yapma işlemi bittikten sonra, kullanıcıyı Welcome ekranına yönlendir.
-                    // Navigasyon grafiğimiz bu geçiş sırasında yığını temizleyecektir.
-                    sendEffect(AccountEffect.NavigateToWelcome)
-                }
+                handleLogout()
             }
-
             is AccountEvent.LoginClicked -> {
-                // Kullanıcı misafir ise ve giriş yapmak isterse, onu da Welcome ekranına yönlendir.
                 sendEffect(AccountEffect.NavigateToWelcome)
             }
-
             is AccountEvent.BackClicked -> {
-                // Geri tuşuna basıldığında bir önceki ekrana dön.
                 sendEffect(AccountEffect.NavigateBack)
             }
+        }
+    }
+
+    private fun handleLogout() {
+        // 1. Önce, state'i güncelleyebilecek olan dinleyiciyi durdur.
+        sessionObserverJob?.cancel()
+
+        // 2. Şimdi, güvenli bir şekilde çıkış işlemini yap.
+        viewModelScope.launch {
+            logoutUseCase()
+            // 3. Çıkış işlemi bittikten sonra navigasyonu tetikle.
+            sendEffect(AccountEffect.NavigateToWelcome)
         }
     }
 }

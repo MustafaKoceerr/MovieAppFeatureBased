@@ -26,7 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_ui.component.error.ErrorScreen
 import com.mustafakocer.core_ui.component.error.toErrorInfo
-import com.mustafakocer.core_ui.component.loading.LoadingScreen
+//import com.mustafakocer.core_ui.component.loading.LoadingScreen
 import com.mustafakocer.feature_movies.R
 import com.mustafakocer.feature_movies.home.presentation.components.FakeSearchBar
 import com.mustafakocer.feature_movies.home.presentation.components.MovieCategorySection
@@ -81,7 +81,7 @@ fun HomeScreen(
             }
             // 2. Sonra tam ekran yükleme durumunu kontrol et.
             else if (state.showFullScreenLoading) {
-                LoadingScreen(message = stringResource(R.string.loading_movies))
+//                LoadingScreen(message = stringResource(R.string.loading_movies))
             }
             // 3. Hiçbiri yoksa, asıl içerisi göster.
             else {

@@ -7,7 +7,7 @@ import androidx.paging.compose.LazyPagingItems
 import com.mustafakocer.core_domain.exception.toAppException
 import com.mustafakocer.core_ui.component.error.ErrorScreen
 import com.mustafakocer.core_ui.component.error.toErrorInfo
-import com.mustafakocer.core_ui.component.loading.LoadingScreen
+//import com.mustafakocer.core_ui.component.loading.LoadingScreen
 
 /**
  * Paging 3'ün yükleme durumlarını (LoadState) yöneten merkezi ve yeniden kullanılabilir Composable.
@@ -31,7 +31,7 @@ fun <T : Any> HandlePagingLoadState(
     when (val refreshState = lazyPagingItems.loadState.refresh) {
         is LoadState.Loading -> {
             // İlk yükleme veya tam ekran yenileme sırasında gösterilir.
-            LoadingScreen(modifier = modifier)
+//            LoadingScreen(modifier = modifier)
         }
 
         is LoadState.Error -> {

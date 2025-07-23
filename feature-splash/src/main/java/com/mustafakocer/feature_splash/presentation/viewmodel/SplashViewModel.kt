@@ -30,7 +30,7 @@ class SplashViewModel @Inject constructor(
             // 1. İki işlemi paralel olarak başlatıyoruz.
             //    - 'timerJob' en az 1 saniye beklemeyi garanti eder.
             //    - 'sessionJob' oturum bilgisini alır.
-            val timerJob = async { delay(2000L) } // 2 saniyelik minimum gecikme
+            val timerJob = async { delay(1500L) } // 1.5 saniyelik minimum gecikme
             val sessionJob = async {
                 runCatching { sessionProvider.observeSessionId().first() }
             }

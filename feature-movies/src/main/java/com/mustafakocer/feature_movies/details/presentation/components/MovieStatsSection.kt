@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Schedule
@@ -22,58 +22,47 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.feature_movies.R
 import com.mustafakocer.feature_movies.shared.util.formattedRating
 
 @Composable
-fun MovieStatsSection(
-    voteAverage: Double,
-    releaseDate: String,
-    runtime: Int?, // Süre bilgisi her zaman gelmeyebilir, bu yüzden nullable.
-    modifier: Modifier = Modifier,
-) {
+fun MovieStatsSection(voteAverage: Double, releaseDate: String, runtime: Int) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Puanlama Kartı
         MovieStatItem(
             icon = Icons.Default.Star,
             label = stringResource(R.string.rating),
             value = voteAverage.formattedRating,
             modifier = Modifier.weight(1f)
         )
-
-        // Çıkış Tarihi Kartı
         MovieStatItem(
             icon = Icons.Default.DateRange,
             label = stringResource(R.string.release),
             value = releaseDate,
             modifier = Modifier.weight(1f)
         )
-
-        // Süre Kartı (sadece süre bilgisi varsa gösterilir)
-        runtime?.let { runtimeInMinutes ->
-            val formattedRuntime = LocalContext.current.resources.getQuantityString(
-                R.plurals.movie_runtime_in_minutes, // 1. Plural resource ID'si
-                runtimeInMinutes,                   // 2. Hangi quantity'nin seçileceğini belirleyen miktar
-                runtimeInMinutes                    // 3. Metindeki %d'nin yerine geçecek olan değer
+        if (runtime > 0) {
+            val context = LocalContext.current
+            val runtimeText = context.resources.getQuantityString(
+                R.plurals.movie_runtime_in_minutes,
+                runtime,
+                runtime
             )
+
             MovieStatItem(
                 icon = Icons.Default.Schedule,
                 label = stringResource(R.string.runtime),
-                value = formattedRuntime,
+                value = runtimeText,
                 modifier = Modifier.weight(1f)
             )
+
         }
     }
 }
 
-/**
- * İstatistikleri göstermek için kullanılan tek bir kart bileşeni.
- */
 @Composable
 private fun MovieStatItem(
     icon: ImageVector,
@@ -103,16 +92,13 @@ private fun MovieStatItem(
             Text(
                 text = value,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                fontWeight = FontWeight.Bold
             )
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
 }
-

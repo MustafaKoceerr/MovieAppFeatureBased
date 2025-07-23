@@ -65,8 +65,7 @@ fun SplashScreen() {
                 painter = painterResource(id = appLogo),
                 contentDescription = stringResource(R.string.app_logo),
                 modifier = Modifier
-                    .width(171.dp) // Logonun en/boy oranına göre bu değeri ayarlayabilirsin
-                    .height(240.dp)
+                    .size(240.dp)
                     .scale(scale)
                     .alpha(alpha),
             )

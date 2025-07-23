@@ -38,6 +38,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_preferences.models.ThemePreference
+import com.mustafakocer.core_ui.component.util.bounceClick
 import com.mustafakocer.feature_movies.R
 
 @Composable
@@ -96,6 +97,7 @@ private fun ThemeOption(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
+            .bounceClick()
             .selectable(
                 selected = isSelected,
                 onClick = onSelected,
