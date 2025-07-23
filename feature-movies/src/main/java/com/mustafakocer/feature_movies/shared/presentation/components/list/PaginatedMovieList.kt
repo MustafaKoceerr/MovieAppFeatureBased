@@ -231,7 +231,7 @@ private fun PagingAppendIndicator(
     modifier: Modifier = Modifier,
 ) {
     when (lazyPagingItems.loadState.append) {
-        is androidx.paging.LoadState.Loading -> {
+        is LoadState.Loading -> {
             Box(
                 modifier = modifier
                     .fillMaxWidth()
@@ -242,7 +242,7 @@ private fun PagingAppendIndicator(
             }
         }
 
-        is androidx.paging.LoadState.Error -> {
+        is LoadState.Error -> {
             Column(
                 modifier = modifier
                     .fillMaxWidth()

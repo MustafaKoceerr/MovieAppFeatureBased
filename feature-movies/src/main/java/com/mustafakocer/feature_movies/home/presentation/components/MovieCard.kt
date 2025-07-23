@@ -1,5 +1,7 @@
 package com.mustafakocer.feature_movies.home.presentation.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,13 +13,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.mustafakocer.core_ui.component.util.bounceClick
 import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import com.mustafakocer.feature_movies.shared.util.formattedRating
 import com.mustafakocer.feature_movies.R
@@ -42,9 +48,11 @@ fun MovieCard(
 ) {
     Card(
         onClick = onClick,
-        modifier = modifier.width(140.dp)
+        modifier = modifier
+            .width(140.dp)
+            .bounceClick()
     ) {
-        Column {
+        Box {
             // Real Movie Poster with Extension
             AsyncImage(
                 model = ImageUrlBuilder.build(
@@ -58,22 +66,38 @@ fun MovieCard(
                     .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
                 contentScale = ContentScale.Crop
             )
-
+            // OKUNABİLİRLİK İÇİN GRADYAN
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Black.copy(alpha = 0.8f)
+                            ),
+                            startY = 300f
+                        )
+                    )
+            )
             Column(
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(8.dp)
             ) {
                 Text(
                     text = movie.title,
                     style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White,
                     maxLines = 2,
                     minLines = 2,
                     overflow = TextOverflow.Ellipsis // ✅ Ellipsis eklendi
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "⭐ ${movie.voteAverage.formattedRating}", // ✅ Extension kullanıyor
+                    text = "⭐ ${movie.voteAverage.formattedRating}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = Color.White.copy(alpha = 0.8f)
                 )
             }
         }

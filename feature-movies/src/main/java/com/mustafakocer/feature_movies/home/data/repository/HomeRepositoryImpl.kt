@@ -1,5 +1,6 @@
 package com.mustafakocer.feature_movies.home.data.repository
 
+import com.mustafakocer.core_domain.exception.toAppException
 import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.core_network.error.ErrorMapper
 import com.mustafakocer.core_preferences.provider.LanguageProvider
@@ -27,48 +28,50 @@ class HomeRepositoryImpl @Inject constructor(
     private val languageProvider: LanguageProvider,
 ) : HomeRepository {
 
-    override fun getMoviesForCategory(category: MovieCategory): Flow<Resource<List<MovieListItem>>> =
-        flow {
-            // 1. Yüklemenin başladığını bildir.
-            emit(Resource.Loading)
+    override fun getMoviesForCategory(
+        category: MovieCategory,
+        isRefresh: Boolean,
+    ): Flow<Resource<List<MovieListItem>>> = flow {
+        // 1. Yüklemenin başladığını bildir.
+        emit(Resource.Loading)
 
-            val language = languageProvider.getLanguageParam()
-            val categoryKey = category.apiEndpoint
+        val language = languageProvider.getLanguageParam()
+        val categoryKey = category.apiEndpoint
 
-            try {
-                // 2. Önbellekteki veriyi al ve hemen yayınla.
-                // Bu, kullanıcıya anında bir UI gösterir.
+        try {
+            // 2. Önbellekteki veriyi al ve hemen yayınla.
+            // Bu, kullanıcıya anında bir UI gösterir.
+            if (!isRefresh) {
                 val cachedMovies = homeMovieDao.getMoviesForCategory(categoryKey, language)
                 emit(Resource.Success(cachedMovies.toDomainList()))
+            }
 
-                // 3. Ağdan yeni veriyi çek.
-                val response = fetchMoviesFromApi(category)
 
-                if (response.isSuccessful && response.body() != null) {
-                    val moviesDto = response.body()!!.results ?: emptyList()
+            // 3. Ağdan yeni veriyi çek.
+            val response = fetchMoviesFromApi(category)
 
-                    // 4. Önbelleği yeni veriyle güncelle (atomik işlem).
-                    // Önce eski veriyi sil, sonra yenisini ekle.
-                    homeMovieDao.deleteMoviesForCategory(categoryKey, language)
-                    val movieEntities = moviesDto.toHomeMovieEntityList(categoryKey, language)
-                    homeMovieDao.upsertAll(movieEntities)
+            if (response.isSuccessful && response.body() != null) {
+                val moviesDto = response.body()!!.results ?: emptyList()
 
-                    // 5. Güncellenmiş önbelleği Tek Gerçek Kaynağı (Single Source of Truth) olarak tekrar yayınla.
-                    val updatedCache = homeMovieDao.getMoviesForCategory(categoryKey, language)
-                    emit(Resource.Success(updatedCache.toDomainList()))
-                } else {
-                    // Ağdan yanıt alınamadı veya yanıt başarısız oldu.
-                    // Hata yayınla, ancak UI'da hala eski önbellek verisi gösteriliyor olacak.
-                    val exception = ErrorMapper.mapHttpErrorResponseToAppException(response)
-                    emit(Resource.Error(exception))
-                }
-            } catch (e: Exception) {
-                // Ağ isteği sırasında bir istisna oluştu (örn. internet yok).
-                // Hatayı bizim anladığımız dile çevir ve yayınla.
-                val exception = ErrorMapper.mapThrowableToAppException(e)
+                // 4. Önbelleği yeni veriyle güncelle (atomik işlem).
+                // Önce eski veriyi sil, sonra yenisini ekle.
+                homeMovieDao.deleteMoviesForCategory(categoryKey, language)
+                val movieEntities = moviesDto.toHomeMovieEntityList(categoryKey, language)
+                homeMovieDao.upsertAll(movieEntities)
+
+                // 5. Güncellenmiş önbelleği Tek Gerçek Kaynağı (Single Source of Truth) olarak tekrar yayınla.
+                val updatedCache = homeMovieDao.getMoviesForCategory(categoryKey, language)
+                emit(Resource.Success(updatedCache.toDomainList()))
+            } else {
+                // Ağdan yanıt alınamadı veya yanıt başarısız oldu.
+                // Hata yayınla, ancak UI'da hala eski önbellek verisi gösteriliyor olacak.
+                val exception = ErrorMapper.mapHttpErrorResponseToAppException(response)
                 emit(Resource.Error(exception))
             }
+        } catch (e: Exception) {
+            emit(Resource.Error(e.toAppException()))
         }
+    }
 
     /**
      * Kategoriye göre ilgili API endpoint'ini çağıran özel yardımcı fonksiyon.

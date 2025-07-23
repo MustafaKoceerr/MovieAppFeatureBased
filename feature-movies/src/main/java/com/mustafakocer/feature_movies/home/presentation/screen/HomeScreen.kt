@@ -1,5 +1,7 @@
 package com.mustafakocer.feature_movies.home.presentation.screen
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,9 +28,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_ui.component.error.ErrorScreen
 import com.mustafakocer.core_ui.component.error.toErrorInfo
-//import com.mustafakocer.core_ui.component.loading.LoadingScreen
+import com.mustafakocer.core_ui.component.util.bounceClick
 import com.mustafakocer.feature_movies.R
 import com.mustafakocer.feature_movies.home.presentation.components.FakeSearchBar
+import com.mustafakocer.feature_movies.home.presentation.components.HomeScreenSkeleton
 import com.mustafakocer.feature_movies.home.presentation.components.MovieCategorySection
 import com.mustafakocer.feature_movies.home.presentation.contract.*
 import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
@@ -47,13 +50,19 @@ fun HomeScreen(
                 title = { Text(text = stringResource(R.string.app_name)) },
                 actions = {
                     // YENİ HESAP BUTONU
-                    IconButton(onClick = { onEvent(HomeEvent.AccountClicked) }) {
+                    IconButton(
+                        onClick = { onEvent(HomeEvent.AccountClicked) },
+                        modifier = Modifier.bounceClick()
+                    ) {
                         Icon(
                             Icons.Default.Person,
                             contentDescription = stringResource(R.string.account)
                         )
                     }
-                    IconButton(onClick = { onEvent(HomeEvent.SettingsClicked) }) {
+                    IconButton(
+                        onClick = { onEvent(HomeEvent.SettingsClicked) },
+                        modifier = Modifier.bounceClick()
+                    ) {
                         Icon(
                             Icons.Default.Settings,
                             contentDescription = stringResource(R.string.settings)
@@ -71,26 +80,28 @@ fun HomeScreen(
                 .fillMaxSize()
         )
         {
-            // 1. Önce tam ekran hata durumunu kontrol et
-            if (state.showFullScreenError) {
-                // Hata null olmayacağı için !! kullanmak güvenlidir.
-                ErrorScreen(
-                    error = state.error!!.toErrorInfo(),
-                    onRetry = { onEvent(HomeEvent.Refresh) }
-                )
-            }
-            // 2. Sonra tam ekran yükleme durumunu kontrol et.
-            else if (state.showFullScreenLoading) {
-//                LoadingScreen(message = stringResource(R.string.loading_movies))
-            }
-            // 3. Hiçbiri yoksa, asıl içerisi göster.
-            else {
-                PullToRefreshBox(
-                    isRefreshing = state.isRefreshing,
-                    onRefresh = { onEvent(HomeEvent.Refresh) },
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    HomeContent(state = state, onEvent = onEvent)
+            Crossfade(
+                targetState = state.showFullScreenLoading || state.showFullScreenError,
+                animationSpec = tween(500),
+                label = "ContentCrossfade"
+            ) { showLoadingOrError ->
+                if (showLoadingOrError) {
+                    if (state.showFullScreenError) {
+                        ErrorScreen(
+                            error = state.error!!.toErrorInfo(),
+                            onRetry = { onEvent(HomeEvent.Refresh) }
+                        )
+                    } else {
+                        HomeScreenSkeleton()
+                    }
+                } else {
+                    PullToRefreshBox(
+                        isRefreshing = state.isRefreshing,
+                        onRefresh = { onEvent(HomeEvent.Refresh) },
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        HomeContent(state = state, onEvent = onEvent)
+                    }
                 }
             }
         }

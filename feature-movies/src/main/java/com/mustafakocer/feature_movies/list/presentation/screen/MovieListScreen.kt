@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.mustafakocer.feature_movies.R
 import com.mustafakocer.feature_movies.home.presentation.screen.toLocalizedTitle
+import com.mustafakocer.feature_movies.list.presentation.components.MovieListTopAppBar
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListEvent
 import com.mustafakocer.feature_movies.list.presentation.contract.MovieListUiState
 import com.mustafakocer.feature_movies.shared.presentation.components.commonpagination.HandlePagingLoadState
@@ -63,32 +64,3 @@ fun MovieListScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun MovieListTopAppBar(
-    title: String,
-    onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    CenterAlignedTopAppBar(
-        modifier = modifier,
-        title = {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = onNavigateBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back)
-                )
-            }
-        },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
-    )
-}
