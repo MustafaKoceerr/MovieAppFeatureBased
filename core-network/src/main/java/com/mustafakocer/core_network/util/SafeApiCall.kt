@@ -11,38 +11,42 @@ import kotlinx.coroutines.flow.flowOn
 import retrofit2.Response
 
 /**
- * Retrofit API çağrılarını sarmalayan ve sonucu Flow<Resource<T>> olarak döndüren merkezi yardımcı fonksiyon.
+ * A centralized wrapper for executing Retrofit API calls safely and converting them into a [Flow] of [Resource].
  *
- * @param T API'den beklenen DTO tipidir.
- * @param apiCall Gerçekleştirilecek olan suspend Retrofit çağrısı.
- * @return API isteğinin durumunu (Loading, Success, Error) yayan bir Flow.
+ * Architectural Note:
+ * This function is a cornerstone of the data layer. It standardizes the entire lifecycle of a network request:
+ * 1.  **State Management:** It emits [Resource.Loading] immediately, providing a consistent signal for UIs.
+ * 2.  **Error Handling:** It uses a central [ErrorMapper] to translate all possible network errors (both HTTP codes and exceptions) into a predictable [AppException].
+ * 3.  **Thread Safety:** It guarantees that all network operations are performed on the `Dispatchers.IO` thread.
+ * By abstracting this logic, repositories can focus solely on invoking the API call, leading to cleaner, more maintainable, and less error-prone code.
+ *
+ * @param T The DTO (Data Transfer Object) type expected from the API response.
+ * @param apiCall A suspend lambda function that performs the actual Retrofit network request.
+ * @return A [Flow] that emits the state of the API request, encapsulated within a [Resource].
  */
 fun <T> safeApiCall(
     apiCall: suspend () -> Response<T>,
 ): Flow<Resource<T>> = flow {
-    // 1. Akış başladığında, UI'a yüklemenin başladığını bildir.
+    // Immediately emit the loading state to notify collectors that the operation has started.
     emit(Resource.Loading)
 
-    // 2. Asıl API çağrısını yap
     val response = apiCall()
 
-    // 3. Yanıtı kontrol et.
     if (response.isSuccessful) {
         val body = response.body()
         if (body != null) {
-            // Başarılı ve body dolu ise, Success durumunu yayınla.
+            // If the call is successful and the body is not null, emit the data.
             emit(Resource.Success(body))
         } else {
-            // Başarılı ama body boş ise, bu da bir veri hatasıdır.
+            // A 2xx response with a null body is considered a data error in this architecture.
             emit(Resource.Error(AppException.Data.EmptyResponse))
         }
     } else {
-        // Sunucudan 4xx veya 5xx gibi bir hata kodu geldiyse,
-        // ErrorMapper'ı kullanarak bunu bizim hata modelimize dönüştür.
+        // Handle non-2xx HTTP error responses by mapping them to a domain-specific exception.
         emit(Resource.Error(ErrorMapper.mapHttpErrorResponseToAppException(response)))
     }
-}.catch { e ->
-    // Çağrı sırasında HttpException, IOException gibi bir istisna fırlatıldıysa,
-    // ErrorMapper'ı kullanarak bunu yakala ve bizim hata modelimize dönüştür.
-    emit(Resource.Error(ErrorMapper.mapThrowableToAppException(e)))
-}.flowOn(Dispatchers.IO) // Tüm bu işlemleri IO thred'inde yap.
+}.catch { throwable ->
+    // Catch any exceptions thrown during the API call (e.g., IOException, HttpException).
+    // Map the throwable to a domain-specific exception.
+    emit(Resource.Error(ErrorMapper.mapThrowableToAppException(throwable)))
+}.flowOn(Dispatchers.IO) // Ensure all operations within this flow execute on the IO thread pool.

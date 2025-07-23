@@ -17,12 +17,14 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
-import kotlin.apply
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+    /**
+     * Provides a configured Kotlinx Serialization Json instance for parsing API responses.
+     */
     @Provides
     @Singleton
     fun provideJson(): Json {
@@ -32,13 +34,16 @@ object NetworkModule {
         }
     }
 
+    /**
+     * Provides an HttpLoggingInterceptor that logs network traffic only in debug builds.
+     */
     @Provides
     @Singleton
     fun provideHttpLoggingInterceptor(
         configProvider: NetworkConfigProvider,
     ): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
-            level = if (configProvider.isDebug) {
+            level = if (configProvider.isDebug && configProvider.enableLogging) {
                 HttpLoggingInterceptor.Level.BODY
             } else {
                 HttpLoggingInterceptor.Level.NONE
@@ -46,31 +51,40 @@ object NetworkModule {
         }
     }
 
+    /**
+     * Provides a shared OkHttp Cache to reduce redundant network calls.
+     */
     @Provides
     @Singleton
     fun provideOkHttpCache(@ApplicationContext context: Context): Cache {
-        return Cache(context.cacheDir, NetworkConfig.CACHE_SIZE)
+        return Cache(context.cacheDir, NetworkConfig.CACHE_SIZE_BYTES)
     }
 
+    /**
+     * Provides the main OkHttpClient instance, configured with timeouts, caching, and interceptors.
+     */
     @Provides
     @Singleton
     fun provideOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
-        apiKeyInterceptor: ApiKeyInterceptor, // ApiKeyInterceptor'ı inject ediyoruz.
-        languageInterceptor: LanguageInterceptor, // ApiKeyInterceptor'ı inject ediyoruz.
+        apiKeyInterceptor: ApiKeyInterceptor,
+        languageInterceptor: LanguageInterceptor,
         cache: Cache,
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .cache(cache)
-            .connectTimeout(NetworkConfig.CONNECT_TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(NetworkConfig.READ_TIMEOUT, TimeUnit.SECONDS)
-            .writeTimeout(NetworkConfig.WRITE_TIMEOUT, TimeUnit.SECONDS)
+            .connectTimeout(NetworkConfig.CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(NetworkConfig.READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(NetworkConfig.WRITE_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .addInterceptor(apiKeyInterceptor)
+            .addInterceptor(languageInterceptor)
             .addInterceptor(loggingInterceptor)
-            .addInterceptor(apiKeyInterceptor) // Interceptor'ı zincire ekliyoruz.
-            .addInterceptor(languageInterceptor) // Interceptor'ı zincire ekliyoruz.
             .build()
     }
 
+    /**
+     * Provides the main Retrofit instance, configured for the application's API.
+     */
     @Provides
     @Singleton
     fun provideRetrofit(
