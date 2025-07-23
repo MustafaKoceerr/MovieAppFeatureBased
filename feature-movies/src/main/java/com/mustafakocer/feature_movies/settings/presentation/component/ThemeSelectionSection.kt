@@ -41,17 +41,31 @@ import com.mustafakocer.core_preferences.models.ThemePreference
 import com.mustafakocer.core_ui.component.util.bounceClick
 import com.mustafakocer.feature_movies.R
 
+/**
+ * A composable that presents the available theme choices (e.g., Light, Dark, System)
+ * within a styled section card.
+ *
+ * @param currentTheme The currently active [ThemePreference] to highlight the selected option.
+ * @param isLoading A boolean to indicate if a preference change is in progress, used to disable controls.
+ * @param onThemeSelected The callback invoked when a user selects a new theme.
+ */
 @Composable
 fun ThemeSelectionSection(
     currentTheme: ThemePreference,
     isLoading: Boolean,
     onThemeSelected: (ThemePreference) -> Unit,
 ) {
+    // `SectionCard` is a reusable wrapper that provides a consistent look and feel
+    // for different sections on the settings screen.
     SectionCard(
         icon = Icons.Default.Palette,
         title = stringResource(R.string.app_theme),
         isLoading = isLoading
     ) {
+        // Architectural Decision: The `selectableGroup` modifier is crucial for accessibility.
+        // It groups the individual `ThemeOption` composables together, allowing screen readers
+        // to understand that they form a single set of mutually exclusive choices, similar to a
+        // traditional radio button group.
         Column(
             modifier = Modifier.selectableGroup(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -84,6 +98,18 @@ fun ThemeSelectionSection(
     }
 }
 
+/**
+ * A private composable that renders a single, selectable row for a theme option.
+ *
+ * It provides strong visual feedback for the selected state and is designed with accessibility in mind.
+ *
+ * @param theme The [ThemePreference] this option represents.
+ * @param icon The icon associated with this theme.
+ * @param description A short description of the theme option.
+ * @param isSelected Whether this option is the currently selected one.
+ * @param isEnabled Whether this option is enabled and can be interacted with.
+ * @param onSelected The callback to be invoked when this option is clicked.
+ */
 @Composable
 private fun ThemeOption(
     theme: ThemePreference,
@@ -98,6 +124,10 @@ private fun ThemeOption(
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .bounceClick()
+            // Architectural Decision: The `selectable` modifier is used to make the entire row
+            // clickable and to report its state to accessibility services. Setting the `role` to
+            // `Role.RadioButton` tells screen readers to treat this custom composable as a
+            // standard radio button, even though we are using custom visuals.
             .selectable(
                 selected = isSelected,
                 onClick = onSelected,
@@ -105,11 +135,10 @@ private fun ThemeOption(
                 role = Role.RadioButton
             ),
         shape = RoundedCornerShape(12.dp),
+        // UI/UX Decision: The background color and border change distinctly when an item is
+        // selected, providing clear and immediate visual feedback to the user.
         color = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f) else Color.Transparent,
-        border = if (isSelected) BorderStroke(
-            2.dp,
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-        ) else null
+        border = if (isSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)) else null
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -118,15 +147,13 @@ private fun ThemeOption(
         ) {
             Surface(
                 shape = RoundedCornerShape(8.dp),
-                color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else MaterialTheme.colorScheme.surfaceVariant.copy(
-                    alpha = 0.5f
-                ),
+                color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                 modifier = Modifier.size(40.dp)
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                     Icon(
                         imageVector = icon,
-                        contentDescription = theme.displayName,
+                        contentDescription = null, // Decorative icon
                         tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp)
                     )
@@ -145,6 +172,8 @@ private fun ThemeOption(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+            // UI/UX Decision: The checkmark icon fades in and out smoothly instead of just
+            // appearing, which creates a more polished and less jarring user experience.
             AnimatedVisibility(
                 visible = isSelected,
                 enter = fadeIn(tween(300)),
@@ -165,9 +194,13 @@ private fun ThemeOption(
                     }
                 }
             }
+            // Accessibility Trick: A zero-sized `RadioButton` is included. It is not visible to the
+            // user, but its presence, combined with the `selectable` modifier's role, provides the
+            // necessary semantics for accessibility services like TalkBack to correctly announce
+            // the state ("Selected" / "Not selected") of the custom component.
             RadioButton(
                 selected = isSelected,
-                onClick = null,
+                onClick = null, // The `selectable` modifier on the parent handles the click.
                 enabled = isEnabled,
                 modifier = Modifier.size(0.dp)
             )
