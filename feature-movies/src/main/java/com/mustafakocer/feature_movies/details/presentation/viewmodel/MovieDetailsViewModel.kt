@@ -11,11 +11,28 @@ import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetail
 import com.mustafakocer.feature_movies.details.presentation.contract.MovieDetailsUiState
 import com.mustafakocer.navigation_contracts.navigation.MovieDetailsScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
+/**
+ * Manages the business logic for the Movie Details screen.
+ *
+ * @param getMovieDetailsUseCase The use case for fetching detailed movie information.
+ * @param savedStateHandle A handle to the saved state, used to retrieve navigation arguments.
+ *
+ * Architectural Note:
+ * This ViewModel is responsible for fetching and displaying the details of a single movie.
+ * - **Argument Retrieval:** It safely retrieves the `movieId` from `SavedStateHandle`, ensuring it's
+ *   decoupled from the navigation framework's specifics.
+ * - **Lifecycle-Aware Data Fetching:** It uses a single `dataCollectionJob` to manage the subscription
+ *   to the data flow. This job is cancelled and restarted on each new data request (e.g., on refresh),
+ *   preventing multiple active collectors and resource leaks.
+ * - **Differentiated Loading States:** The `loadMovieDetails` function uses a `LoadingType` enum to
+ *   update the UI state appropriately for either an initial full-screen load or a less intrusive
+ *   pull-to-refresh indicator.
+ */
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
@@ -24,7 +41,7 @@ class MovieDetailsViewModel @Inject constructor(
     initialState = MovieDetailsUiState()
 ) {
     private val movieId: Int = savedStateHandle.get<Int>(MovieDetailsScreen.KEY_MOVIE_ID)
-        ?: throw IllegalStateException("movieId is required")
+        ?: throw IllegalStateException("movieId is required for MovieDetailsViewModel")
 
     private var dataCollectionJob: Job? = null
 
@@ -42,23 +59,21 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun loadMovieDetails(loadingType: LoadingType) {
-        // Önceki veri dinleme işlemini iptal et.
+        // Architectural Decision:
+        // The existing `dataCollectionJob` is cancelled before starting a new one. This is a crucial
+        // pattern to prevent multiple, concurrent data streams if the user triggers a refresh while
+        // a previous request is still in flight.
         dataCollectionJob?.cancel()
 
-        // UseCase'den gelen reaktif akışı dinlemeye başla.
         dataCollectionJob = getMovieDetailsUseCase(movieId)
             .onEach { resource ->
                 val newState = when (resource) {
                     is Resource.Loading -> {
                         when (loadingType) {
                             LoadingType.MAIN -> currentState.copy(isLoading = true, error = null)
-                            LoadingType.REFRESH -> currentState.copy(
-                                isRefreshing = true,
-                                error = null
-                            )
+                            LoadingType.REFRESH -> currentState.copy(isRefreshing = true, error = null)
                         }
                     }
-
                     is Resource.Success -> {
                         currentState.copy(
                             isLoading = false,
@@ -67,7 +82,6 @@ class MovieDetailsViewModel @Inject constructor(
                             movie = resource.data
                         )
                     }
-
                     is Resource.Error -> {
                         currentState.copy(
                             isLoading = false,
@@ -84,8 +98,8 @@ class MovieDetailsViewModel @Inject constructor(
     private fun handleShareMovie(shareContent: String) {
         setState { copy(isSharing = true) }
         sendEffect(MovieDetailsEffect.ShareContent(shareContent))
-        // Paylaşım işlemi anlık olduğu için, state'i hemen geri alabiliriz.
-        // Eğer uzun süren bir işlem olsaydı, bir callback mekanizması gerekirdi.
+        // The sharing state is toggled immediately. Since the share action is a fire-and-forget
+        // intent, we don't need a complex callback mechanism to reset the state.
         setState { copy(isSharing = false) }
     }
 }

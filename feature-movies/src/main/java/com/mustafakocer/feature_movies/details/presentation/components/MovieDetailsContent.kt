@@ -26,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -43,7 +42,16 @@ import com.mustafakocer.feature_movies.shared.util.ImageSize
 import com.mustafakocer.feature_movies.shared.util.ImageUrlBuilder
 
 /**
- * Ana içerik ve yenileme göstergesi için bir sarmalayıcı (wrapper).
+ * A wrapper component that orchestrates the display of the main movie details and a refresh indicator.
+ *
+ * @param movie The movie details data to be displayed.
+ * @param isRefreshLoading A flag indicating if a refresh operation is in progress.
+ * @param modifier The modifier to be applied to the root Box.
+ *
+ * Architectural Note:
+ * This component separates the core content from the loading state logic. It conditionally displays
+ * a `RefreshLoadingIndicator` over the main content, providing a non-blocking UI update during a
+ * pull-to-refresh action. The main content itself is delegated to smaller, more focused Composables.
  */
 @Composable
 fun MovieDetailsContent(
@@ -85,7 +93,8 @@ fun MovieDetailsContent(
                 MovieOverviewSection(overview = movie.overview)
             }
 
-            Spacer(modifier = Modifier.height(80.dp)) // FAB için boşluk
+            // Provide spacing at the bottom to avoid content being obscured by the FAB.
+            Spacer(modifier = Modifier.height(80.dp))
         }
 
         if (isRefreshLoading) {
@@ -94,10 +103,9 @@ fun MovieDetailsContent(
     }
 }
 
-
-
-// --- İÇ IMPLEMENTASYON (PRIVATE) ---
-
+/**
+ * Displays the main hero section, including the backdrop image, poster, and title overlay.
+ */
 @Composable
 private fun MovieHeroSection(
     backdropUrl: String,
@@ -113,8 +121,7 @@ private fun MovieHeroSection(
         AsyncImage(
             model = backdropUrl,
             contentDescription = stringResource(R.string.backdrop_description, title),
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
         GradientOverlay()
@@ -122,6 +129,9 @@ private fun MovieHeroSection(
     }
 }
 
+/**
+ * Applies a vertical gradient scrim over an image to ensure that text overlaid on top is readable.
+ */
 @Composable
 private fun GradientOverlay(modifier: Modifier = Modifier) {
     Box(
@@ -140,6 +150,9 @@ private fun GradientOverlay(modifier: Modifier = Modifier) {
     )
 }
 
+/**
+ * Lays out the movie poster, title, and tagline over the hero section's backdrop.
+ */
 @Composable
 private fun MovieInfoOverlay(
     posterUrl: String,
@@ -149,7 +162,7 @@ private fun MovieInfoOverlay(
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize() // Fill size to use alignment
             .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.Bottom
@@ -159,7 +172,7 @@ private fun MovieInfoOverlay(
             contentDescription = stringResource(R.string.poster_description, title),
             modifier = Modifier
                 .width(120.dp)
-                .aspectRatio(2 / 3f) // En/boy oranını koru
+                .aspectRatio(2 / 3f)
                 .clip(MaterialTheme.shapes.medium),
             contentScale = ContentScale.Crop
         )
@@ -187,29 +200,33 @@ private fun MovieInfoOverlay(
     }
 }
 
-
+/**
+ * Displays the movie's overview text with appropriate styling.
+ */
 @Composable
 private fun MovieOverviewSection(overview: String, modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.fillMaxWidth(), // Genişliği doldurmasını sağla
-        verticalArrangement = Arrangement.spacedBy(12.dp) // Boşluğu biraz artır
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
-            text = "Overview",
-            style = MaterialTheme.typography.titleLarge // Başlığı daha belirgin yap
+            text = stringResource(R.string.overview),
+            style = MaterialTheme.typography.titleLarge
         )
         if (overview.isNotBlank()) {
             Text(
                 text = overview,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                // Satır aralığını artırarak okunabilirliği iyileştirir.
                 lineHeight = 24.sp
             )
         }
     }
 }
 
+/**
+ * A small, non-intrusive loading indicator displayed at the top of the screen during a refresh.
+ */
 @Composable
 private fun RefreshLoadingIndicator(modifier: Modifier = Modifier) {
     Card(
@@ -233,6 +250,14 @@ private fun RefreshLoadingIndicator(modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * Displays a list of genres using a `FlowRow` for adaptive layout.
+ *
+ * Architectural Note:
+ * Using `FlowRow` is a deliberate choice for displaying a variable number of genre chips.
+ * It allows the chips to wrap to the next line gracefully on smaller screens, creating a
+ * responsive layout without complex manual calculations.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun MovieGenresSection(genres: List<Genre>, modifier: Modifier = Modifier) {
@@ -244,7 +269,7 @@ private fun MovieGenresSection(genres: List<Genre>, modifier: Modifier = Modifie
         ) {
             genres.forEach { genre ->
                 AssistChip(
-                    onClick = { /* TODO: Genre click event */ },
+                    onClick = { /* No-op: Genre chips are not clickable in this design. */ },
                     label = { Text(text = genre.name, style = MaterialTheme.typography.bodyMedium) }
                 )
             }

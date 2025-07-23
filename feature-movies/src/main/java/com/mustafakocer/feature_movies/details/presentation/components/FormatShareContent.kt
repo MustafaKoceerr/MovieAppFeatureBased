@@ -2,11 +2,24 @@ package com.mustafakocer.feature_movies.details.presentation.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails
 import androidx.compose.ui.res.stringResource
 import com.mustafakocer.feature_movies.R
+import com.mustafakocer.feature_movies.shared.domain.model.MovieDetails
 import com.mustafakocer.feature_movies.shared.util.formattedRating
 
+/**
+ * Formats `MovieDetails` into a user-friendly, shareable plain text string.
+ *
+ * @param movie The movie details to format.
+ * @return A formatted `String` ready to be used in a share intent.
+ *
+ * Architectural Note:
+ * This is a `@Composable` function because it needs access to the composable context to resolve
+ * localized string resources (`stringResource`, `getQuantityString`). This is a deliberate
+ * design choice that allows the shared text to be correctly localized according to the user's
+ * device settings, while keeping the ViewModel completely free of Android `Context` dependencies.
+ * Centralizing this logic here ensures a consistent share message format is used everywhere.
+ */
 @Composable
 fun formatShareContent(movie: MovieDetails): String {
     val shareTitle = stringResource(R.string.share_text_title)

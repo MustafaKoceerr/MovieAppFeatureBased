@@ -18,6 +18,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_ui.component.loading.ShimmerBrush
 
+/**
+ * A placeholder Composable that displays a skeleton layout for the Movie Details screen.
+ *
+ * Architectural Note:
+ * This component provides a better user experience during initial data loading than a simple
+ * spinner. It mimics the final layout of the `MovieDetailsContent`, which prevents jarring
+ * content shifts when the data arrives. It is a "dumb" component that reuses the
+ * centralized `ShimmerBrush` from the `:core_ui` module to ensure a consistent loading
+ * animation style across the application.
+ */
 @Composable
 fun MovieDetailsSkeleton() {
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
