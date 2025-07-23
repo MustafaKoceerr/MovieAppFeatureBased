@@ -7,13 +7,24 @@ import com.mustafakocer.feature_splash.presentation.contract.SplashEffect
 import com.mustafakocer.feature_splash.presentation.contract.SplashEvent
 import com.mustafakocer.feature_splash.presentation.contract.SplashUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
+/**
+ * Manages the business logic for the Splash screen.
+ *
+ * @param sessionProvider The provider for checking the current user session state.
+ *
+ * Architectural Note:
+ * The primary responsibility of this ViewModel is to determine the user's authentication status
+ * and then emit a navigation effect. It orchestrates two parallel tasks: a minimum display timer
+ * and a session check. This ensures the splash screen is displayed for a pleasant duration while
+ * efficiently deciding the next navigation destination.
+ */
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val sessionProvider: SessionProvider,
@@ -27,35 +38,34 @@ class SplashViewModel @Inject constructor(
 
     private fun checkUserSession() {
         viewModelScope.launch {
-            // 1. İki işlemi paralel olarak başlatıyoruz.
-            //    - 'timerJob' en az 1 saniye beklemeyi garanti eder.
-            //    - 'sessionJob' oturum bilgisini alır.
-            val timerJob = async { delay(1500L) } // 1.5 saniyelik minimum gecikme
+            // Architectural Decision:
+            // Two jobs are launched in parallel using `async` for efficiency.
+            // - `timerJob`: Guarantees a minimum branding display time, improving user experience.
+            // - `sessionJob`: Fetches the session state from the data layer.
+            // `awaitAll` ensures that we wait for the slower of the two tasks to complete before
+            // proceeding, which is the most efficient way to handle this dual requirement.
+            val timerJob = async { delay(1500L) }
             val sessionJob = async {
                 runCatching { sessionProvider.observeSessionId().first() }
             }
 
-            // 2. İki işlemin de tamamlanmasını bekliyoruz.
-            //    - Eğer sessionJob 200ms'de biterse, bu satır kalan 800ms'yi bekler.
-            //    - Eğer sessionJob 1200ms'de biterse, timerJob zaten bitmiş olacağı için
-            //      bu satır sadece sessionJob'un kalan 200ms'sini bekler.
             awaitAll(timerJob, sessionJob)
 
-            // 3. Artık her iki iş de bittiğine göre, oturum kontrolünün sonucunu işleyebiliriz.
-            val sessionResult = sessionJob.await() // Sonucu al
+            val sessionResult = sessionJob.await()
             sessionResult.onSuccess { sessionId ->
                 if (sessionId.isNullOrBlank()) {
                     sendEffect(SplashEffect.NavigateToWelcome)
                 } else {
                     sendEffect(SplashEffect.NavigateToHome)
                 }
-            }.onFailure { exception ->
-                sendEffect(SplashEffect.NavigateToWelcome) // Hata durumunda varsayılan ekrana git
+            }.onFailure {
+                // In case of an error reading the session, default to the welcome screen.
+                sendEffect(SplashEffect.NavigateToWelcome)
             }
         }
     }
 
-    // Kullanıcı etkileşimi olmadığı için boş
     override fun onEvent(event: SplashEvent) {
+        // No user interactions on this screen.
     }
 }
