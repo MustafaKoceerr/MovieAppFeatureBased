@@ -13,11 +13,17 @@ import com.mustafakocer.feature_movies.shared.util.ImageSize
 import com.mustafakocer.feature_movies.shared.util.ImageUrlBuilder
 
 /**
- * Film afişini gösteren, yeniden kullanılabilir atomik bir bileşen.
+ * A reusable, atomic component for displaying a movie poster.
  *
- * @param posterPath Afişin yolu (path). Tam URL değil.
- * @param contentDescription Erişilebilirlik için afiş açıklaması.
- * @param size Poster boyutunu belirleyen enum.
+ * Architectural Decision: This is an "atomic" component in a design system. It has a single,
+ * well-defined responsibility: to display a poster image. It is unaware of any business logic
+ * or context beyond what is necessary to render the image, making it highly reusable across
+ * different features (e.g., home screen, search results, movie details).
+ *
+ * @param posterPath The path segment of the poster image (not the full URL).
+ * @param contentDescription The accessibility description for the poster image.
+ * @param modifier The modifier to be applied to the AsyncImage.
+ * @param size An enum that defines the display dimensions of the poster, ensuring consistency.
  */
 @Composable
 fun MoviePoster(
@@ -26,11 +32,10 @@ fun MoviePoster(
     modifier: Modifier = Modifier,
     size: PosterSize = PosterSize.Medium,
 ) {
-    // Not: Coil'in yeni versiyonlarında (coil3) model direkt URL bekler.
-    // Bu yüzden base URL'i burada birleştiriyoruz.
+
     val fullPosterUrl = ImageUrlBuilder.build(
         path = posterPath,
-        size = ImageSize.POSTER_W342  // veya ihtiyacınıza göre farklı bir ImageSize
+        size = ImageSize.POSTER_W342
     )
 
     AsyncImage(
@@ -44,7 +49,10 @@ fun MoviePoster(
 }
 
 /**
- * Uygulama genelinde tutarlılık için standartlaştırılmış poster boyutları.
+ * Defines standardized poster dimensions to ensure visual consistency throughout the application.
+ *
+ * Using an enum for predefined sizes prevents developers from using arbitrary "magic numbers"
+ * for dimensions, leading to a more maintainable and visually cohesive UI.
  */
 enum class PosterSize(val width: Dp, val height: Dp) {
     Small(60.dp, 90.dp),

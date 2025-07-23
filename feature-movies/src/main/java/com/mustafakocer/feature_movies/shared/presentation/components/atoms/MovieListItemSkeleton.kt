@@ -19,29 +19,38 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_ui.component.loading.ShimmerBrush
 
-
 /**
- * PaginatedMovieList'teki bir satırın (MovieRow) yükleniyor halini
- * temsil eden iskelet (skeleton) Composable'ı.
+ * A skeleton composable that represents the loading state of a single movie item row
+ * in a paginated list.
+ *
+ * Architectural Decision: This is an atomic "skeleton" component. Its purpose is to mimic the
+ * layout and dimensions of the actual `MovieRow` component. By using this in a shimmer loading
+ * screen, we provide the user with a visual placeholder that accurately represents the content
+ * that is about to be loaded. This improves perceived performance and creates a more cohesive
+ * loading experience.
+ *
+ * @param modifier The modifier to be applied to the root Row.
  */
 @Composable
 fun MovieListItemSkeleton(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 16.dp), // MovieRow ile aynı padding
+            .padding(vertical = 12.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Poster iskeleti
+        // Skeleton for the movie poster.
         Box(
             modifier = Modifier
-                .size(width = 80.dp, height = 120.dp) // MoviePoster (Medium) ile aynı boyut
+                .size(width = 80.dp, height = 120.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(ShimmerBrush())
+                .background(ShimmerBrush()) // The shimmer provides an animated loading effect.
         )
-        Spacer(modifier = Modifier.width(16.dp)) // MovieRow ile aynı boşluk
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) { // Boşlukları artırdık
-            // Başlık iskeleti
+        // The spacer width is also matched with the real component's layout.
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            // Skeleton for the movie title.
+            // The fractional width (0.8f) mimics the approximate length of an average movie title.
             Box(
                 modifier = Modifier
                     .height(20.dp)
@@ -49,7 +58,7 @@ fun MovieListItemSkeleton(modifier: Modifier = Modifier) {
                     .clip(RoundedCornerShape(4.dp))
                     .background(ShimmerBrush())
             )
-            // Tarih iskeleti
+            // Skeleton for the release date.
             Box(
                 modifier = Modifier
                     .height(16.dp)
@@ -57,7 +66,7 @@ fun MovieListItemSkeleton(modifier: Modifier = Modifier) {
                     .clip(RoundedCornerShape(4.dp))
                     .background(ShimmerBrush())
             )
-            // Özet iskeleti
+            // Skeleton for the movie overview/summary.
             Box(
                 modifier = Modifier
                     .height(16.dp)
