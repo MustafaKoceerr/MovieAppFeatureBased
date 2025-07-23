@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,19 +31,18 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mustafakocer.core_domain.exception.AppException
+import com.mustafakocer.core_ui.component.util.bounceClick
 import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
 
 /**
@@ -53,134 +55,110 @@ fun ErrorScreen(
     onRetry: (() -> Unit)? = null,
     onNavigateBack: (() -> Unit)? = null,
 ) {
-    val displayError = error
     val infiniteTransition = rememberInfiniteTransition(label = "error_animation")
 
     val bounceAnimation by infiniteTransition.animateFloat(
-        initialValue = 0.95f,
-        targetValue = 1.05f,
+        initialValue = 0.98f,
+        targetValue = 1.02f,
         animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = EaseInOutCubic),
+            animation = tween(1500, easing = EaseInOutCubic),
             repeatMode = RepeatMode.Reverse
         ),
         label = "bounce"
     )
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 32.dp), // Padding'i dışarı aldık
         contentAlignment = Alignment.Center
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
+                .fillMaxWidth()
                 .wrapContentHeight(),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.1f)
+                containerColor = MaterialTheme.colorScheme.surface // Yeni temamızın yüzey rengi
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant) // Hafif bir çerçeve
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp) // Boşlukları biraz azalttık
             ) {
-                // Animated error icon
-                Icon(
-                    imageVector = displayError.icon,
-                    contentDescription = displayError.title,
-                    modifier = Modifier
-                        .size(80.dp)
-                        .scale(bounceAnimation),
-                    tint = MaterialTheme.colorScheme.error
-                )
-
-                // Error emoji
-                Text(
-                    text = displayError.emoji,
-                    fontSize = 64.sp,
+                // İkon ve Emoji
+                Box(
                     modifier = Modifier.scale(bounceAnimation)
-                )
+                ) {
+                    Icon(
+                        imageVector = error.icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(80.dp),
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                    Text(
+                        text = error.emoji,
+                        fontSize = 32.sp,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .offset(x = 8.dp, y = 8.dp)
+                    )
+                }
 
-                // Error title
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Başlık (Yeni Tipografi)
                 Text(
-                    text = displayError.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    text = error.title,
+                    style = MaterialTheme.typography.headlineSmall, // Montserrat SemiBold
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center
                 )
 
-                // Error description
+                // Açıklama (Yeni Tipografi)
                 Text(
-                    text = displayError.description,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f),
+                    text = error.description,
+                    style = MaterialTheme.typography.bodyLarge, // Inter Regular
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     lineHeight = 24.sp
                 )
 
-                // Help text (if available)
-                if (displayError.helpText.isNotEmpty()) {
-                    Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                    ) {
-                        Text(
-                            text = displayError.helpText,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                }
 
                 // Action buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Back button (if provided)
-                    onNavigateBack?.let { callback ->
-                        OutlinedButton(
-                            onClick = callback,
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = MaterialTheme.colorScheme.onErrorContainer
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                                contentDescription = "Go Back",
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Go Back")
+                if (onRetry != null || onNavigateBack != null) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
+                    ) {
+                        onNavigateBack?.let {
+                            OutlinedButton(
+                                onClick = it,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .bounceClick()
+                            ) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                                Spacer(Modifier.width(8.dp))
+                                Text("Go Back")
+                            }
                         }
-                    }
-
-                    // Retry button (if provided)
-                    onRetry?.let { callback ->
-                        Button(
-                            onClick = callback,
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.error,
-                                contentColor = MaterialTheme.colorScheme.onError
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = "Retry",
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(displayError.retryText)
+                        onRetry?.let {
+                            Button(
+                                onClick = it,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .bounceClick()
+                            ) {
+                                Icon(Icons.Default.Refresh, contentDescription = null)
+                                Spacer(Modifier.width(8.dp))
+                                Text(error.retryText)
+                            }
                         }
                     }
                 }
@@ -189,11 +167,13 @@ fun ErrorScreen(
     }
 }
 
+// ... (Preview aynı kalabilir, ama yeni temayla daha iyi görünecek)
+
 @Preview(showBackground = true)
 @Composable
 fun ErrorScreenPreview() {
     MovieDiscoveryTheme {
-        val errorInfo = AppException.Api.ServerError(code = 500).toErrorInfo()
+        val errorInfo = AppException.Network.NoInternet().toErrorInfo()
         ErrorScreen(
             error = errorInfo,
             onRetry = {}
