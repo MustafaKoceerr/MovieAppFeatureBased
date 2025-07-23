@@ -12,11 +12,18 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 /**
- * Sonsuz bir shimmer animasyonu sağlayan bir Brush oluşturur.
+ * Creates a `Brush` that produces a shimmering animation effect.
  *
- * @param showShimmer Animasyonun aktif olup olmadığını kontrol eder.
- * @param targetValue Animasyonun ne kadar uzağa gideceğini belirler.
- * @return Shimmer efektini içeren bir Brush.
+ * @param showShimmer A flag to enable or disable the shimmer effect.
+ * @param targetValue The end value for the animation's translation, controlling the sweep distance.
+ * @return A `Brush` instance that can be used for drawing.
+ *
+ * Architectural Note:
+ * This function encapsulates the complex logic of `rememberInfiniteTransition` to provide a
+ * simple, reusable API for applying a shimmer effect. By returning a `Brush`, it remains
+ * highly flexible and can be applied to any Composable that accepts a brush for its background
+ * or drawing. The `showShimmer` parameter provides a clean and efficient way to conditionally
+ * disable the animation entirely, avoiding unnecessary composition and animation overhead.
  */
 @Composable
 fun ShimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1000f): Brush {
@@ -40,6 +47,7 @@ fun ShimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1000f): Brush
         ),
         label = "shimmer_animation"
     )
+
     return Brush.linearGradient(
         colors = shimmerColors,
         start = Offset.Zero,

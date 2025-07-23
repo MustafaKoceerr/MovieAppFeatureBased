@@ -15,8 +15,23 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 
 /**
- * Bir Composable'a tıklandığında "bastırma" (bounce) efekti ekleyen bir Modifier.
- * Kullanıcı parmağını bileşenin üzerine koyduğunda küçülür, kaldırdığında eski boyutuna döner.
+ * A custom Modifier that adds a physical "bounce" effect to a Composable on press.
+ *
+ * @return A Modifier instance that applies the bounce effect.
+ *
+ * Architectural Note:
+ * This Modifier provides a consistent and reusable way to add satisfying physical feedback to any
+ * clickable component, enhancing the user experience.
+ *
+ * - **Why `composed`?** It uses the `composed` factory to create a stateful modifier, ensuring
+ *   that each Composable using it maintains its own independent press state.
+ * - **Why `pointerInput`?** Low-level touch events are handled with `pointerInput` to precisely
+ *   control the `isPressed` state that drives the animation, offering more control than relying
+ *   solely on `InteractionSource`.
+ * - **Why `clickable(indication = null)`?** The standard ripple `indication` is explicitly
+ *   disabled to allow the custom scale animation to be the sole visual feedback for the interaction,
+ *   preventing visual clutter. The `onClick` lambda is empty because the actual click handling
+ *   is deferred to the component this modifier is applied to (e.g., a `Button`'s own `onClick`).
  */
 fun Modifier.bounceClick(): Modifier = composed {
     var isPressed by remember { mutableStateOf(false) }
@@ -32,8 +47,8 @@ fun Modifier.bounceClick(): Modifier = composed {
         }
         .clickable(
             interactionSource = remember { MutableInteractionSource() },
-            indication = null, // Ripple efektini kaldırıyoruz, kendi efektimizi kullanacağız
-            onClick = { /* onClick, dışarıdaki Button'dan gelecek */ }
+            indication = null,
+            onClick = { /* No-op; handled by the component's own click listener */ }
         )
         .pointerInput(isPressed) {
             awaitPointerEventScope {
