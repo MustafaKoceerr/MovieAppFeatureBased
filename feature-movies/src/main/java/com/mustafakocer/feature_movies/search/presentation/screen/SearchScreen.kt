@@ -17,6 +17,17 @@ import com.mustafakocer.feature_movies.search.presentation.contract.SearchUiStat
 import com.mustafakocer.feature_movies.shared.presentation.components.commonpagination.HandlePagingLoadState
 import com.mustafakocer.feature_movies.shared.presentation.components.list.PaginatedMovieList
 
+/**
+ * The main stateless UI component for the movie search screen.
+ *
+ * This composable is responsible for laying out the screen's visual elements based on the
+ * provided [state] and forwarding user interactions to the ViewModel via the [onEvent] callback.
+ * It contains no business logic itself.
+ *
+ * @param state The current [SearchUiState] to render.
+ * @param onEvent A function to call when a user interaction occurs.
+ * @param snackbarHostState The state manager for displaying Snackbars.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
@@ -43,18 +54,22 @@ fun SearchScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+
             if (state.showInitialPrompt || !state.canSearch) {
                 SearchInitialPrompt()
             } else {
-                // Tam ekran yükleme/hata durumlarını merkezi bileşenle yönet.
-                HandlePagingLoadState(lazyPagingItems = lazyMovieItems) { items ->
-                    // Başarılı durumda, sayfalanmış liste bileşenini göster.
+                // Architectural Decision: `HandlePagingLoadState` is a shared, reusable composable
+                // that centralizes the logic for displaying loading spinners, error messages, or
+                // an empty state based on the `LoadState` from the Paging library. This keeps
+                // this screen-level composable clean and focused on the "success" state.
+                HandlePagingLoadState(lazyPagingItems = lazyMovieItems) {
+                    // This content lambda is only invoked when the paging data is successfully loaded.
+                    // It displays the actual list of movies using another shared component.
                     PaginatedMovieList(
-                        lazyPagingItems = items,
+                        lazyPagingItems = lazyMovieItems,
                         onMovieClick = { movie ->
                             onEvent(SearchEvent.MovieClicked(movie.id))
                         }
-                        // Arama ekranında ekstra padding'e gerek yok, Column zaten yönetiyor.
                     )
                 }
             }

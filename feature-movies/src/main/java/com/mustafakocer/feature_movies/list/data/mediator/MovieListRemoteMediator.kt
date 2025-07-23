@@ -151,9 +151,8 @@ class MovieListRemoteMediator(
     }
 
     // --- HELPER METHODS ---
-
     /**
-     * Retrieves the [RemoteKey] for the last item in the loaded pages.
+     * Retrieves the [RemoteKey] closest to the user's current scroll position.
      */
     private suspend fun getRemoteKeyClosestToCurrentPosition(
         state: PagingState<Int, MovieListEntity>,
@@ -165,6 +164,9 @@ class MovieListRemoteMediator(
         }
     }
 
+    /**
+     * Retrieves the [RemoteKey] for the first item in the loaded pages.
+     */
     private suspend fun getRemoteKeyForFirstItem(
         state: PagingState<Int, MovieListEntity>,
     ): RemoteKey? {
@@ -173,6 +175,9 @@ class MovieListRemoteMediator(
         }
     }
 
+    /**
+     * Retrieves the [RemoteKey] for the last item in the loaded pages.
+     */
     private suspend fun getRemoteKeyForLastItem(
         state: PagingState<Int, MovieListEntity>,
     ): RemoteKey? {
