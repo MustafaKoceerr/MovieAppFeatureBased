@@ -1,5 +1,6 @@
 package com.mustafakocer.feature_movies.home.presentation.screen
 
+import HomeScreenSkeleton
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
@@ -31,7 +32,6 @@ import com.mustafakocer.core_ui.component.error.toErrorInfo
 import com.mustafakocer.core_ui.component.util.bounceClick
 import com.mustafakocer.feature_movies.R
 import com.mustafakocer.feature_movies.home.presentation.components.FakeSearchBar
-import com.mustafakocer.feature_movies.home.presentation.components.HomeScreenSkeleton
 import com.mustafakocer.feature_movies.home.presentation.components.MovieCategorySection
 import com.mustafakocer.feature_movies.home.presentation.contract.*
 import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory

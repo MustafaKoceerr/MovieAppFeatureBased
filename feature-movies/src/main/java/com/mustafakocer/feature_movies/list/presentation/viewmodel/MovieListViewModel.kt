@@ -14,48 +14,46 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 /**
- * Movie List ViewModel
+ * Manages the UI state and business logic for the paginated movie list screen.
  *
- * Sorumlulukları:
- * - Gerekli kategori bilgisini SavedStateHandle'dan alır.
- * - Dil değişikliklerine duyarlı olan GetMovieListUseCase'i çağırır.
- * - PagingData akışını `cachedIn` ile yönetir ve UI state'e koyar.
- * - UI event'lerini (tıklama, geri gitme) ilgili Effect'lere dönüştürür.
+ * Its responsibilities include:
+ * - Retrieving the required movie category from navigation arguments via [SavedStateHandle].
+ * - Invoking the [GetMovieListUseCase] to get a reactive stream of paginated movie data.
+ * - Caching the PagingData stream within the ViewModel's lifecycle to handle configuration changes.
+ * - Translating UI events into navigation or other side effects.
  */
 @HiltViewModel
 class MovieListViewModel @Inject constructor(
     private val getMovieListUseCase: GetMovieListUseCase,
+    // Architectural Decision: SavedStateHandle is used to access navigation arguments.
+    // This is the recommended approach as it's lifecycle-aware and allows the ViewModel
+    // to survive process death and configuration changes without losing its context.
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<MovieListUiState, MovieListEvent, MovieListEffect>(
     initialState = MovieListUiState()
 ) {
-    // Kategori bilgisi navigasyon argümanından alınır.
+    // The category endpoint is retrieved from the navigation arguments.
     private val categoryEndpoint: String = savedStateHandle[MovieListScreen.KEY_CATEGORY_ENDPOINT]
         ?: throw IllegalStateException("Category endpoint is required for MovieListScreen")
 
     init {
-        // Kategori endpoint'ini MovieCategory enum'una çevir.
         val category = MovieCategory.fromApiEndpoint(categoryEndpoint)
 
         if (category == null) {
-            // Geçersiz bir kategori gelirse, hata mesajı göster ve ekranı kapat.
             sendEffect(MovieListEffect.ShowSnackbar("Category not found."))
             sendEffect(MovieListEffect.NavigateBack)
         } else {
-            // Geçerli kategori ile film listesini yükle.
             loadMovies(category)
         }
     }
 
-
+    /**
+     * Handles incoming user events from the UI.
+     */
     override fun onEvent(event: MovieListEvent) {
         when (event) {
             is MovieListEvent.MovieClicked -> {
-                sendEffect(
-                    MovieListEffect.NavigateToMovieDetail(
-                        event.movieId
-                    )
-                )
+                sendEffect(MovieListEffect.NavigateToMovieDetail(event.movieId))
             }
 
             is MovieListEvent.BackClicked -> {
@@ -65,12 +63,14 @@ class MovieListViewModel @Inject constructor(
     }
 
     /**
-     * Belirtilen kategori için film listesini yükler.
-     * UseCase artık dil yönetimini kendi içinde yaptığı için dil parametresine gerek yoktur.
+     * Initiates the loading of the paginated movie list for a given category.
+     *
+     * @param category The [MovieCategory] for which to load movies.
      */
     private fun loadMovies(category: MovieCategory) {
+
         val moviesPagingFlow = getMovieListUseCase(category)
-            .cachedIn(viewModelScope) // Paging verisini ViewModel scope'unda önbelleğe al.
+            .cachedIn(viewModelScope)
 
         setState {
             copy(
