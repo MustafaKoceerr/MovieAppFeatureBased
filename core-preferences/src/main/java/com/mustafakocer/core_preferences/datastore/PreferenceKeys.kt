@@ -3,21 +3,25 @@ package com.mustafakocer.core_preferences.datastore
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 /**
- * DI package'ı için yorum:
- * Aksiyon: Bu dosyayı tamamen sil. core modülünün görevi DataStore'u sağlamak değil, sadece PreferenceKeys gibi tanımları barındırmaktır.
+ * Defines a centralized contract for all keys used with Jetpack DataStore.
  *
+ * Architectural Note:
+ * This object centralizes all preference keys, preventing the use of "magic strings" and
+ * ensuring type safety across the application when interacting with DataStore.
+ *
+ * This `core_preferences` module's responsibility is only to define the *keys* (the contract),
+ * not to provide the actual DataStore instance. The instance itself should be provided via
+ * dependency injection from a higher-level module (like the `:app` module), adhering to the
+ * Dependency Inversion Principle.
  */
 object PreferenceKeys {
-    /**
-     * Theme preference key
-     * Stores ThemePreference enum name as string
-     */
 
     val THEME_PREFERENCE = stringPreferencesKey("theme_preference")
-    val LANGUAGE_PREFERENCE = stringPreferencesKey("language_preference")
-    val SESSION_ID = stringPreferencesKey("session_id")
 
-    // Future keys will be added when needed:
-    // val LANGUAGE_PREFERENCE = stringPreferencesKey("language_preference")
-    // val AUTH_TOKEN = stringPreferencesKey("auth_token")
+    val LANGUAGE_PREFERENCE = stringPreferencesKey("language_preference")
+
+    /**
+     * Stores the active user session ID obtained after a successful login.
+     */
+    val SESSION_ID = stringPreferencesKey("session_id")
 }

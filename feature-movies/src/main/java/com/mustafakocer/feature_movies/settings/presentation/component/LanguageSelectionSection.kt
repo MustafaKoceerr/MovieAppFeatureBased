@@ -57,7 +57,7 @@ fun LanguageSelectionSection(
                 enabled = !isLoading,
                 leadingIcon = {
                     FlagIcon(
-                        flagResource = currentLanguage.flagResource,
+                        flagResource = currentLanguage.flagResourceName,
                         contentDescription = currentLanguage.displayName
                     )
                 },
@@ -83,7 +83,7 @@ fun LanguageSelectionSection(
                                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                                 ) {
                                     FlagIcon(
-                                        flagResource = language.flagResource,
+                                        flagResource = language.flagResourceName,
                                         contentDescription = language.displayName
                                     )
                                     Text(language.displayName)
