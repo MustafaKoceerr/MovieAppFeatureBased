@@ -1,5 +1,6 @@
 package com.mustafakocer.feature_movies.home.data.repository
 
+import com.mustafakocer.core_domain.exception.toAppException
 import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.core_network.error.ErrorMapper
 import com.mustafakocer.core_preferences.provider.LanguageProvider
@@ -18,8 +19,15 @@ import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// Dosya: home/data/repository/MovieRepositoryImpl.kt
-
+/**
+ * Implements the [HomeRepository] interface, providing a concrete data-handling strategy.
+ *
+ * Architectural Decision: This repository follows a "Single Source of Truth" (SSOT) pattern with a
+ * cache-first strategy. The local database (via `HomeMovieDao`) is the SSOT for the UI. The repository
+ * first emits cached data for immediate display, then fetches fresh data from the network, updates
+ * the cache, and finally emits the updated data from the cache again. This provides a responsive
+ * user experience and offline support.
+ */
 @Singleton
 class HomeRepositoryImpl @Inject constructor(
     private val movieApiService: MovieApiService,
@@ -27,51 +35,67 @@ class HomeRepositoryImpl @Inject constructor(
     private val languageProvider: LanguageProvider,
 ) : HomeRepository {
 
-    override fun getMoviesForCategory(category: MovieCategory): Flow<Resource<List<MovieListItem>>> =
-        flow {
-            // 1. Yüklemenin başladığını bildir.
-            emit(Resource.Loading)
+    /**
+     * Fetches movies for a given category, implementing the cache-first strategy.
+     *
+     * @param category The category of movies to fetch.
+     * @param isRefresh If true, the initial cache emission is skipped, and data is fetched directly
+     *                  from the network.
+     * @return A Flow emitting resource states for the movie list.
+     */
+    override fun getMoviesForCategory(
+        category: MovieCategory,
+        isRefresh: Boolean,
+    ): Flow<Resource<List<MovieListItem>>> = flow {
+        // 1. Emit Loading state to inform the UI that a data operation has started.
+        emit(Resource.Loading)
 
-            val language = languageProvider.getLanguageParam()
-            val categoryKey = category.apiEndpoint
+        val language = languageProvider.getLanguageParam()
+        val categoryKey = category.apiEndpoint
 
-            try {
-                // 2. Önbellekteki veriyi al ve hemen yayınla.
-                // Bu, kullanıcıya anında bir UI gösterir.
+        try {
+            // 2. Emit cached data first (if not a forced refresh).
+            // This provides an instant UI update with potentially stale data, improving perceived performance.
+            if (!isRefresh) {
                 val cachedMovies = homeMovieDao.getMoviesForCategory(categoryKey, language)
                 emit(Resource.Success(cachedMovies.toDomainList()))
+            }
 
-                // 3. Ağdan yeni veriyi çek.
-                val response = fetchMoviesFromApi(category)
+            // 3. Fetch fresh data from the network.
+            val response = fetchMoviesFromApi(category)
 
-                if (response.isSuccessful && response.body() != null) {
-                    val moviesDto = response.body()!!.results ?: emptyList()
+            if (response.isSuccessful && response.body() != null) {
+                val moviesDto = response.body()!!.results ?: emptyList()
 
-                    // 4. Önbelleği yeni veriyle güncelle (atomik işlem).
-                    // Önce eski veriyi sil, sonra yenisini ekle.
-                    homeMovieDao.deleteMoviesForCategory(categoryKey, language)
-                    val movieEntities = moviesDto.toHomeMovieEntityList(categoryKey, language)
-                    homeMovieDao.upsertAll(movieEntities)
+                // 4. Update the cache with the new network data in an atomic operation.
+                // Deleting old data before inserting new data ensures the cache is always consistent.
+                homeMovieDao.deleteMoviesForCategory(categoryKey, language)
+                val movieEntities = moviesDto.toHomeMovieEntityList(categoryKey, language)
+                homeMovieDao.upsertAll(movieEntities)
 
-                    // 5. Güncellenmiş önbelleği Tek Gerçek Kaynağı (Single Source of Truth) olarak tekrar yayınla.
-                    val updatedCache = homeMovieDao.getMoviesForCategory(categoryKey, language)
-                    emit(Resource.Success(updatedCache.toDomainList()))
-                } else {
-                    // Ağdan yanıt alınamadı veya yanıt başarısız oldu.
-                    // Hata yayınla, ancak UI'da hala eski önbellek verisi gösteriliyor olacak.
-                    val exception = ErrorMapper.mapHttpErrorResponseToAppException(response)
-                    emit(Resource.Error(exception))
-                }
-            } catch (e: Exception) {
-                // Ağ isteği sırasında bir istisna oluştu (örn. internet yok).
-                // Hatayı bizim anladığımız dile çevir ve yayınla.
-                val exception = ErrorMapper.mapThrowableToAppException(e)
+                // 5. Emit the updated cache as the final, authoritative data.
+                // This reinforces the database as the Single Source of Truth.
+                val updatedCache = homeMovieDao.getMoviesForCategory(categoryKey, language)
+                emit(Resource.Success(updatedCache.toDomainList()))
+            } else {
+                // If the network call fails, emit an error.
+                // The UI can gracefully handle this, for instance, by continuing to show the
+                // previously emitted (stale) cached data along with an error message.
+                val exception = ErrorMapper.mapHttpErrorResponseToAppException(response)
                 emit(Resource.Error(exception))
             }
+        } catch (e: Exception) {
+            // Catch any other exceptions (e.g., network connectivity issues) and wrap them.
+            emit(Resource.Error(e.toAppException()))
         }
+    }
 
     /**
-     * Kategoriye göre ilgili API endpoint'ini çağıran özel yardımcı fonksiyon.
+     * A private helper function to encapsulate the logic of calling the correct API endpoint.
+     * This keeps the main repository method cleaner and more focused on the caching strategy.
+     *
+     * @param category The movie category to determine which API endpoint to call.
+     * @return The Retrofit [Response] object from the API call.
      */
     private suspend fun fetchMoviesFromApi(category: MovieCategory): Response<PaginatedResponseDto<MovieDto>> {
         return when (category) {

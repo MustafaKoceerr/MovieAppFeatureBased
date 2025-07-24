@@ -1,21 +1,27 @@
 package com.mustafakocer.core_network.error
 
 import com.mustafakocer.core_domain.exception.AppException
+import java.io.IOException
 import retrofit2.HttpException
 import retrofit2.Response
-import java.io.IOException
 
 /**
- * Ağ katmanına özgü hataları, projenin anladığı dilde (:core-domain'deki AppException)'a çeviren nesne
+ * A singleton object responsible for mapping network-layer errors to domain-specific [AppException]s.
+ *
+ * Architectural Note:
+ * This mapper acts as a crucial boundary between the network layer and the rest of the application.
+ * It translates raw, platform-specific exceptions (like Retrofit's [HttpException] or Java's
+ * [IOException]) into the well-defined, sealed hierarchy of [AppException]. This ensures that
+ * higher-level components, like repositories and ViewModels, are decoupled from the network
+ * implementation details and can handle errors in a consistent, type-safe manner.
  */
 object ErrorMapper {
 
-    // Bu fonksiyon, HttpException ve IOException gibi istisnaları ele alır.
     fun mapThrowableToAppException(throwable: Throwable): AppException {
         return when (throwable) {
-            is AppException -> throwable
+            is AppException -> throwable // If it's already our type, pass it through.
             is HttpException -> {
-                // HTTP hata koduna göre spesifik bir AppException döndür.
+                // Map specific HTTP error codes to our defined API exceptions.
                 when (throwable.code()) {
                     401 -> AppException.Api.Unauthorized(throwable)
                     404 -> AppException.Api.NotFound(throwable)
@@ -23,14 +29,14 @@ object ErrorMapper {
                     else -> AppException.Unknown(throwable)
                 }
             }
-
+            // IOException is a common parent for network issues like no connectivity
+            // or request timeouts.
             is IOException -> AppException.Network.NoInternet(throwable)
-            // SocketTimeoutException da bir IOException'dır, bu yüzden yukarıdaki dal onu yakalar.
             else -> AppException.Unknown(throwable)
         }
     }
 
-    // Bu fonksiyon, başarılı olmayan ama istisna fırlatmayan Response'ları ele alır.
+
     fun mapHttpErrorResponseToAppException(response: Response<*>): AppException {
         val code = response.code()
         return when (code) {

@@ -4,13 +4,31 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Liste ve arama endpoint'lerinden gelen tek bir film öğesini temsil eden DTO.
- * Tüm alanlar, API'dan null gelebileceği ihtimaline karşı nullable olarak tanımlanmıştır.
+ * Represents a single movie item as a Data Transfer Object (DTO) from the remote API.
+ *
+ * This class is designed to directly map the JSON structure of a movie object returned by list-based
+ * endpoints from the TMDB API (e.g., popular, search).
+ *
+ * @property id The unique TMDB identifier for the movie.
+ * @property title The title of the movie.
+ * @property overview A brief summary of the movie.
+ * @property posterPath The relative path for the poster image (e.g., "/path.jpg").
+ * @property backdropPath The relative path for the backdrop image.
+ * @property releaseDate The release date string in "YYYY-MM-DD" format.
+ * @property voteAverage The average user rating.
+ * @property voteCount The total number of user votes.
+ * @property genreIds A list of IDs corresponding to the movie's genres.
+ * @property adult Indicates if the movie is for an adult audience.
+ * @property popularity A metric indicating the movie's popularity.
+ * @property originalLanguage The original language of the movie (e.g., "en").
+ * @property originalTitle The original title, often in its native language.
+ * @property video Indicates if a video trailer is available.
  */
 @Serializable
 data class MovieDto(
+
     @SerialName("id")
-    val id: Int, // ID genellikle zorunludur, ama güvende olmak için nullable yapılabilir.
+    val id: Int,
 
     @SerialName("title")
     val title: String?,

@@ -6,11 +6,16 @@ import androidx.room.Query
 import com.mustafakocer.core_database.dao.BaseDao
 import com.mustafakocer.feature_movies.shared.data.local.entity.MovieListEntity
 
+/**
+ * Data Access Object (DAO) for managing the paginated list of movie entities.
+ *
+ * This interface defines the database operations required for the Paging 3 library's
+ * `RemoteMediator` to function correctly. It provides methods to query a `PagingSource`,
+ * clear cached data, and check for the existence of data.
+ */
 @Dao
 interface MovieListDao : BaseDao<MovieListEntity> {
 
-    // PagingSource'un kendisi dile duyarlı hale gelecek, bu yüzden bu sorgu değişebilir.
-    // Şimdilik bu sorgunun, PagingSource'un constructor'ına taşınacağını varsayalım.
     @Query("SELECT * FROM movie_list WHERE category = :category AND language = :language ORDER BY position ASC")
     fun getMoviesForCategory(category: String, language: String): PagingSource<Int, MovieListEntity>
 
@@ -19,6 +24,4 @@ interface MovieListDao : BaseDao<MovieListEntity> {
 
     @Query("SELECT COUNT(*) > 0 FROM movie_list WHERE category = :category AND language = :language")
     suspend fun hasCachedDataForCategory(category: String, language: String): Boolean
-
-    // ... diğer olası sorgular da 'language' parametresi almalı ...
 }

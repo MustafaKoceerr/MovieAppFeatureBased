@@ -10,12 +10,14 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 /**
- * Base class for all ViewModels that follow the MVI pattern with UiContract.
+ * An abstract ViewModel that implements the [UiContract] to enforce a consistent MVI pattern.
+ * It manages the state and effect streams, providing a structured foundation for all ViewModels
+ * in the application.
  *
- * @param State The type of the UI state. Must implement BaseUiState.
- * @param Event The type of the UI events.
- * @param Effect The type of the UI side effects.
- * @param initialState The initial state of the UI.
+ * @param State The type of the UI state, constrained to [BaseUiState].
+ * @param Event The type of the UI events, constrained to [BaseUiEvent].
+ * @param Effect The type of the side effects, constrained to [BaseUiEffect].
+ * @param initialState The starting state for the UI.
  */
 abstract class BaseViewModel<
         State : BaseUiState,
@@ -25,62 +27,54 @@ abstract class BaseViewModel<
     initialState: State,
 ) : ViewModel(), UiContract<State, Event, Effect> {
 
-    // PRIVATE STATE STREAM
     private val _uiState = MutableStateFlow(initialState)
     override val uiState: StateFlow<State> = _uiState.asStateFlow()
 
-    // PRIVATE EFFECT STREAM (SharedFlow Kullanımı)
-    // Channel yerine, bu senaryo için tasarlanmış olan MutableSharedFlow kullanıyoruz.
     private val _uiEffect = MutableSharedFlow<Effect>(
-        /**
-         * replay = 0: Yeni bir dinleyici (örn. ekran döndükten sonra UI) bağlandığında,
-         * geçmişteki effect'leri tekrar göndermez. Bu, Toast'ların tekrar tekrar
-         * gösterilmesini engeller. Hayati öneme sahiptir.
-         */
         replay = 0,
-        /**
-         * extraBufferCapacity = 1: Bir effect gönderildiğinde, dinleyici hazır olmasa bile
-         * coroutine'in askıda kalmasını (suspend) önler. Akıcılığı artırır.
-         */
         extraBufferCapacity = 1
     )
     override val uiEffect: SharedFlow<Effect> = _uiEffect.asSharedFlow()
 
-    // EVENT HANDLER (Must be implemented by subclasses)
+    /**
+     * Handles incoming UI events. This must be implemented by concrete ViewModel classes.
+     */
     abstract override fun onEvent(event: Event)
 
     /**
-     * Gets the current UI state.
+     * Provides read-only access to the current UI state.
      */
     protected val currentState: State
         get() = _uiState.value
 
     /**
-     * Updates the UI state using a reducer function.
+     * Updates the UI state immutably by applying a reduction function to the current state.
      *
-     * @param reduce A function that takes the current state and returns the new state.
+     * @param reduce A lambda function that receives the current state and returns a new state.
      */
     protected fun setState(reduce: State.() -> State) {
         _uiState.value = currentState.reduce()
     }
 
     /**
-     * Sends a one-time side effect to the UI.
+     * Sends a one-time side effect to be consumed by the UI.
      *
-     * @param effect The side effect to be sent.
+     * @param effect The effect to be sent.
      */
     protected fun sendEffect(effect: Effect) {
         viewModelScope.launch {
-            // Channel'daki 'send' yerine, SharedFlow için 'emit' kullanılır.
             _uiEffect.emit(effect)
         }
     }
 }
 
 /**
- * Defines the type of loading indicator to show.
+ * Defines the type of loading indicator to be displayed in the UI.
  */
 enum class LoadingType {
-    MAIN, // For initial screen load, usually a full-screen loader
-    REFRESH // For pull-to-refresh, usually a swipe indicator
+    /** For initial data loading, typically represented by a full-screen or large indicator. */
+    MAIN,
+
+    /** For subsequent data refreshes, like a pull-to-refresh action. */
+    REFRESH
 }

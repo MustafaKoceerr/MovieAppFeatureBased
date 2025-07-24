@@ -5,6 +5,13 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.mustafakocer.feature_movies.shared.data.local.entity.HomeMovieEntity
 
+/**
+ * Data Access Object (DAO) for managing home screen movie entities in the local Room database.
+ *
+ * This interface defines the database operations required for the home screen's cache,
+ * such as inserting, querying, and deleting movies categorized by type (e.g., "popular")
+ * and language.
+ */
 @Dao
 interface HomeMovieDao {
 

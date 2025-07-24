@@ -2,6 +2,14 @@ package com.mustafakocer.core_domain.presentation
 
 import com.mustafakocer.core_domain.exception.AppException
 
+/**
+ * Defines the foundational contract for any screen's UI state.
+ *
+ * Architectural Note:
+ * By enforcing this base interface, we guarantee that every feature's UI state will consistently
+ * handle common concerns like loading indicators and error displays. This promotes a predictable
+ * user experience and reduces boilerplate code in individual feature ViewModels.
+ */
 interface BaseUiState {
     val isLoading: Boolean
     val isRefreshing: Boolean
@@ -9,11 +17,11 @@ interface BaseUiState {
 }
 
 /**
- * Marker interface for UI events
+ * A marker interface for all UI events.
  */
 interface BaseUiEvent
 
 /**
- * Marker interface for UI effects
+ * A marker interface for all single-fire UI effects.
  */
 interface BaseUiEffect

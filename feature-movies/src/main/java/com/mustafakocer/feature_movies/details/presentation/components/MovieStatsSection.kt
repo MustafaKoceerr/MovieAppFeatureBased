@@ -22,49 +22,52 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.feature_movies.R
 import com.mustafakocer.feature_movies.shared.util.formattedRating
 
+/**
+ * A Composable that displays a row of key movie statistics (rating, release date, runtime).
+ *
+ * @param voteAverage The movie's average vote score.
+ * @param releaseDate The movie's release date string.
+ * @param runtime The movie's runtime in minutes.
+ *
+ * Architectural Note:
+ * This component encapsulates the presentation logic for a specific, reusable piece of the UI.
+ * It handles the conditional display of the runtime and uses `LocalContext` to access plural
+ * string resources, a task appropriate for the UI layer.
+ */
 @Composable
-fun MovieStatsSection(
-    voteAverage: Double,
-    releaseDate: String,
-    runtime: Int?, // Süre bilgisi her zaman gelmeyebilir, bu yüzden nullable.
-    modifier: Modifier = Modifier,
-) {
+fun MovieStatsSection(voteAverage: Double, releaseDate: String, runtime: Int) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Puanlama Kartı
         MovieStatItem(
             icon = Icons.Default.Star,
             label = stringResource(R.string.rating),
             value = voteAverage.formattedRating,
             modifier = Modifier.weight(1f)
         )
-
-        // Çıkış Tarihi Kartı
         MovieStatItem(
             icon = Icons.Default.DateRange,
             label = stringResource(R.string.release),
             value = releaseDate,
             modifier = Modifier.weight(1f)
         )
-
-        // Süre Kartı (sadece süre bilgisi varsa gösterilir)
-        runtime?.let { runtimeInMinutes ->
-            val formattedRuntime = LocalContext.current.resources.getQuantityString(
-                R.plurals.movie_runtime_in_minutes, // 1. Plural resource ID'si
-                runtimeInMinutes,                   // 2. Hangi quantity'nin seçileceğini belirleyen miktar
-                runtimeInMinutes                    // 3. Metindeki %d'nin yerine geçecek olan değer
+        if (runtime > 0) {
+            val context = LocalContext.current
+            // Why use plurals: This correctly formats the string for "1 minute" vs "120 minutes".
+            val runtimeText = context.resources.getQuantityString(
+                R.plurals.movie_runtime_in_minutes,
+                runtime,
+                runtime
             )
             MovieStatItem(
                 icon = Icons.Default.Schedule,
                 label = stringResource(R.string.runtime),
-                value = formattedRuntime,
+                value = runtimeText,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -72,7 +75,7 @@ fun MovieStatsSection(
 }
 
 /**
- * İstatistikleri göstermek için kullanılan tek bir kart bileşeni.
+ * A private helper composable for displaying a single stat item within a card.
  */
 @Composable
 private fun MovieStatItem(
@@ -103,16 +106,13 @@ private fun MovieStatItem(
             Text(
                 text = value,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                fontWeight = FontWeight.Bold
             )
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
 }
-

@@ -21,15 +21,18 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import com.mustafakocer.core_ui.component.util.bounceClick
 import com.mustafakocer.feature_movies.R
 
 /**
- * Arama ekranı için, içinde arama kutusu bulunan TopAppBar.
+ * A custom TopAppBar for the search screen, containing the search input field and navigation controls.
  *
- * @param searchQuery Arama kutusunda gösterilecek olan anlık metin.
- * @param onQueryChange Kullanıcı metni değiştirdiğinde tetiklenir.
- * @param onClearSearch Temizle (X) butonuna tıklandığında tetiklenir.
- * @param onNavigateBack Geri navigasyon ikonuna tıklandığında tetiklenir.
+ * @param searchQuery The current text to be displayed in the search field.
+ * @param onQueryChange Callback invoked when the user changes the text in the search field.
+ * @param onClearSearch Callback invoked when the user clicks the 'clear' (X) icon.
+ * @param onNavigateBack Callback invoked when the user clicks the back navigation icon.
+ * @param onSearchSubmitted Callback invoked when the user submits the search via the keyboard action.
+ * @param modifier The modifier to be applied to the TopAppBar.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,8 +44,9 @@ fun SearchTopBar(
     onSearchSubmitted: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Ekrana ilk gelindiğinde arama kutusuna otomatik olarak odaklanmak
-    // ve klavyeyi açmak için.
+    // UX Rationale: To provide a seamless search experience, the search field should be
+    // automatically focused and the keyboard should appear as soon as the screen is displayed.
+    // This is achieved using a FocusRequester and the SoftwareKeyboardController.
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -58,10 +62,8 @@ fun SearchTopBar(
                 onValueChange = onQueryChange,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .focusRequester(focusRequester), // Focus'u bu alana bağlıyoruz.
+                    .focusRequester(focusRequester), // Attach the focus requester to this text field.
                 placeholder = { Text(stringResource(R.string.search_placeholder_alt)) },
-                // Otomatik arama yaptığımız için, klavyedeki "Search" butonu
-                // artık bir eylem yapmıyor, sadece klavyeyi kapatabilir.
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done
                 ),
@@ -70,7 +72,6 @@ fun SearchTopBar(
                         onSearchSubmitted()
                     }),
                 singleLine = true,
-                // Temizle (X) butonu
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
                         IconButton(onClick = onClearSearch) {
@@ -84,10 +85,13 @@ fun SearchTopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = onNavigateBack) {
+            IconButton(
+                onClick = onNavigateBack,
+                modifier = Modifier.bounceClick()
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.go_back)
+                    contentDescription = stringResource(R.string.back)
                 )
             }
         },

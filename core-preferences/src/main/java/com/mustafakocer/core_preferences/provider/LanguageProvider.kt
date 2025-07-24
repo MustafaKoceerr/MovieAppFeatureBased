@@ -1,16 +1,24 @@
 package com.mustafakocer.core_preferences.provider
 
 import com.mustafakocer.core_preferences.repository.LanguageRepository
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
- * Kontrolü hilt'e vermek ve dependency sorunlarıyla uğraşmamak için @Singleton class kullandık.
- * Bunu yapan object'de var ama object'lerin parametresi olmadığı için init bloğunda bir şeyler yapmamız gerekiyordu. Uzun iş :) Hilt varken
+ * A singleton provider that maintains a high-performance, in-memory cache of the current language setting.
+ *
+ * @param languageRepository The repository for accessing persisted language preferences.
+ *
+ * Architectural Note:
+ * This class is a critical optimization. It is designed to provide synchronous, non-blocking
+ * access to the user's selected language. It achieves this by observing the language preference
+ * from DataStore in a background coroutine and caching the result in a `volatile` variable.
+ * This allows components on performance-critical paths, like an OkHttp Interceptor, to get the
+ * current language instantly without performing any disk I/O.
  */
 @Singleton
 class LanguageProvider @Inject constructor(
@@ -18,26 +26,24 @@ class LanguageProvider @Inject constructor(
 ) {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    // Dil parametresini hafızada tutacak değişken
-    // 'volatile' keyword'ü, farklı thread'lerden erişimde görünürlüğü garanti eder.
+    // Why `@Volatile`:
+    // This keyword guarantees that writes to this variable from the background coroutine
+    // are immediately made visible to all other threads (e.g., the network interceptor's thread).
+    // This prevents reading a stale value.
     @Volatile
     private var currentLanguageParam: String = ""
 
     init {
-        // Sınıf oluşturulduğunda, DataStore'dan ilk değeri senkron olarak al.
-        // Bu, uygulamanın ilk isteğinin doğru dille gitmesini sağlar.
+        // The init block launches a long-lived coroutine to listen for language changes.
+        // This "hot" collection ensures our in-memory cache is always up-to-date.
         scope.launch {
             languageRepository.languageFlow.collect { newLanguage ->
-                // DataStore'dan ne zaman yeni bir dil değeri gelse,
-                // bu blok tetiklenir ve hafızadaki değişkenimiz güncellenir.
                 currentLanguageParam = newLanguage.apiParam
             }
         }
     }
 
-    // Interceptor bu fonksiyonu çağıracak. Disk I/O'su yok, sadece hafızadan okuma var.
     fun getLanguageParam(): String {
         return currentLanguageParam
     }
-
 }

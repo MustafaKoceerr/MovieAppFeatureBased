@@ -4,34 +4,38 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
+import androidx.room.RoomDatabase
 import androidx.room.withTransaction
 import com.mustafakocer.core_database.dao.RemoteKeyDao
 import com.mustafakocer.core_database.pagination.RemoteKey
 import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
-import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import com.mustafakocer.feature_movies.shared.data.api.MovieApiService
 import com.mustafakocer.feature_movies.shared.data.local.entity.MovieListEntity
 import com.mustafakocer.feature_movies.shared.data.mapper.toEntityList
-import kotlinx.coroutines.delay
+import com.mustafakocer.feature_movies.shared.domain.model.MovieCategory
 import retrofit2.HttpException
+import java.io.IOException
 
 /**
- * Remote Mediator for Movie List pagination
+ * A [RemoteMediator] that coordinates between the local database cache and the remote API
+ * for paginated movie lists.
  *
- * CLEAN ARCHITECTURE: Infrastructure Layer - Data Source Coordination
- * RESPONSIBILITY: Coordinate between remote API and local database
- *
- * PAGING 3 PATTERN:
- * - Handles network requests when cached data is exhausted
- * - Manages database transactions for atomic operations
- * - Uses core database RemoteKey for pagination state
+ * Architectural Decision: This class is the core of the "offline-first" pagination strategy for
+ * movie lists. It is responsible for:
+ * 1.  Triggering network requests to fetch new pages of data when the user scrolls beyond the
+ *     data available in the local database.
+ * 2.  Storing the fetched movies and the corresponding pagination keys (next/previous page)
+ *     in the local database.
+ * 3.  Handling atomic database transactions to ensure data consistency during cache updates.
+ * This approach provides a seamless user experience with offline support, as the UI always
+ * reads from the database, which is continuously updated by this mediator.
  */
 @OptIn(ExperimentalPagingApi::class)
 class MovieListRemoteMediator(
-    private val apiService: MovieApiService, // ← UPDATED: Single service
+    private val apiService: MovieApiService,
     private val movieListDao: MovieListDao,
     private val remoteKeyDao: RemoteKeyDao,
-    private val database: androidx.room.RoomDatabase,
+    private val database: RoomDatabase,
     private val category: MovieCategory,
     private val language: String,
 ) : RemoteMediator<Int, MovieListEntity>() {
@@ -41,26 +45,33 @@ class MovieListRemoteMediator(
         private const val NETWORK_DELAY_MS = 300L
     }
 
+    /**
+     * Determines whether to trigger a remote refresh when Paging starts.
+     */
     override suspend fun initialize(): InitializeAction {
         val hasCachedData = movieListDao.hasCachedDataForCategory(category.apiEndpoint, language)
-
         return if (hasCachedData) {
-            InitializeAction.SKIP_INITIAL_REFRESH // ❌ Bu Page 1'i atlıyor!
+            InitializeAction.SKIP_INITIAL_REFRESH
         } else {
             InitializeAction.LAUNCH_INITIAL_REFRESH
         }
     }
 
+    /**
+     * Called by the Paging library to fetch more data from the network when needed.
+     *
+     * @param loadType The type of load operation (REFRESH, APPEND, or PREPEND).
+     * @param state The current state of the pagination, including loaded pages and config.
+     * @return A [MediatorResult] indicating success (with end-of-pagination signal) or an error.
+     */
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, MovieListEntity>,
     ): MediatorResult {
-        // Silme ve ekleme işlemi için de aynı query'yi kullanıyoruz.
+        // We use the same query for both delete and insert operations.
         val queryKey = RemoteKey.createCompositeKey("movies", category.apiEndpoint)
 
         return try {
-            delay(NETWORK_DELAY_MS)
-
             val page = when (loadType) {
                 LoadType.REFRESH -> {
                     val remoteKey = getRemoteKeyClosestToCurrentPosition(state)
@@ -86,36 +97,31 @@ class MovieListRemoteMediator(
                 }
             }
 
+            // Fetch data from the API.
             val apiResponse = apiService.getMoviesByCategory(
                 category = category.apiEndpoint,
                 page = page,
             )
-            // 2. ADIM: Zarfın sağlam geldiğinden emin oluyoruz.
-            if (!apiResponse.isSuccessful) {
-                throw HttpException(apiResponse)
-            }
 
-            // 3. ADIM: Zarfı açıp içinden "mektubu" (body) alıyoruz.
-            val body = apiResponse.body()
-            if (body == null) {
-                // Başarılı ama boş bir yanıt geldiyse, bu sayfanın sonu demektir.
-                return MediatorResult.Success(endOfPaginationReached = true)
-            }
+            if (!apiResponse.isSuccessful) throw HttpException(apiResponse)
+            val body =
+                apiResponse.body() ?: return MediatorResult.Success(endOfPaginationReached = true)
 
-            // 4. ADIM: Artık mektubun içindeki alanlara güvenle erişebiliriz.
             val movies = body.results ?: emptyList()
-            val endOfPaginationReached = movies.isEmpty() ||
-                    (page >= body.totalPages)
-            // Database transaction öncesi
+            val endOfPaginationReached = movies.isEmpty() || (page >= body.totalPages)
+
+            // Architectural Decision: `withTransaction` ensures atomicity. All database operations
+            // within this block (clearing old data, inserting new data, updating remote keys)
+            // either complete successfully together or are all rolled back if an error occurs.
+            // This prevents the database from being left in an inconsistent state.
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     movieListDao.deleteMoviesForCategory(category.apiEndpoint, language)
-                    // 2. ADIM: Silme işlemi için oluşturduğumuz anahtarı kullan.
-                    remoteKeyDao.deleteRemoteKey(queryKey, language)
+                    remoteKeyDao.deleteRemoteKey(category.cacheKey, language)
                 }
 
                 val remoteKey = RemoteKey.create(
-                    query = queryKey,
+                    query = category.cacheKey,
                     language = language,
                     currentPage = page,
                     totalPages = body.totalPages,
@@ -123,24 +129,31 @@ class MovieListRemoteMediator(
                 )
                 remoteKeyDao.upsert(remoteKey)
 
-                // 5. ADIM: DTO listesini Entity listesine çeviriyoruz.
                 val movieEntities = movies.toEntityList(
                     category = category.apiEndpoint,
                     page = page,
                     pageSize = state.config.pageSize,
                     language = language
                 )
-                movieListDao.upsertAll(movieEntities) // upsertAll, bir List bekler.
+                movieListDao.upsertAll(movieEntities)
             }
 
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
-        } catch (exception: Exception) {
-            MediatorResult.Error(exception)
+        } catch (e: IOException) {
+            // IOException represents network errors.
+            MediatorResult.Error(e)
+        } catch (e: HttpException) {
+            // HttpException represents non-2xx server responses.
+            MediatorResult.Error(e)
+        } catch (e: Exception) {
+            MediatorResult.Error(e)
         }
     }
 
-    // ==================== HELPER METHODS ====================
-
+    // --- HELPER METHODS ---
+    /**
+     * Retrieves the [RemoteKey] closest to the user's current scroll position.
+     */
     private suspend fun getRemoteKeyClosestToCurrentPosition(
         state: PagingState<Int, MovieListEntity>,
     ): RemoteKey? {
@@ -151,6 +164,9 @@ class MovieListRemoteMediator(
         }
     }
 
+    /**
+     * Retrieves the [RemoteKey] for the first item in the loaded pages.
+     */
     private suspend fun getRemoteKeyForFirstItem(
         state: PagingState<Int, MovieListEntity>,
     ): RemoteKey? {
@@ -159,6 +175,9 @@ class MovieListRemoteMediator(
         }
     }
 
+    /**
+     * Retrieves the [RemoteKey] for the last item in the loaded pages.
+     */
     private suspend fun getRemoteKeyForLastItem(
         state: PagingState<Int, MovieListEntity>,
     ): RemoteKey? {

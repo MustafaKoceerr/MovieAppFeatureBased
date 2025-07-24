@@ -1,5 +1,3 @@
-// GÜNCELLENMİŞ VE EN İDEAL DOSYA
-
 package com.mustafakocer.feature_auth.welcome.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
@@ -13,22 +11,38 @@ import com.mustafakocer.feature_auth.welcome.presentation.contract.WelcomeEffect
 import com.mustafakocer.feature_auth.welcome.presentation.contract.WelcomeEvent
 import com.mustafakocer.feature_auth.welcome.presentation.contract.WelcomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
+/**
+ * Manages the user authentication flow for the Welcome screen.
+ *
+ * @param createRequestTokenUseCase For initiating the login process by getting a request token.
+ * @param createSessionUseCase For finalizing the login with an approved token.
+ * @param authCallbackHandler A bridge to receive the callback token from the web auth flow.
+ *
+ * Architectural Note:
+ * This ViewModel orchestrates the entire multi-step TMDB login process. Its key design features are:
+ * 1.  **Decoupling with a Handler:** It uses `AuthCallbackHandler` to receive the result from the
+ *     web authentication flow. This decouples the ViewModel from the Android component (e.g., an
+ *     Activity) that captures the deep link, preventing lifecycle issues and direct dependencies.
+ * 2.  **Centralized Resource Handling:** A private extension function, `handleResource`, is used
+ *     to process `Resource` streams. This avoids repetitive `when` blocks and centralizes the
+ *     logic for updating loading and error states, leading to cleaner and more maintainable code.
+ */
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
     private val createRequestTokenUseCase: CreateRequestTokenUseCase,
     private val createSessionUseCase: CreateSessionUseCase,
-    private val authCallbackHandler: AuthCallbackHandler, // <-- Artık somut sınıfı enjekte ediyoruz
+    private val authCallbackHandler: AuthCallbackHandler,
 ) : BaseViewModel<WelcomeUiState, WelcomeEvent, WelcomeEffect>(
     initialState = WelcomeUiState()
 ) {
 
     init {
-        // Tarayıcıdan dönebilecek onaylanmış token'ı dinlemeye başla.
+        // Immediately start listening for an approved token from the web auth callback.
         listenForAuthCallback()
     }
 
@@ -40,10 +54,6 @@ class WelcomeViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Kullanıcı "Login" butonuna tıkladığında tetiklenir.
-     * Önce bir request token alır, sonra kullanıcıyı TMDB'nin onay sayfasına yönlendirir.
-     */
     private fun handleLoginClick() {
         createRequestTokenUseCase()
             .handleResource(
@@ -54,18 +64,14 @@ class WelcomeViewModel @Inject constructor(
             )
     }
 
-    /**
-     * AuthCallbackHandler'dan gelen onaylanmış token'ları dinler.
-     * Bir token geldiğinde, onunla bir session oluşturmaya çalışır.
-     */
     private fun listenForAuthCallback() {
         authCallbackHandler.tokenFlow
             .onEach { approvedToken ->
-                // Onaylanmış token geldi, şimdi bu token ile session oluştur.
+                // An approved token has been received; now create a session with it.
                 createSessionUseCase(approvedToken)
                     .handleResource(
                         onSuccess = {
-                            // Başarılı! Home ekranına yönlendir.
+                            // Session created successfully, navigate to the main app content.
                             sendEffect(WelcomeEffect.NavigateToHome)
                         }
                     )
@@ -74,11 +80,12 @@ class WelcomeViewModel @Inject constructor(
     }
 
     /**
-     * Resource akışlarını işlemek için merkezi bir yardımcı extension fonksiyon.
-     * Bu, 'when' bloğunu ve state güncellemelerini tek bir yerde toplayarak kod tekrarını önler.
+     * A private extension function to centralize the handling of `Resource` streams.
+     * This reduces boilerplate by managing the `when` block for `Loading`, `Success`,
+     * and `Error` states and standardizing UI state updates.
      *
-     * @param T Resource içindeki başarılı veri tipi.
-     * @param onSuccess Kaynak başarılı olduğunda çalıştırılacak olan eylem.
+     * @param T The type of data within the `Resource.Success` state.
+     * @param onSuccess A lambda to be executed only when the resource is `Success`.
      */
     private fun <T> Flow<Resource<T>>.handleResource(
         onSuccess: (data: T) -> Unit
@@ -90,7 +97,6 @@ class WelcomeViewModel @Inject constructor(
                 }
                 is Resource.Success -> {
                     setState { copy(isLoading = false) }
-                    // Başarı durumunda, verilen lambda'yı çalıştır.
                     onSuccess(resource.data)
                 }
                 is Resource.Error -> {

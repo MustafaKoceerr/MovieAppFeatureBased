@@ -8,13 +8,16 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/**
+ * A Hilt module for binding interfaces from the domain layer to their concrete implementations
+ * in this data layer.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class ProviderBindingModule { // <-- 'abstract class' olmak zorunda
+abstract class PreferencesBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindSessionProvider(
-        defaultSessionProvider: DefaultSessionProvider,
-    ): SessionProvider
+    abstract fun bindSessionProvider(impl: DefaultSessionProvider): SessionProvider
+
 }

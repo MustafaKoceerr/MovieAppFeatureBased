@@ -1,20 +1,18 @@
 package com.mustafakocer.core_preferences.models
 
 /**
- * Theme preference options
+ * Defines the available theme options for the application.
  *
- * KISS PRINCIPLE: Only 3 essential options
- * App-agnostic: No Android UI dependencies
+ * Architectural Note:
+ * This enum serves as the single source of truth for theme settings. It is intentionally kept
+ * simple and free of Android framework dependencies, allowing it to be used across different
+ * layers (e.g., in domain logic or data repositories) without coupling them to the UI.
  */
 enum class ThemePreference {
     LIGHT,
     DARK,
     SYSTEM;
 
-    /**
-     * Get display name for UI
-     * Simple string - no resource dependencies
-     */
     val displayName: String
         get() = when (this) {
             LIGHT -> "Light"
@@ -23,14 +21,9 @@ enum class ThemePreference {
         }
 
     companion object {
-        /**
-         * Default theme preference
-         */
+
         val DEFAULT = SYSTEM
 
-        /**
-         * Get preference from string safely
-         */
         fun fromString(value: String?): ThemePreference {
             return try {
                 valueOf(value ?: DEFAULT.name)

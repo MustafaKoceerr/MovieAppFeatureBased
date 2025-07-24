@@ -1,4 +1,3 @@
-// feature-settings/src/main/java/com/mustafakocer/feature_settings/presentation/components/SettingsTopBar.kt
 package com.mustafakocer.feature_movies.settings.presentation.component
 
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +22,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.feature_movies.R
 
+/**
+ * A custom, center-aligned TopAppBar for the settings screen.
+ *
+ * @param onBackPressed The callback function to be invoked when the navigation (back) icon is clicked.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsTopBar(onBackPressed: () -> Unit) {
@@ -53,6 +57,10 @@ fun SettingsTopBar(onBackPressed: () -> Unit) {
                 )
             }
         },
+        // UI/UX Decision: The container color is set to transparent. This allows the content
+        // of the screen to scroll underneath the app bar, creating a modern, layered look.
+        // The `Scaffold`'s scroll behavior will handle applying an elevation or color change
+        // if configured to do so.
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = Color.Transparent
         )

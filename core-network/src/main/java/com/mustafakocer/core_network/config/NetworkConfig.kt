@@ -1,22 +1,21 @@
 package com.mustafakocer.core_network.config
-// # Timeouts, base URLs
+
 /**
- * SIMPLIFIED: Network configuration constants
+ * Provides centralized and static network configuration constants for the application.
  *
- * KISS PRINCIPLE: Only keeps actually used configurations
- * ✅ Timeouts - USED in NetworkModule
- * ✅ Cache settings - NOW USED in NetworkModule
- * ✅ Connection limits - NOW USED in NetworkModule
- * ✅ Retry settings - WILL BE USED in RetryStrategy
+ * Architectural Note:
+ * Using a singleton object (`object`) centralizes all magic numbers related to network
+ * operations (like timeouts and cache sizes). This improves maintainability and ensures
+ * consistency across all network-related components, such as the OkHttpClient setup.
+ * It follows the KISS principle by only including configurations that are actively used.
  */
 object NetworkConfig {
 
-    // ==================== TIMEOUTS ====================
-    const val CONNECT_TIMEOUT = 30L
-    const val READ_TIMEOUT = 30L
-    const val WRITE_TIMEOUT = 30L
+    const val CONNECT_TIMEOUT_SECONDS = 10L
 
-    // ==================== CACHE SETTINGS ====================
-    const val CACHE_SIZE = 10 * 1024 * 1024L // 10 MB
+    const val READ_TIMEOUT_SECONDS = 15L
 
+    const val WRITE_TIMEOUT_SECONDS = 15L
+
+    const val CACHE_SIZE_BYTES = 10 * 1024 * 1024L // 10 MB
 }

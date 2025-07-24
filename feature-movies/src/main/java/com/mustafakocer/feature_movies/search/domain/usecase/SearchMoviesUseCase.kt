@@ -13,7 +13,12 @@ import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 /**
- * Arama sorgusunu ve dil değişikliklerini dinleyerek film aramasını yöneten UseCase.
+ * A use case that orchestrates the movie search functionality by reacting to both query
+ * and language changes.
+ *
+ * Architectural Decision: This use case centralizes the core business logic for searching.
+ * It abstracts the complexity of combining multiple data streams (query and language) and
+ * enforcing validation rules, providing a simple, single entry point for the ViewModel.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class SearchMoviesUseCase @Inject constructor(
@@ -21,25 +26,34 @@ class SearchMoviesUseCase @Inject constructor(
     private val languageRepository: LanguageRepository,
 ) {
     /**
-     * Arama sorgusu akışını ve dil akışını birleştirerek PagingData akışını döndürür.
+     * Combines a stream of search queries with the application's language stream to produce
+     * a paginated flow of search results.
      *
-     * @param queryFlow ViewModel'den gelen, kullanıcının girdiği arama sorgularını içeren akış.
-     * @return Arama sorgusuna ve dil değişikliklerine duyarlı PagingData akışı.
+     * @param queryFlow A [Flow] of search query strings from the ViewModel.
+     * @return A [Flow] of [PagingData] that is reactive to both query and language changes.
      */
     operator fun invoke(queryFlow: Flow<String>): Flow<PagingData<MovieListItem>> {
-        // Dil akışını ve sorgu akışını birleştir.
+        // Architectural Decision: `combine` is used to merge the user's search query with the
+        // current language from the LanguageRepository. This makes the entire search pipeline
+        // reactive. If the user changes the app's language while on the search screen, this
+        // flow will re-emit, triggering a new search with the updated language without any
+        // extra logic in the ViewModel.
         val combinedFlow = combine(queryFlow, languageRepository.languageFlow) { query, _ ->
-            query // Sadece sorguyu al, dil değişikliği sadece tetikleyici.
+            query // We only need the query for the next step; the language flow acts as a trigger.
         }
 
+        // Architectural Decision: `flatMapLatest` is critical for efficiency and correctness.
+        // When the combined flow emits a new query (or the language changes), `flatMapLatest`
+        // automatically cancels the previous search operation and starts a new one. This prevents
+        // race conditions and avoids executing searches for outdated queries.
         return combinedFlow.flatMapLatest { query ->
+            // The raw string is converted into a `SearchQuery` value object. This encapsulates
+            // validation logic within the domain layer, keeping the use case clean.
             val searchQuery = SearchQuery.create(query)
-
-            // Business Rule: Sorgu geçerli değilse (örn. 2 karakterden kısa),
-            // boş bir PagingData akışı döndür. Bu, ViewModel'deki if/else'i ortadan kaldırır.
             if (!searchQuery.isValid) {
                 flowOf(PagingData.empty())
             } else {
+                // If the query is valid, delegate the actual data fetching to the repository.
                 searchRepository.searchMovies(searchQuery)
             }
         }

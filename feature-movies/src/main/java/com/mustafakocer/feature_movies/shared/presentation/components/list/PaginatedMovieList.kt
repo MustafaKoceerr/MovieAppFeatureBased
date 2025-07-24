@@ -1,11 +1,39 @@
 package com.mustafakocer.feature_movies.shared.presentation.components.list
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -13,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import com.mustafakocer.feature_movies.R
@@ -20,36 +49,20 @@ import com.mustafakocer.feature_movies.shared.domain.model.MovieListItem
 import com.mustafakocer.feature_movies.shared.presentation.components.atoms.MoviePoster
 import com.mustafakocer.feature_movies.shared.presentation.components.atoms.PosterSize
 import com.mustafakocer.feature_movies.shared.util.formattedRating
-
-/**
- * Paging 3 ile gelen film listesini ve sayfa sonu yükleme/hata durumlarını
- * gösteren, dışarıya açılan ana Composable.
- *
- * Bu bileşen, listenin kendisini ve sayfa sonu göstergelerini yönetir.
- * Tam ekran yükleme/hata durumları için `HandlePagingLoadState` ile sarmalanmalıdır.
- *
- * @param lazyMovieItems UI katmanında .collectAsLazyPagingItems() ile oluşturulan Paging listesi.
- * @param onMovieClick Bir film öğesine tıklandığında tetiklenecek olay.
- * @param modifier Bu bileşene uygulanacak olan Modifier.
- * @param contentPadding Scaffold gibi üst bileşenlerden gelen iç boşluk.
- */
-
-// ... (diğer importlar aynı kalacak)
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.paging.LoadState
-import androidx.compose.animation.*
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.runtime.*
 import kotlinx.coroutines.launch
 
 /**
- * Paging 3 ile gelen film listesini ve "Yukarı Çık" butonunu gösteren ana Composable.
+ * The primary composable for displaying a paginated list of movies from Paging 3.
+ *
+ * This component is responsible for rendering the list items and handling UI related to the list's
+ * state, such as the "scroll to top" button and indicators for empty or appended content. It is
+ * designed to be wrapped by `HandlePagingLoadState`, which manages the initial full-screen
+ * loading and error states.
+ *
+ * @param lazyPagingItems The Paging 3 data stream, created using `.collectAsLazyPagingItems()` in the UI layer.
+ * @param onMovieClick The callback to be invoked when a movie item is clicked.
+ * @param modifier The modifier to be applied to this component.
+ * @param contentPadding Padding values from a parent composable like `Scaffold`.
  */
 @Composable
 fun PaginatedMovieList(
@@ -61,31 +74,39 @@ fun PaginatedMovieList(
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    // Butonun görünürlüğünü performanslı bir şekilde hesapla.
-    // Sadece boolean sonuç değiştiğinde recompose olur.
+    // Architectural Decision: `derivedStateOf` is used for performance optimization. It ensures that
+    // this block is only re-evaluated when the result of the calculation (`listState.firstVisibleItemIndex > 5`)
+    // actually changes from true to false or vice versa. This prevents recomposition on every single
+    // scroll event, which would be inefficient.
     val showScrollToTopButton by remember {
         derivedStateOf {
-            listState.firstVisibleItemIndex > 5 // 5. öğeyi geçince butonu göster
+            listState.firstVisibleItemIndex > 5
         }
     }
 
+    // A `Box` is used as the root container to allow the `LazyColumn` and the `FloatingActionButton`
+    // to be layered on top of each other.
     Box(modifier = modifier.padding(contentPadding)) {
         LazyColumn(
-            state = listState, // State'i LazyColumn'a bağla
+            state = listState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Liste boşsa gösterilecek olan öğe
+            // UI/UX Rationale: It's important to distinguish between a "loading" state and a
+            // "successfully loaded but empty" state. This block handles the latter, providing
+            // clear feedback to the user that the search was successful but yielded no results.
             if (lazyPagingItems.loadState.refresh is LoadState.NotLoading && lazyPagingItems.itemCount == 0) {
                 item {
                     EmptyListIndicator(modifier = Modifier.fillParentMaxSize())
                 }
             }
 
-            // Film öğeleri
+            // Render the list of movie items.
             items(
                 count = lazyPagingItems.itemCount,
+                // Performance Optimization: Providing a stable and unique key for each item allows
+                // Compose to be more intelligent about recompositions, moves, and deletions.
                 key = lazyPagingItems.itemKey { it.id }
             ) { index ->
                 lazyPagingItems[index]?.let { movie ->
@@ -96,18 +117,19 @@ fun PaginatedMovieList(
                 }
             }
 
-            // Sayfa sonu yükleme/hata göstergesi
+            // Render the indicator for appending new pages at the end of the list.
             item {
                 PagingAppendIndicator(lazyPagingItems = lazyPagingItems)
             }
         }
 
-        // "Yukarı Çık" Butonu
+        // The "Scroll to Top" button is aligned to the bottom end of the Box.
         ScrollToTopButton(
             isVisible = showScrollToTopButton,
             onClick = {
                 coroutineScope.launch {
-                    listState.animateScrollToItem(0) // Animasyonla en üste kaydır
+                    // `animateScrollToItem` provides a smooth scrolling animation to the top.
+                    listState.animateScrollToItem(0)
                 }
             },
             modifier = Modifier
@@ -117,10 +139,12 @@ fun PaginatedMovieList(
     }
 }
 
-// ... (MovieRow, MovieInfo, PagingAppendIndicator, EmptyListIndicator fonksiyonları aynı kalacak)
-
 /**
- * Animasyonlu bir şekilde görünüp kaybolan "Yukarı Çık" FloatingActionButton'u.
+ * A FloatingActionButton that appears with an animation when the user scrolls down the list.
+ *
+ * @param isVisible Controls the visibility of the button.
+ * @param onClick The callback to be invoked when the button is clicked.
+ * @param modifier The modifier to be applied to the button.
  */
 @Composable
 private fun ScrollToTopButton(
@@ -128,6 +152,8 @@ private fun ScrollToTopButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // UI/UX Decision: `AnimatedVisibility` provides a smooth fade and slide animation as the
+    // button appears and disappears, making the UI feel more polished and less abrupt.
     AnimatedVisibility(
         visible = isVisible,
         enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
@@ -148,6 +174,13 @@ private fun ScrollToTopButton(
     }
 }
 
+/**
+ * Renders a single row in the movie list, containing a poster and movie information.
+ *
+ * @param movie The movie data to display.
+ * @param onClick The callback to be invoked when the row is clicked.
+ * @param modifier The modifier to be applied to the Card.
+ */
 @Composable
 private fun MovieRow(
     movie: MovieListItem,
@@ -179,6 +212,12 @@ private fun MovieRow(
     }
 }
 
+/**
+ * Renders the textual information for a movie, such as title, year, overview, and rating.
+ *
+ * @param movie The movie data to display.
+ * @param modifier The modifier to be applied to the Column.
+ */
 @Composable
 private fun MovieInfo(
     movie: MovieListItem,
@@ -193,7 +232,7 @@ private fun MovieInfo(
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             maxLines = 2,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis // Prevents long titles from breaking the layout.
         )
         Text(
             text = movie.releaseYear,
@@ -204,7 +243,7 @@ private fun MovieInfo(
             text = movie.overview,
             style = MaterialTheme.typography.bodySmall,
             maxLines = 3,
-            overflow = TextOverflow.Ellipsis,
+            overflow = TextOverflow.Ellipsis, // Prevents long overviews from taking up too much space.
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Row(
@@ -225,13 +264,25 @@ private fun MovieInfo(
     }
 }
 
+/**
+ * Displays an indicator at the bottom of the list based on the Paging `append` state.
+ *
+ * This component shows a loading spinner when the next page is being fetched, or an error
+ * message with a retry button if the fetch fails.
+ *
+ * @param lazyPagingItems The Paging 3 data stream.
+ * @param modifier The modifier to be applied to the indicator's container.
+ */
 @Composable
 private fun PagingAppendIndicator(
     lazyPagingItems: LazyPagingItems<*>,
     modifier: Modifier = Modifier,
 ) {
+    // Architectural Decision: This `when` statement specifically checks the `loadState.append`.
+    // It is only responsible for the UI at the *end* of the list, not the initial full-screen load.
+    // This separation of concerns makes the component focused and reusable.
     when (lazyPagingItems.loadState.append) {
-        is androidx.paging.LoadState.Loading -> {
+        is LoadState.Loading -> {
             Box(
                 modifier = modifier
                     .fillMaxWidth()
@@ -241,8 +292,7 @@ private fun PagingAppendIndicator(
                 CircularProgressIndicator(modifier = Modifier.size(32.dp), strokeWidth = 3.dp)
             }
         }
-
-        is androidx.paging.LoadState.Error -> {
+        is LoadState.Error -> {
             Column(
                 modifier = modifier
                     .fillMaxWidth()
@@ -260,13 +310,17 @@ private fun PagingAppendIndicator(
                 }
             }
         }
-
-        is androidx.paging.LoadState.NotLoading -> {
-            // Hiçbir şey yapma
+        is LoadState.NotLoading -> {
+            // Do nothing when not loading and no error.
         }
     }
 }
 
+/**
+ * Displays a simple message indicating that the list is empty.
+ *
+ * @param modifier The modifier to be applied to the container Box.
+ */
 @Composable
 private fun EmptyListIndicator(modifier: Modifier = Modifier) {
     Box(

@@ -2,74 +2,61 @@ package com.mustafakocer.core_ui.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Light Theme Colors
-// Primary
+// This file defines the specific color palettes for both the light and dark themes,
+// adhering to the Material 3 color system.
+
+// --- Brand & Accent Colors ---
+val BrandGold = Color(0xFFFFC107) // Gold: Used for primary actions, ratings, and highlights.
+val BrandBlue = Color(0xFF0D47A1) // Deep Blue: Used for links and secondary actions.
+
+// --- Dark Theme Palette (Cinematic Night) ---
+val DarkPrimary = Color(0xFF1A2C42)
+val DarkOnPrimary = Color(0xFFFFFFFF)
+val DarkPrimaryContainer = Color(0xFF2C3E50)
+val DarkOnPrimaryContainer = Color(0xFFE0E0E0)
+
+val DarkSecondary = BrandGold
+val DarkOnSecondary = Color(0xFF000000)
+val DarkSecondaryContainer = Color(0x33FFC107) // Gold with ~20% opacity for subtle highlights.
+val DarkOnSecondaryContainer = BrandGold
+
+val DarkTertiary = Color(0xFF82B1FF) // A brighter, more vibrant version of BrandBlue for accents.
+val DarkOnTertiary = Color(0xFF002E69)
+val DarkTertiaryContainer = BrandBlue
+val DarkOnTertiaryContainer = Color(0xFFD6E3FF)
+
+val DarkBackground = Color(0xFF0F172A)      // A very dark, slightly blue-tinted background.
+val DarkOnBackground = Color(0xFFE2E8F0)
+val DarkSurface = Color(0xFF1E293B)         // The color for elevated surfaces like Cards.
+val DarkOnSurface = Color(0xFFCBD5E1)
+val DarkSurfaceVariant = Color(0xFF334155)  // A slightly lighter surface for differentiation.
+val DarkOnSurfaceVariant = Color(0xFF94A3B8)
+
+val DarkError = Color(0xFFEF4444)           // A vibrant red for high-visibility error states.
+val DarkOnError = Color(0xFFFFFFFF)
+
+// --- Light Theme Palette (Clean Studio Light) ---
 val LightPrimary = Color(0xFF2C3E50)
 val LightOnPrimary = Color(0xFFFFFFFF)
-val LightPrimaryContainer = Color(0xFF7EA6E0)
-val LightOnPrimaryContainer = Color(0xFF0A1929)
+val LightPrimaryContainer = Color(0xFFD6EAF8)
+val LightOnPrimaryContainer = Color(0xFF1A2C42)
 
-// Secondary
-val LightSecondary = Color(0xFFE74C3C)
-val LightOnSecondary = Color(0xFFFFFFFF)
-val LightSecondaryContainer = Color(0xFFFFDAD4)
-val LightOnSecondaryContainer = Color(0xFF410001)
+val LightSecondary = BrandGold
+val LightOnSecondary = Color(0xFF000000)
+val LightSecondaryContainer = Color(0x33FFC107)
+val LightOnSecondaryContainer = Color(0xFFB8860B) // A darker gold for better contrast on light containers.
 
-// Tertiary
-val LightTertiary = Color(0xFFF39C12)
+val LightTertiary = BrandBlue
 val LightOnTertiary = Color(0xFFFFFFFF)
-val LightTertiaryContainer = Color(0xFFFFE0B2)
-val LightOnTertiaryContainer = Color(0xFF3E2E00)
+val LightTertiaryContainer = Color(0xFFD6E3FF)
+val LightOnTertiaryContainer = Color(0xFF001B3E)
 
-// Error
-val LightError = Color(0xFFFF5252)
+val LightBackground = Color(0xFFF8FAFC)     // An almost-white, clean background.
+val LightOnBackground = Color(0xFF0F172A)
+val LightSurface = Color(0xFFFFFFFF)        // The color for elevated surfaces like Cards.
+val LightOnSurface = Color(0xFF1E293B)
+val LightSurfaceVariant = Color(0xFFE2E8F0)
+val LightOnSurfaceVariant = Color(0xFF475569)
+
+val LightError = Color(0xFFB91C1C)           // A darker, more accessible red for light backgrounds.
 val LightOnError = Color(0xFFFFFFFF)
-val LightErrorContainer = Color(0xFFFFCDD2)
-val LightOnErrorContainer = Color(0xFF410002)
-
-// Neutral
-val LightBackground = Color(0xFFF5F5F5)
-val LightOnBackground = Color(0xFF1C1B1F)
-val LightSurface = Color(0xFFFFFFFF)
-val LightOnSurface = Color(0xFF1C1B1F)
-
-// Neutral Variant
-val LightSurfaceVariant = Color(0xFFE7E0EC)
-val LightOnSurfaceVariant = Color(0xFF49454F)
-val LightOutline = Color(0xFF79747E)
-
-// Dark Theme Colors
-// Primary
-val DarkPrimary = Color(0xFF93B5DF)
-val DarkOnPrimary = Color(0xFF0B2641)
-val DarkPrimaryContainer = Color(0xFF1E4D78)
-val DarkOnPrimaryContainer = Color(0xFFD6E3FF)
-
-// Secondary
-val DarkSecondary = Color(0xFFFF8A80)
-val DarkOnSecondary = Color(0xFF680000)
-val DarkSecondaryContainer = Color(0xFFAC2F24)
-val DarkOnSecondaryContainer = Color(0xFFFFDAD4)
-
-// Tertiary
-val DarkTertiary = Color(0xFFFFCC80)
-val DarkOnTertiary = Color(0xFF5D3F00)
-val DarkTertiaryContainer = Color(0xFFB37300)
-val DarkOnTertiaryContainer = Color(0xFFFFE0B2)
-
-// Error
-val DarkError = Color(0xFFFF8A80)
-val DarkOnError = Color(0xFF680000)
-val DarkErrorContainer = Color(0xFFB00020)
-val DarkOnErrorContainer = Color(0xFFFFCDD2)
-
-// Neutral
-val DarkBackground = Color(0xFF121212)
-val DarkOnBackground = Color(0xFFE3E3E3)
-val DarkSurface = Color(0xFF1E1E1E)
-val DarkOnSurface = Color(0xFFE3E3E3)
-
-// Neutral Variant
-val DarkSurfaceVariant = Color(0xFF2F2F2F)
-val DarkOnSurfaceVariant = Color(0xFFCACACA)
-val DarkOutline = Color(0xFF8E8E8E)
