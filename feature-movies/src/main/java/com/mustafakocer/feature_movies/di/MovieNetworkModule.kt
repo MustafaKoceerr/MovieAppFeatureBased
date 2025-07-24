@@ -5,34 +5,30 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
 import javax.inject.Singleton
+import retrofit2.Retrofit
 
 /**
- * CONSOLIDATED: Single network module for all movie API services
+ * A Dagger Hilt module for providing network-related dependencies specific to the movies feature.
  *
- * ✅ Uses core-network's shared Retrofit instance
- * ✅ Single MovieApiService for all movie operations
- *
- * HILT MAGIC:
- * - Retrofit comes from core-network module
- * - Config comes from app module
- * - feature-movies has no dependency on app module!
+ * Architectural Decision: This module is responsible for creating the concrete implementation of
+ * the `MovieApiService` interface. It leverages a pre-configured `Retrofit` instance that is
+ * provided by a lower-level module (e.g., a `core-network` module). This is a powerful feature
+ * of Hilt's dependency graph: this `feature-movies` module does not need to know *how* the `Retrofit`
+ * instance is built (e.g., with what base URL, interceptors, or converters). It simply declares
+ * its dependency on `Retrofit`, and Hilt resolves it from the appropriate provider in the graph.
+ * This promotes excellent separation of concerns, keeping network configuration details isolated
+ * from the feature modules that consume the API services.
  */
 @Module
 @InstallIn(SingletonComponent::class)
 object MovieNetworkModule {
-    /**
-     * Provide single MovieApiService for all movie operations
-     *
-     * Uses shared Retrofit instance from core-network
-     */
+
     @Provides
     @Singleton
     fun provideMovieApiService(
-        retrofit: Retrofit // ← HILT MAGIC: This comes from core-network!
+        retrofit: Retrofit,
     ): MovieApiService {
         return retrofit.create(MovieApiService::class.java)
     }
-
 }
