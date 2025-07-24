@@ -4,7 +4,6 @@ agp = "8.9.2"
 
 kotlin = "2.1.0"
 compose-bom = "2025.06.01"
-core-ktx = "1.16.0"
 lifecycle = "2.9.1"
 activity-compose = "1.10.1"
 appcompat = "1.7.1"
@@ -37,20 +36,15 @@ espressoCore = "3.6.1"
 
 # Icons Extended
 compose-material = "1.7.8"
-materialVersion = "1.12.0"
 
 # Preferences
 datastore = "1.1.7"
-testng = "6.9.6"
 turbine = "1.0.0"
-material = "1.12.0"
 
 [libraries]
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 # Core Android
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }  # Bu eklenmeli
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
@@ -85,7 +79,6 @@ room-paging = { group = "androidx.room", name = "room-paging", version.ref = "ro
 
 # Networka
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
-retrofit-kotlinx-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 retrofit-kotlinx-serialization-converter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version = "1.0.0" }
@@ -96,7 +89,6 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCo
 
 # Coroutines
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
-kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 # UI Tests
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
@@ -112,9 +104,7 @@ androidx-material-icons-extended = { module = "androidx.compose.material:materia
 
 # Preferences
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
-testng = { group = "org.testng", name = "testng", version.ref = "testng" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
