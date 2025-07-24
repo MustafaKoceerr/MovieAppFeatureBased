@@ -15,13 +15,26 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/**
+ * A Dagger Hilt module responsible for providing all database-related dependencies for the application.
+ *
+ * This module centralizes the creation of the main `AppDatabase` instance and exposes the individual
+ * Data Access Objects (DAOs) so they can be injected into repositories across different feature modules.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
     /**
-     * Tüm feature modüllerinden gelen katkıları kullanarak
-     * dinamik bir AppDatabase implementasyonu sağlar.
+     * Provides the singleton instance of the application's main [AppDatabase].
+     *
+     * Architectural Decision: This function is the single source for creating the database. It uses
+     * the `Room.databaseBuilder` to construct the database instance. By centralizing its creation
+     * here, we ensure that the entire application shares the same database instance, which is critical
+     * for data consistency.
+     *
+     * @param context The application context, provided by Hilt.
+     * @return The singleton [AppDatabase] instance.
      */
     @Provides
     @Singleton
@@ -33,9 +46,6 @@ object DatabaseModule {
             AppDatabase::class.java,
             DatabaseConstants.DATABASE_NAME
         )
-            // .addMigrations(...) // Gerekirse migration'lar burada eklenir
-            // TODO: Product için bunu kesinlikle kaldır, her seferinde database'yi yeniden oluşturuyor.
-            .fallbackToDestructiveMigration() // Geliştirme aşaması için kullanışlı
             .build()
     }
 
@@ -45,10 +55,6 @@ object DatabaseModule {
         return appDatabase
     }
 
-    /**
-     * AppDatabase içindeki DAO'ları tek tek sağlar.
-     * Hilt, bu sayede Repository'lere sadece ihtiyaç duydukları DAO'yu enjekte edebilir.
-     */
     @Provides
     @Singleton
     fun provideMovieListDao(appDatabase: AppDatabase): MovieListDao {

@@ -9,13 +9,20 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * UPDATED: App-specific network configuration provider
+ * Provides the application-specific network configuration values.
  *
- * ✅ Provides app-specific network settings
- * ✅ Removes generic configs (moved to NetworkConfig)
- * ✅ Adds cache directory for OkHttpClient
+ * Architectural Decision: This class serves as the concrete implementation of the abstract
+ * `NetworkConfigProvider` interface defined in the `core-domain` layer. It acts as a bridge,
+ * supplying the `core-network` module with the specific configuration values it needs (like API
+ * keys and base URLs) without the core module needing to know where these values come from.
+ * This is a key principle of dependency inversion and modular architecture.
+ *
+ * The configuration values are sourced from the `BuildConfig` file, which is the standard Android
+ * practice for injecting environment-specific variables at compile time. This allows for different
+ * configurations for various build types (e.g., debug, release, staging).
+ *
+ * @param context The application context, injected by Hilt, used to determine the cache directory.
  */
-
 @Singleton
 class MovieNetworkConfigProvider @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -25,12 +32,4 @@ class MovieNetworkConfigProvider @Inject constructor(
     override val isDebug = BuildConfig.ENABLE_LOGGING
     override val enableLogging = BuildConfig.ENABLE_LOGGING
     override val userAgent = "${BuildConfig.APP_NAME}/${BuildConfig.VERSION_NAME}"
-
-    /**
-     * Provide cache directory for OkHttpClient
-     */
-    fun getCacheDirectory(): File {
-        return File(context.cacheDir, "http_cache")
-    }
-
 }
