@@ -1,4 +1,10 @@
 # Movie Discovery App
+### Modern Mobile Architecture & Clean Development Practices
+
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.0-blue.svg)](https://kotlinlang.org)
+[![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-2024.02.00-green.svg)](https://developer.android.com/jetpack/compose)
+[![Clean Architecture](https://img.shields.io/badge/Architecture-Clean%20+%20MVI-orange.svg)](https://developer.android.com/topic/architecture)
+[![Modular Design](https://img.shields.io/badge/Design-Feature%20Based%20Modules-purple.svg)](https://developer.android.com/guide/app-bundle/play-feature-delivery)
 
 A modern, modular, and robust movie discovery application built with Clean Architecture, best practices, and a focus on scalability and maintainability.
 
@@ -57,16 +63,16 @@ Movie Discovery App allows users to explore, search, and discover movies with a 
 ---
 
 ## 🛠️ Technologies & Libraries
-- **Kotlin**
-- **Jetpack Compose** (UI)
-- **Hilt** (Dependency Injection)
-- **Room** (Database)
-- **Retrofit & OkHttp** (Networking)
-- **Paging 3** (Pagination, offline-first)
-- **DataStore** (Preferences)
-- **Kotlin Coroutines & Flow** (Async, reactive)
-- **Coil** (Image loading)
-- **JUnit, Mockito, Espresso** (Testing)
+- **Kotlin** `2.1.0`
+- **Jetpack Compose** (UI) `BOM 2025.06.01`
+- **Hilt** (Dependency Injection) `2.56.2`
+- **Room** (Database) `2.6.1`
+- **Retrofit** (Networking) `2.11.0` & **OkHttp** `4.12.0`
+- **Paging 3** (Pagination, offline-first) `3.2.1`
+- **DataStore** (Preferences) `1.1.7`
+- **Kotlin Coroutines & Flow** (Async, reactive) `1.9.0`
+- **Coil** (Image loading) `3.2.0`
+- **JUnit** `4.13.2`, **Mockito** `5.8.0`, **Espresso** `3.6.1` (Testing)
 - **Modular Gradle setup**
 
 ---
@@ -121,8 +127,18 @@ navigation-contracts/
 - [x] Modular navigation
 - [ ] Profile feature (planned)
 - [ ] Push notifications (planned)
+- [ ] Favorites and rating feature for logged-in users (planned)
+- [ ] Comprehensive testing (planned)
+- [ ] Onboarding flow with ViewPager2 (planned)
 
 ---
 
-## 📖 More Details
-For in-depth architectural explanations, code samples, and rationale, see [DETAILS.md](DETAILS.md). 
+---
+
+# **🔥 Don’t Just Browse — Explore the Engine Behind the Project!**
+
+**🚀 [Dive into the Full Technical Deep-Dive →](DETAILS.md)**
+
+*Curious about how everything is built? Discover detailed architecture explanations, real-world code examples, and the decisions that power this project. If you want to see the structure and implementation up close, this is the place to start!*
+
+---
