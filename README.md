@@ -12,13 +12,136 @@ A modern, modular, and robust movie discovery application built with Clean Archi
 
 ## 📸 App Gallery
 
-<!-- Example: 2 static images + 1 gif per row, 3-4 rows. Replace with your own assets. -->
+<h3>📱 Light Theme Screens</h3>
 
-| ![](assets/app_icon.png) | ![](assets/app_icon.png) | ![](assets/auth_video_1_compressed.mp4) |
-|-------------------------|-------------------------|-----------------------------------------|
-| ![](assets/app_icon.png) | ![](assets/app_icon.png) | ![](assets/list_video_1_compressed.mp4) |
-| ![](assets/app_icon.png) | ![](assets/app_icon.png) | ![](assets/theme_video_1_compressed.mp4) |
-| ![](assets/app_icon.png) | ![](assets/app_icon.png) | ![](assets/language_video_1_compressed.mp4) |
+<table>
+  <tr>
+    <th style="width:160px;">Splash Screen</th>
+    <th style="width:160px;">Welcome Screen</th>
+    <th style="width:160px;">Home Screen(1)</th>
+    <th style="width:160px;">Home Screen(2)</th>
+  </tr>
+  <tr>
+    <td><img src="assets/splash_light_1.jpg" height="400"/></td>
+    <td><img src="assets/welcome_light_1.jpg" height="400"/></td>
+    <td><img src="assets/home_light_1.jpg" height="400"/></td>
+    <td><img src="assets/home_light_2.jpg" height="400"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th style="width:160px;">List Screen(1)</th>
+    <th style="width:160px;">List Screen(2)</th>
+    <th style="width:160px;">Details Screen(1)</th>
+    <th style="width:160px;">Details Screen(2)</th>
+  </tr>
+  <tr>
+    <td><img src="assets/list_light_1.jpg" height="400"/></td>
+    <td><img src="assets/list_light_2.jpg" height="400"/></td>
+    <td><img src="assets/details_light_1.jpg" height="400"/></td>
+    <td><img src="assets/details_light_2.jpg" height="400"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th style="width:160px;">Settings Screen(1)</th>
+    <th style="width:160px;">Settings Screen(2)</th>
+    <th style="width:160px;">Search Screen(1)</th>
+    <th style="width:160px;">Search Screen(2)</th>
+  </tr>
+  <tr>
+    <td><img src="assets/settings_light_1.jpg" height="400"/></td>
+    <td><img src="assets/settings_light_2.jpg" height="400"/></td>
+    <td><img src="assets/search_light_1.jpg" height="400"/></td>
+    <td><img src="assets/search_light_2.jpg" height="400"/></td>
+  </tr>
+</table>
+<br/>
+
+<h3>📱 Dark Theme Screens</h3>
+
+<table>
+  <tr>
+    <th style="width:160px;">Splash Screen</th>
+    <th style="width:160px;">Welcome Screen</th>
+    <th style="width:160px;">Home Screen(1)</th>
+    <th style="width:160px;">Home Screen(2)</th>
+  </tr>
+  <tr>
+    <td><img src="assets/splash_dark_1.jpg" height="400"/></td>
+    <td><img src="assets/welcome_dark_1.jpg" height="400"/></td>
+      <td><img src="assets/home_dark_1.jpg" height="400"/></td>
+    <td><img src="assets/home_dark_2.jpg" height="400"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th style="width:160px;">List Screen(1)</th>
+    <th style="width:160px;">List Screen(2)</th>
+    <th style="width:160px;">Details Screen(1)</th>
+    <th style="width:160px;">Details Screen(2)</th>
+  </tr>
+  <tr>
+    <td><img src="assets/list_dark_1.jpg" height="400"/></td>
+    <td><img src="assets/list_dark_2.jpg" height="400"/></td>
+    <td><img src="assets/details_dark_1.jpg" height="400"/></td>
+    <td><img src="assets/details_dark_2.jpg" height="400"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th style="width:160px;">Settings Screen(1)</th>
+    <th style="width:160px;">Settings Screen(2)</th>
+    <th style="width:160px;">Search Screen(1)</th>
+    <th style="width:160px;">Search Screen(2)</th>
+  </tr>
+  <tr>
+    <td><img src="assets/settings_dark_1.jpg" height="400"/></td>
+    <td><img src="assets/settings_dark_2.jpg" height="400"/></td>
+    <td><img src="assets/search_dark_1.jpg" height="400"/></td>
+    <td><img src="assets/search_dark_2.jpg" height="400"/></td>
+  </tr>
+</table>
+<br/>
+
+<h3>📱 Other Screens</h3>
+<table>
+  <tr>
+    <th style="width:160px;">Share Content(1)</th>
+    <th style="width:160px;">Share Content(2)</th>
+    <th style="width:160px;">Error Screen</th>
+    <th style="width:160px;">Error Screen</th>
+    <th style="width:160px;">Auth Screen</th>
+  </tr>
+  <tr>
+    <td><img src="assets/share_whatsapp_1.jpg" height="400"/></td>
+    <td><img src="assets/share_whatsapp_2.jpg" height="400"/></td>
+    <td><img src="assets/error_light_1.jpg" height="400"/></td>
+    <td><img src="assets/error_dark_1.jpg" height="400"/></td>
+    <td><img src="assets/auth_screen.jpg" height="400"/></td>
+  </tr>
+</table>
+
+<br/>
+<h3>📽️ Feature Demonstrations (GIFs)</h3>
+<table>
+  <tr>
+    <th style="width:160px;">Details Feature</th>
+    <th style="width:160px;">List Feature</th>
+    <th style="width:160px;">Search Feature</th>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/67cae3d1-e0cb-4e41-b3c5-799423076095" height="400"/></td>  
+    <td><img src="https://github.com/user-attachments/assets/86b4563e-dba7-4fb0-8852-6401bcfc8751" height="400"/></td>
+    <td><img src="https://github.com/user-attachments/assets/39ddbe84-a505-4cce-a123-0bdfc7aeff08" height="400"/></td>
+  </tr>
+</table>
+
+<br/>
 
 ---
 
@@ -93,45 +216,47 @@ feature-splash/
 navigation-contracts/
 ```
 
-### Module Responsibilities
-- **app**: Application entry, DI setup, navigation host, global config
-- **core-domain**: Business logic, domain models, contracts
-- **core-ui**: Shared UI components, themes, error UI, UI contracts
-- **core-network**: Network layer, API config, interceptors
-- **core-database**: Room DB, DAOs, caching
-- **core-preferences**: DataStore, user preferences (theme, language, token)
-- **core-android**: Android-specific utilities, base ViewModel
-- **feature-movies**: Home, list, details, search screens & logic
-- **feature-auth**: Authentication (login, logout, token flow)
-- **feature-splash**: Splash screen, initial loading
-- **navigation-contracts**: Type-safe navigation contracts, decoupled navigation
+### 📦 Module Responsibilities
+
+- **`app`**: *Application entry, DI setup, navigation host, global config*
+- **`core-domain`**: *Business logic, domain models, contracts*
+- **`core-ui`**: *Shared UI components, themes, error UI, UI contracts*
+- **`core-network`**: *Network layer, API config, interceptors*
+- **`core-database`**: *Room DB, DAOs, caching*
+- **`core-preferences`**: *DataStore, user preferences (theme, language, token)*
+- **`core-android`**: *Android-specific utilities, base ViewModel*
+- **`feature-movies`**: *Home, list, details, search screens & logic*
+- **`feature-auth`**: *Authentication (login, logout, token flow)*
+- **`feature-splash`**: *Splash screen, initial loading*
+- **`navigation-contracts`**: *Type-safe navigation contracts, decoupled navigation*
 
 ---
 
 ## 🧩 Architectural Summary
-- **Clean Architecture**: Strict separation (domain, data, presentation)
-- **MVI Pattern**: Unidirectional data flow, UI contracts for all screens
-- **Dependency Injection**: Hilt for scalable, testable DI
-- **Modularization**: Each feature/core is a separate Gradle module
-- **Offline-First**: Caching, fast load, pagination
-- **Type-Safe Navigation**: navigation-contracts for decoupled, safe navigation
-- **Unified Error Handling**: AppException, surfaced to UI
-- **Best Practices**: Naming, file structure, code quality
+
+- **Clean Architecture**: *Strict separation (domain, data, presentation)*
+- **MVI Pattern**: *Unidirectional data flow, UI contracts for all screens*
+- **Dependency Injection**: *Hilt for scalable, testable DI*
+- **Modularization**: *Each feature/core is a separate Gradle module*
+- **Offline-First**: *Caching, fast load, pagination*
+- **Type-Safe Navigation**: *navigation-contracts for decoupled, safe navigation*
+- **Unified Error Handling**: *AppException, surfaced to UI*
+- **Best Practices**: *Naming, file structure, code quality*
 
 ---
 
-## 📝 Planned/Upcoming Features
-- [x] Multi-language support (add new language via enum)
-- [x] Offline-first home/list screens
-- [x] Unified error handling
-- [x] Modular navigation
-- [ ] Profile feature (planned)
-- [ ] Push notifications (planned)
-- [ ] Favorites and rating feature for logged-in users (planned)
-- [ ] Comprehensive testing (planned)
-- [ ] Onboarding flow with ViewPager2 (planned)
+## 📝 Planned / Upcoming Features
 
----
+- ✅ **Multi-language support** *(add new language via enum)*
+- ✅ **Offline-first home/list screens**
+- ✅ **Unified error handling**
+- ✅ **Modular navigation**
+- 🔜 **Profile feature** *(planned)*
+- 🔜 **Push notifications** *(planned)*
+- 🔜 **Favorites and rating feature for logged-in users** *(planned)*
+- 🔜 **Comprehensive testing** *(planned)*
+- 🔜 **Onboarding flow with ViewPager2** *(planned)*
+
 
 ---
 
@@ -142,3 +267,9 @@ navigation-contracts/
 *Curious about how everything is built? Discover detailed architecture explanations, real-world code examples, and the decisions that power this project. If you want to see the structure and implementation up close, this is the place to start!*
 
 ---
+
+## 🎥 Full App Experience (YouTube Video)
+
+If you want to see the full experience of the application in action, check out the video below:
+
+👉 **[Watch Full Demo on YouTube »](https://youtu.be/STPagjB_6XI?si=-vNI7OGCxxwJbAn3)**
