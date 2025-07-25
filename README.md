@@ -12,13 +12,121 @@ A modern, modular, and robust movie discovery application built with Clean Archi
 
 ## 📸 App Gallery
 
-<!-- Example: 2 static images + 1 gif per row, 3-4 rows. Replace with your own assets. -->
+<h3>📱 Light Theme Screens</h3>
 
-| ![](assets/app_icon.png) | ![](assets/app_icon.png) | ![](assets/auth_video_1_compressed.mp4) |
-|-------------------------|-------------------------|-----------------------------------------|
-| ![](assets/app_icon.png) | ![](assets/app_icon.png) | ![](assets/list_video_1_compressed.mp4) |
-| ![](assets/app_icon.png) | ![](assets/app_icon.png) | ![](assets/theme_video_1_compressed.mp4) |
-| ![](assets/app_icon.png) | ![](assets/app_icon.png) | ![](assets/language_video_1_compressed.mp4) |
+<table>
+  <tr>
+    <th style="width:160px;">Splash Screen</th>
+    <th style="width:160px;">Welcome Screen</th>
+    <th style="width:160px;">Home Screen(1)</th>
+    <th style="width:160px;">Home Screen(2)</th>
+  </tr>
+  <tr>
+    <td><img src="assets/splash_light_1.jpg" height="400"/></td>
+    <td><img src="assets/welcome_light_1.jpg" height="400"/></td>
+    <td><img src="assets/home_light_1.jpg" height="400"/></td>
+    <td><img src="assets/home_light_2.jpg" height="400"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th style="width:160px;">List Screen(1)</th>
+    <th style="width:160px;">List Screen(2)</th>
+    <th style="width:160px;">Details Screen(1)</th>
+    <th style="width:160px;">Details Screen(2)</th>
+  </tr>
+  <tr>
+    <td><img src="assets/list_light_1.jpg" height="400"/></td>
+    <td><img src="assets/list_light_2.jpg" height="400"/></td>
+    <td><img src="assets/details_light_1.jpg" height="400"/></td>
+    <td><img src="assets/details_light_2.jpg" height="400"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th style="width:160px;">Settings Screen(1)</th>
+    <th style="width:160px;">Settings Screen(2)</th>
+    <th style="width:160px;">Search Screen(1)</th>
+    <th style="width:160px;">Search Screen(2)</th>
+  </tr>
+  <tr>
+    <td><img src="assets/settings_light_1.jpg" height="400"/></td>
+    <td><img src="assets/settings_light_2.jpg" height="400"/></td>
+    <td><img src="assets/search_light_1.jpg" height="400"/></td>
+    <td><img src="assets/search_light_2.jpg" height="400"/></td>
+  </tr>
+</table>
+<br/>
+
+<h3>📱 Dark Theme Screens</h3>
+
+<table>
+  <tr>
+    <th style="width:160px;">Splash Screen</th>
+    <th style="width:160px;">Welcome Screen</th>
+    <th style="width:160px;">Home Screen(1)</th>
+    <th style="width:160px;">Home Screen(2)</th>
+  </tr>
+  <tr>
+    <td><img src="assets/splash_dark_1.jpg" height="400"/></td>
+    <td><img src="assets/welcome_dark_1.jpg" height="400"/></td>
+      <td><img src="assets/home_dark_1.jpg" height="400"/></td>
+    <td><img src="assets/home_dark_2.jpg" height="400"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th style="width:160px;">List Screen(1)</th>
+    <th style="width:160px;">List Screen(2)</th>
+    <th style="width:160px;">Details Screen(1)</th>
+    <th style="width:160px;">Details Screen(2)</th>
+  </tr>
+  <tr>
+    <td><img src="assets/list_dark_1.jpg" height="400"/></td>
+    <td><img src="assets/list_dark_2.jpg" height="400"/></td>
+    <td><img src="assets/details_dark_1.jpg" height="400"/></td>
+    <td><img src="assets/details_dark_2.jpg" height="400"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th style="width:160px;">Settings Screen(1)</th>
+    <th style="width:160px;">Settings Screen(2)</th>
+    <th style="width:160px;">Search Screen(1)</th>
+    <th style="width:160px;">Search Screen(2)</th>
+  </tr>
+  <tr>
+    <td><img src="assets/settings_dark_1.jpg" height="400"/></td>
+    <td><img src="assets/settings_dark_2.jpg" height="400"/></td>
+    <td><img src="assets/search_dark_1.jpg" height="400"/></td>
+    <td><img src="assets/search_dark_2.jpg" height="400"/></td>
+  </tr>
+</table>
+<br/>
+
+<h3>📱 Other Screens</h3>
+<table>
+  <tr>
+    <th style="width:160px;">Share Content(1)</th>
+    <th style="width:160px;">Share Content(2)</th>
+    <th style="width:160px;">Error Screen</th>
+    <th style="width:160px;">Error Screen</th>
+    <th style="width:160px;">Auth Screen</th>
+  </tr>
+  <tr>
+    <td><img src="assets/share_whatsapp_1.jpg" height="400"/></td>
+    <td><img src="assets/share_whatsapp_2.jpg" height="400"/></td>
+    <td><img src="assets/error_light_1.jpg" height="400"/></td>
+    <td><img src="assets/error_dark_1.jpg" height="400"/></td>
+    <td><img src="assets/auth_screen.jpg" height="400"/></td>
+  </tr>
+</table>
+
+<br/>
 
 ---
 
