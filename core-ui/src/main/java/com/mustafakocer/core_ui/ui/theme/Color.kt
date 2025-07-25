@@ -10,10 +10,10 @@ val BrandGold = Color(0xFFFFC107) // Gold: Used for primary actions, ratings, an
 val BrandBlue = Color(0xFF0D47A1) // Deep Blue: Used for links and secondary actions.
 
 // --- Dark Theme Palette (Cinematic Night) ---
-val DarkPrimary = Color(0xFF1A2C42)
+val DarkPrimary = Color(0xFF4A90E2)
 val DarkOnPrimary = Color(0xFFFFFFFF)
 val DarkPrimaryContainer = Color(0xFF2C3E50)
-val DarkOnPrimaryContainer = Color(0xFFE0E0E0)
+val DarkOnPrimaryContainer = Color(0xFFD0E1FF)
 
 val DarkSecondary = BrandGold
 val DarkOnSecondary = Color(0xFF000000)
@@ -44,7 +44,8 @@ val LightOnPrimaryContainer = Color(0xFF1A2C42)
 val LightSecondary = BrandGold
 val LightOnSecondary = Color(0xFF000000)
 val LightSecondaryContainer = Color(0x33FFC107)
-val LightOnSecondaryContainer = Color(0xFFB8860B) // A darker gold for better contrast on light containers.
+val LightOnSecondaryContainer =
+    Color(0xFFB8860B) // A darker gold for better contrast on light containers.
 
 val LightTertiary = BrandBlue
 val LightOnTertiary = Color(0xFFFFFFFF)
