@@ -128,9 +128,9 @@ private fun HomeContent(state: HomeUiState, onEvent: (HomeEvent) -> Unit) {
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        FakeSearchBar(onClick = { onEvent(HomeEvent.SearchClicked) })
 
-        Spacer(modifier = Modifier.height(16.dp))
+        FakeSearchBar(onClick = { onEvent(HomeEvent.SearchClicked) },
+            modifier = Modifier.padding(vertical = 16.dp))
 
         // Iterate through movie categories and display them.
         // The order is determined by the enum's declaration order.

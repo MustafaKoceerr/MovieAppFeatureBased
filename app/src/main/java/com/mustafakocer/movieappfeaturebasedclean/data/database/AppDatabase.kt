@@ -16,7 +16,7 @@ import com.mustafakocer.feature_movies.shared.data.local.entity.MovieListEntity
  */
 internal object DatabaseConstants {
     const val DATABASE_NAME = "movie_app_database.db"
-    const val DATABASE_VERSION = 2
+    const val DATABASE_VERSION = 3
 }
 
 /**
