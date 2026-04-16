@@ -52,9 +52,11 @@ abstract class BaseViewModel<
      *
      * @param reduce A lambda function that receives the current state and returns a new state.
      */
-    protected fun setState(reduce: State.() -> State) {
-        _uiState.value = currentState.reduce()
+    protected fun setState(transform: State.() -> State) {
+    _uiState.update { current ->
+        current.transform()
     }
+}
 
     /**
      * Sends a one-time side effect to be consumed by the UI.
