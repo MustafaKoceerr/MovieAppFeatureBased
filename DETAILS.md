@@ -6,48 +6,51 @@ This document provides in-depth explanations of the architectural decisions, pat
 
 ---
 
-### 1. Clean Architecture & Modularization
+### 1. Architecture & Module Structure
 
-**Why Clean Architecture?**
-- Enforces strict separation of concerns (domain, data, presentation)
-- Makes the codebase scalable, testable, and maintainable
-- Allows independent development and testing of features
+**Why this structure?**
+- The app is small, so a few modules and clear packages are enough
+- Fewer moving parts: faster builds, less boilerplate, easier to read
+- The project began as a multi-module learning exercise (11 modules, MVI) and was deliberately simplified
 
 **How is it implemented?**
-- Each feature and core concern is a separate Gradle module
-- Domain logic is isolated from data and UI layers
-- Dependencies flow inward (UI → Domain, Data → Domain)
+- Three Gradle modules: `app` (entry point + every feature), `core-data` (data foundation), `core-ui` (theme and shared UI)
+- Inside `app`, code is organized package-by-feature: `feature/home`, `feature/details`, `feature/search`, ...
+- Layers are `UI (Screen) → ViewModel → [UseCase] → Repository → data source`; dependencies point one way
 
 **Best Practices Applied:**
-- No direct dependency from UI to data/network
-- All business logic in domain layer
-- Feature modules depend only on what they need
+- Screens never touch Retrofit/Room; they only see `UiState`
+- Repositories are plain classes (no interface with a single implementation)
+- A UseCase exists only when it contains real logic (`GetHomeScreenDataUseCase` merges four category streams)
 
 **Pitfalls Avoided:**
-- No God classes or monolithic modules
-- No tight coupling between features
+- No one-line "wrapper" UseCases and no interface-per-class ceremony
+- No feature-to-feature dependencies: features only share `feature/movies/shared` and the core modules
 
 ---
 
-### 2. MVI Pattern & UI Contracts
+### 2. MVVM with Unidirectional Data Flow
 
-**Why MVI?**
-- Ensures unidirectional data flow
-- Makes UI state predictable and easy to debug
-- Simplifies testing and maintenance
+**Why MVVM instead of MVI?**
+- MVI added a Contract (State/Event/Effect), a base ViewModel and event-to-effect round trips for every screen
+- Plain MVVM gives the same predictable, one-directional flow with far less code
 
 **How is it implemented?**
-- All ViewModels implement a common `UiContract` interface
-- State, events, and effects are managed via Kotlin Flows
-- UI observes state/effects, sends events to ViewModel
+- Each ViewModel owns a private `MutableStateFlow<XUiState>` and exposes it as `StateFlow`
+- User actions are ViewModel functions (`onRefresh()`, `onQueryChange()`), not event objects
+- State flows down, actions flow up: the `Route` collects state with `collectAsStateWithLifecycle` and passes it plus callbacks to a stateless `Screen`
+- One-shot events (open browser, restart activity, navigate after login) are **state fields** that the route consumes in a `LaunchedEffect`; the ViewModel resets them when needed. Unlike a `SharedFlow`, they cannot be lost while nothing is collecting
+- Paging flows (`Flow<PagingData>`) are separate ViewModel properties, never part of a state class
+- Pure UI actions (share intent, hiding the keyboard, navigation) are handled in the route and never go through the ViewModel
 
 **Best Practices Applied:**
-- No mutable state in UI
-- All user actions go through ViewModel
+- Immutable `UiState` data classes, updated with `StateFlow.update`
+- State hoisting: `Screen` composables are stateless and previewable
+- ViewModels are unit tested with fake flows and virtual time
 
 **Pitfalls Avoided:**
-- No spaghetti event handling
-- No inconsistent state updates
+- No base ViewModel hierarchy and no forced `isLoading/error` fields on screens that do not need them
+- No pass-through events that only turn into navigation effects
 
 ---
 
@@ -55,12 +58,11 @@ This document provides in-depth explanations of the architectural decisions, pat
 
 **Why Hilt?**
 - Scalable, testable, and boilerplate-free DI
-- Enables easy swapping of implementations (e.g., for testing)
 
 **How is it implemented?**
-- All modules use Hilt for providing dependencies
 - `@HiltAndroidApp` in Application, `@HiltViewModel` for ViewModels
-- `@Module` and `@Binds`/`@Provides` for interface-implementation binding
+- Repositories and use cases are `@Inject constructor` classes (`@Singleton` where shared), so they need no module
+- `@Module` + `@Provides` only for things Hilt cannot construct: Retrofit/OkHttp, API services, Room database and DAOs, DataStore
 
 **Best Practices Applied:**
 - No manual dependency graph
@@ -68,28 +70,28 @@ This document provides in-depth explanations of the architectural decisions, pat
 
 **Pitfalls Avoided:**
 - No service locator anti-pattern
-- No manual DI setup in Activities/Fragments
+- No `@Binds` boilerplate for interfaces that only have one implementation
 
 ---
 
-### 4. Type-Safe Navigation (navigation-contracts)
+### 4. Type-Safe Navigation
 
-**Why navigation-contracts?**
-- Decouples navigation logic from feature modules
-- Prevents runtime navigation errors (type-safe destinations)
+**Why?**
+- Prevents runtime navigation errors (typed destinations and arguments)
+- Keeps screens independent of the `NavController`
 
 **How is it implemented?**
-- Each feature exposes its own navigation graph via contracts
-- App module composes the navigation graphs
-- Destinations are serializable objects, not string routes
+- Routes are `@Serializable` objects/data classes in `navigation/` (e.g. `MovieDetailsScreen(movieId)`)
+- Each feature exposes a `NavGraphBuilder` extension (`splashNavGraph`, `moviesNavGraph`, `authNavGraph`); `AppNavHost` composes them
+- A `Route` composable takes plain lambdas (`onNavigateToMovieDetails: (Int) -> Unit`), and the nav graph implements them with `navController`
 
 **Best Practices Applied:**
-- No string-based navigation
-- No cross-feature navigation dependencies
+- No string-based routes
+- ViewModels read route arguments from `SavedStateHandle` using the route's property name (`MovieDetailsScreen::movieId.name`)
 
 **Pitfalls Avoided:**
-- No navigation logic leaks between modules
-- No fragile deep-linking
+- No `NavController` passed into screens or ViewModels
+- No navigation-contract interfaces that only forward calls
 
 ---
 
@@ -180,12 +182,12 @@ This document provides in-depth explanations of the architectural decisions, pat
 - Seamless user experience, no repeated logins
 
 **How is it implemented?**
-- Token is stored securely in DataStore
-- On app launch, token is checked and user is auto-logged in if valid
+- The session id is stored in DataStore (app-private storage, not additionally encrypted)
+- On app launch, `SplashViewModel` checks the stored session and routes to Home or Welcome
 
 **Best Practices Applied:**
 - No token in memory only
-- Secure, encrypted storage (if supported)
+- Session id, request token and API key are masked in debug network logs (`redactSecrets`)
 
 **Pitfalls Avoided:**
 - No forced logout on app restart
@@ -214,29 +216,61 @@ This document provides in-depth explanations of the architectural decisions, pat
 
 ## Code Examples & Deep Dives
 
-### 1. MVI & UI Contract Example
+### 1. MVVM Example (Settings screen)
 
-**UiContract interface:**
+**ViewModel: one `UiState`, plain functions, one-shot event as state:**
 ```kotlin
-interface UiContract<State, Event, Effect> {
-    val uiState: StateFlow<State>
-    val uiEffect: SharedFlow<Effect>
-    fun onEvent(event: Event)
+data class SettingsUiState(
+    val currentTheme: ThemePreference = ThemePreference.SYSTEM,
+    val currentLanguage: LanguagePreference = LanguagePreference.ENGLISH,
+    val isSaving: Boolean = false,
+    val error: AppException? = null,
+    val restartRequired: Boolean = false,
+)
+
+@HiltViewModel
+class SettingsViewModel @Inject constructor(
+    private val themeRepository: ThemeRepository,
+    private val languageRepository: LanguageRepository,
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(SettingsUiState())
+    val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
+
+    fun onLanguageSelected(language: LanguagePreference) {
+        val state = _uiState.value
+        if (language == state.currentLanguage || state.isSaving) return
+        save(onSaved = { _uiState.update { it.copy(restartRequired = true) } }) {
+            languageRepository.setLanguage(language)
+        }
+    }
+
+    fun onRestartHandled() = _uiState.update { it.copy(restartRequired = false) }
+    // ...
 }
 ```
 
-**BaseViewModel implementation:**
+**Route: collects state, consumes the one-shot flag, stays free of business logic:**
 ```kotlin
-abstract class BaseViewModel<State : BaseUiState, Event : BaseUiEvent, Effect : BaseUiEffect>(
-    initialState: State,
-) : ViewModel(), UiContract<State, Event, Effect> {
-    private val _uiState = MutableStateFlow(initialState)
-    override val uiState: StateFlow<State> = _uiState.asStateFlow()
-    private val _uiEffect = MutableSharedFlow<Effect>(replay = 0, extraBufferCapacity = 1)
-    override val uiEffect: SharedFlow<Effect> = _uiEffect.asSharedFlow()
-    abstract override fun onEvent(event: Event)
-    protected fun setState(reduce: State.() -> State) { _uiState.value = currentState.reduce() }
-    protected fun sendEffect(effect: Effect) { viewModelScope.launch { _uiEffect.emit(effect) } }
+@Composable
+fun SettingsRoute(onNavigateUp: () -> Unit, onLanguageChanged: () -> Unit,
+                  viewModel: SettingsViewModel = hiltViewModel()) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.restartRequired) {
+        if (state.restartRequired) {
+            viewModel.onRestartHandled()
+            onLanguageChanged()
+        }
+    }
+
+    SettingsScreen(
+        state = state,
+        onBackClick = onNavigateUp,
+        onThemeSelected = viewModel::onThemeSelected,
+        onLanguageSelected = viewModel::onLanguageSelected,
+        // ...
+    )
 }
 ```
 
@@ -244,14 +278,30 @@ abstract class BaseViewModel<State : BaseUiState, Event : BaseUiEvent, Effect : 
 
 ### 2. Dependency Injection (Hilt) Example
 
-**RepositoryModule with @Binds:**
+**A repository needs no module, just `@Inject`:**
+```kotlin
+@Singleton
+class MovieDetailsRepository @Inject constructor(
+    private val movieApiService: MovieApiService,
+    private val languageRepository: LanguageRepository,
+) {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getMovieDetails(movieId: Int): Flow<Resource<MovieDetails>> =
+        languageRepository.languageFlow.flatMapLatest {
+            safeApiCall { movieApiService.getMovieDetails(movieId) }
+                .map { resource -> resource.mapSuccess { dto -> dto.toDomain() } }
+        }
+}
+```
+
+**`@Provides` only for what Hilt cannot construct:**
 ```kotlin
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
-    @Binds @Singleton
-    abstract fun bindHomeRepository(impl: HomeRepositoryImpl): HomeRepository
-    // ... other bindings
+object MovieNetworkModule {
+    @Provides @Singleton
+    fun provideMovieApiService(retrofit: Retrofit): MovieApiService =
+        retrofit.create(MovieApiService::class.java)
 }
 ```
 
@@ -259,7 +309,31 @@ abstract class RepositoryModule {
 
 ### 3. Type-Safe Navigation Example
 
-**AppNavHost decoupling navigation:**
+**Routes are plain `@Serializable` types:**
+```kotlin
+@Serializable
+data class MovieDetailsScreen(val movieId: Int)
+```
+
+**The nav graph turns navigation into lambdas; the route knows nothing about `NavController`:**
+```kotlin
+fun NavGraphBuilder.splashNavGraph(navController: NavController) {
+    navigation<SplashFeatureGraph>(startDestination = SplashScreen) {
+        composable<SplashScreen> {
+            SplashRoute(
+                onNavigateToHome = {
+                    navController.navigate(MoviesFeatureGraph) {
+                        popUpTo(SplashFeatureGraph) { inclusive = true }
+                    }
+                },
+                onNavigateToWelcome = { /* ... */ },
+            )
+        }
+    }
+}
+```
+
+**AppNavHost composes the graphs:**
 ```kotlin
 @Composable
 fun AppNavHost(navController: NavHostController, ...) {
@@ -268,6 +342,23 @@ fun AppNavHost(navController: NavHostController, ...) {
         moviesNavGraph(navController, onLanguageChanged = { activity?.recreate() })
         authNavGraph(navController)
     }
+}
+```
+
+---
+
+### 3b. Testing a ViewModel
+
+Repositories are replaced with Mockito mocks that return a controllable `MutableSharedFlow`, and `MainDispatcherRule` swaps `Dispatchers.Main`:
+```kotlin
+@Test
+fun `loading with cached content does not flash the skeleton`() = runTest {
+    val viewModel = createViewModel()
+    homeData.emit(Resource.Success(content))
+
+    homeData.emit(Resource.Loading)
+
+    assertFalse(viewModel.uiState.value.isLoading)
 }
 ```
 

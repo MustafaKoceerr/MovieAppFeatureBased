@@ -100,3 +100,27 @@ C) KARAR OZETI
 - UseCase yalnizca gercek is mantigi varsa; digerleri ViewModel -> Repository.
 - Calisma: refactor/mad-mvvm branch'i, adim basi commit.
 - Detayli adimlar: MovieAppPlan.md
+
+
+D) UYGULAMA SONUCU (refactor/mad-mvvm)
+--------------------------------------
+Cozuldu:
+  B1  Moduller 11 -> 3 (:app, :core-data, :core-ui); MVI -> MVVM; BaseViewModel/BaseUi*/UiContract,
+      pass-through nav event'leri, SharedFlow effect'ler kaldirildi (tek seferlik olaylar state oldu).
+  B2  Flow<PagingData> state disina alindi; Home'daki manuel Job yonetimi sade tutuldu.
+  B3  Tek satirlik UseCase'ler ve tek implementasyonlu interface'ler silindi (GetHomeScreenDataUseCase kaldi);
+      AppDatabase artik feature'larla ayni modulde; paging/data import'lari domain'den temizlendi.
+  B4  Mapper tekrarlari birlesti; sabit Ingilizce fallback'ler 7 dilde string resource oldu; Gson kaldirildi;
+      SocketTimeoutException artik Network.Timeout.
+  B5  safeApiCall sabit dispatcher'dan kurtuldu (Retrofit suspend zaten main-safe).
+  B6  local.properties/API_KEY guvenli okunuyor; build config tekrarlari, cift room, safeargs, catalog duzeni.
+  B7  Log'larda api_key/session_id/request_token maskeleniyor; AuthCallbackActivity Log.d kaldirildi.
+  B8  SettingsContact/ListContract ve KEY_* sabitleri silindi.
+  B9  22 unit test (Home/Details/Search VM, log maskeleme, hata eslemesi); 6 yeni ekran icin @Preview.
+
+Acik kalanlar:
+  - MainActivity.attachBaseContext icindeki runBlocking (cihazda dogrulanabildiginde
+    AppCompatDelegate.setApplicationLocales'e gecis).
+  - Kalan ViewModel'ler (List, Settings, Welcome, Account), repository ve Compose UI testleri.
+  - Release build'de proguard/R8 kurallari test edilmedi (isMinifyEnabled=true).
+  - Tum degisiklikler yalnizca derleme + unit test ile dogrulandi; cihazda manuel akis denenmedi.

@@ -1,12 +1,12 @@
 # Movie Discovery App
 ### Modern Mobile Architecture & Clean Development Practices
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.0-blue.svg)](https://kotlinlang.org)
-[![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-2024.02.00-green.svg)](https://developer.android.com/jetpack/compose)
-[![Clean Architecture](https://img.shields.io/badge/Architecture-Clean%20+%20MVI-orange.svg)](https://developer.android.com/topic/architecture)
-[![Modular Design](https://img.shields.io/badge/Design-Feature%20Based%20Modules-purple.svg)](https://developer.android.com/guide/app-bundle/play-feature-delivery)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.1.0-blue.svg)](https://kotlinlang.org)
+[![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-BOM%202025.06.01-green.svg)](https://developer.android.com/jetpack/compose)
+[![Architecture](https://img.shields.io/badge/Architecture-MAD%20+%20MVVM-orange.svg)](https://developer.android.com/topic/architecture)
+[![Structure](https://img.shields.io/badge/Structure-Package%20by%20Feature-purple.svg)](https://developer.android.com/topic/modularization/patterns)
 
-A modern, modular, and robust movie discovery application built with Clean Architecture, best practices, and a focus on scalability and maintainability.
+A movie discovery app built following Modern Android Development (MAD) guidance: a simple MVVM architecture with unidirectional data flow, a small number of modules, and package-by-feature organization.
 
 ---
 
@@ -147,7 +147,7 @@ A modern, modular, and robust movie discovery application built with Clean Archi
 
 ## 🚀 Overview
 
-Movie Discovery App allows users to explore, search, and discover movies with a beautiful, fast, and offline-first experience. The app is designed with a strong focus on modularity, scalability, and clean code principles.
+Movie Discovery App allows users to explore, search, and discover movies with a beautiful, fast, and offline-first experience. The app favors simplicity: each screen has one ViewModel exposing one `UiState`, and abstractions are only added where they earn their place.
 
 ---
 
@@ -169,17 +169,19 @@ Movie Discovery App allows users to explore, search, and discover movies with a 
 - **Shimmer loading animation on every screen for network data**
 
 ### Architectural Highlights
-- Clean Architecture with strict separation of concerns
-- Modularized project structure (feature & core modules)
-- Type-safe, encapsulated navigation via navigation-contracts
+- Modern MVVM: one `StateFlow<UiState>` per screen, plain ViewModel functions for user actions
+- One-shot UI events (navigate, open browser, restart) are modeled as state and consumed by the route, so they are never lost
+- Stateless screens (state hoisting): `Route` composables connect ViewModel and navigation, `Screen` composables only render
+- Three Gradle modules (`app`, `core-data`, `core-ui`) with package-by-feature inside `app`
+- Type-safe navigation with `@Serializable` routes; screens receive plain navigation lambdas
+- UseCases only where there is real logic (e.g. combining the home categories); otherwise ViewModel → Repository
 - Centralized, unified database (Room)
 - AppException: unified error handling, surfaced to UI via core-ui
 - Offline-first data strategy for home/list screens (cache, fast load)
 - Pagination in search & list screens
-- Language & API key as interceptors for network requests
+- Language & API key as interceptors for network requests; secrets are redacted from debug logs
 - Enum-based language architecture: add a new language with a single line
-- UI contracts: consistent, maintainable screen logic
-- Best practices applied, pitfalls avoided
+- Unit tests for ViewModels (coroutines-test, Turbine, Mockito) and the network error/log helpers
 - Shimmer loading animation for all network-fetched data (user always sees a polished loading state)
 - Smooth transitions between screens and UI states
 
@@ -195,53 +197,66 @@ Movie Discovery App allows users to explore, search, and discover movies with a 
 - **DataStore** (Preferences) `1.1.7`
 - **Kotlin Coroutines & Flow** (Async, reactive) `1.9.0`
 - **Coil** (Image loading) `3.2.0`
-- **JUnit** `4.13.2`, **Mockito** `5.8.0`, **Espresso** `3.6.1` (Testing)
-- **Modular Gradle setup**
+- **JUnit** `4.13.2`, **Mockito** `5.20.0`, **Turbine** `1.0.0`, **kotlinx-coroutines-test** (Testing)
 
 ---
 
 ## 🏗️ Project Structure
 
 ```
-app/
-core-domain/
-core-ui/
-core-network/
-core-database/
-core-preferences/
-core-android/
-feature-movies/
-feature-auth/
-feature-splash/
-navigation-contracts/
+app/                      Application, MainActivity, NavHost, all features, AppDatabase
+  └─ feature/
+       splash/  auth/  home/  list/  details/  search/  settings/
+       movies/            (shared by the movie screens: API, DTOs, entities, mappers, models)
+core-data/                Resource/AppException, network, DataStore preferences, Room/Paging base classes
+core-ui/                  Theme, shared Compose components, error UI
+```
+
+Inside a feature the code is split by layer only where it helps:
+
+```
+feature/details/
+  data/repository/        MovieDetailsRepository
+  presentation/
+    screen/               MovieDetailsRoute (wires ViewModel + navigation), MovieDetailsScreen (stateless UI)
+    viewmodel/            MovieDetailsViewModel + MovieDetailsUiState
+    components/           screen-specific composables
 ```
 
 ### 📦 Module Responsibilities
 
-- **`app`**: *Application entry, DI setup, navigation host, global config*
-- **`core-domain`**: *Business logic, domain models, contracts*
-- **`core-ui`**: *Shared UI components, themes, error UI, UI contracts*
-- **`core-network`**: *Network layer, API config, interceptors*
-- **`core-database`**: *Room DB, DAOs, caching*
-- **`core-preferences`**: *DataStore, user preferences (theme, language, token)*
-- **`core-android`**: *Android-specific utilities, base ViewModel*
-- **`feature-movies`**: *Home, list, details, search screens & logic*
-- **`feature-auth`**: *Authentication (login, logout, token flow)*
-- **`feature-splash`**: *Splash screen, initial loading*
-- **`navigation-contracts`**: *Type-safe navigation contracts, decoupled navigation*
+- **`app`**: *Entry point, navigation graph, DI setup, every feature (screens, ViewModels, repositories, API, Room entities)*
+- **`core-data`**: *Shared data foundation: `Resource`, `AppException`, Retrofit/OkHttp setup and interceptors, `safeApiCall`, DataStore preferences (theme, language, session), Room/Paging base classes*
+- **`core-ui`**: *Material 3 theme, loading/shimmer and error components shared by all screens*
+
+> The project started as a multi-module experiment (11 modules, MVI). It was later simplified: the project is small, so features live in one module and are separated by package instead.
 
 ---
 
 ## 🧩 Architectural Summary
 
-- **Clean Architecture**: *Strict separation (domain, data, presentation)*
-- **MVI Pattern**: *Unidirectional data flow, UI contracts for all screens*
-- **Dependency Injection**: *Hilt for scalable, testable DI*
-- **Modularization**: *Each feature/core is a separate Gradle module*
-- **Offline-First**: *Caching, fast load, pagination*
-- **Type-Safe Navigation**: *navigation-contracts for decoupled, safe navigation*
-- **Unified Error Handling**: *AppException, surfaced to UI*
-- **Best Practices**: *Naming, file structure, code quality*
+- **MVVM + UDF**: *`UI (Screen) → ViewModel (UiState) → [UseCase, only if needed] → Repository → Retrofit / Room / DataStore`*
+- **Dependency Injection**: *Hilt (`@HiltViewModel`, constructor injection, `@Provides` for Retrofit/Room)*
+- **Offline-First**: *Room as the source of truth, Paging 3 `RemoteMediator` for lists*
+- **Type-Safe Navigation**: *`@Serializable` routes; screens get navigation lambdas, not a `NavController`*
+- **Unified Error Handling**: *`AppException`, mapped to UI by `core-ui`*
+- **Testing**: *ViewModel unit tests with fake flows, Turbine and virtual time*
+
+---
+
+## 🚀 Getting Started
+
+1. Get a TMDB API key and add it to `local.properties`:
+   ```
+   API_KEY=your_tmdb_api_key
+   ```
+   Without it the app builds but API calls fail.
+2. Use a JDK between 17 and 23 for Gradle (Gradle 8.11 does not support newer JDKs). Android Studio's bundled JDK works.
+3. Build and test:
+   ```
+   ./gradlew assembleDebug
+   ./gradlew testDebugUnitTest
+   ```
 
 ---
 
@@ -250,11 +265,13 @@ navigation-contracts/
 - ✅ **Multi-language support** *(add new language via enum)*
 - ✅ **Offline-first home/list screens**
 - ✅ **Unified error handling**
-- ✅ **Modular navigation**
+- ✅ **Type-safe navigation**
+- ✅ **MVVM migration with ViewModel unit tests**
 - 🔜 **Profile feature** *(planned)*
 - 🔜 **Push notifications** *(planned)*
 - 🔜 **Favorites and rating feature for logged-in users** *(planned)*
-- 🔜 **Comprehensive testing** *(planned)*
+- 🔜 **Broader test coverage (remaining ViewModels, repositories, UI tests)** *(planned)*
+- 🔜 **Per-app language via `AppCompatDelegate.setApplicationLocales`** *(planned; removes the startup `runBlocking`)*
 - 🔜 **Onboarding flow with ViewPager2** *(planned)*
 
 

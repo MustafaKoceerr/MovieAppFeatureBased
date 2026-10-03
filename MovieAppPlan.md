@@ -27,7 +27,7 @@ Navigasyon composable'dan lambda ile; ViewModel'den geçmez.
 - [x] 5. Domain sadeleştirme: 7 UseCase silindi (yalnızca `GetHomeScreenDataUseCase` kaldı, gerçek birleştirme mantığı var); repository interface'leri kaldırılıp somut sınıf oldu, dil değişince yeniden yükleme repository'ye taşındı; auth'ta `LoginRepository`/`AccountRepository` → tek `AuthRepository`; mapper tekrarları tek yardımcıda birleşti; sabit İngilizce fallback'ler string resource'a (7 dil) taşındı
 - [x] 6. Kalite/güvenlik: OkHttp loglarında `api_key`/`session_id`/`request_token` maskeleme (`redactSecrets`), `AuthCallbackActivity` `Log.d` kaldırıldı, `safeApiCall`'daki sabit `Dispatchers.IO` kaldırıldı (Retrofit suspend zaten main-safe), `SocketTimeoutException` → `Network.Timeout`. Yükleme state'i: `BaseUiState` kalkınca çift modelleme kendiliğinden bitti (`Resource.Loading` repository sinyali, `isLoading` UI state). **Yapılmadı:** `MainActivity.attachBaseContext` içindeki `runBlocking` (cihazda doğrulayamadığım için riskli; `AppCompatDelegate.setApplicationLocales` geçişi gerektirir, kullanıcı kararına bırakıldı)
 - [x] 7. Testler: Home/Details/Search ViewModel (coroutines-test + Turbine + Mockito, 14 test) ve core-data (log maskeleme + hata eşleme, 8 test); `@Preview`: Home (içerik + yükleme), Details (içerik + yükleme), Settings, Account (misafir + giriş yapılmış), Splash, Search ilk ekranı. **Not:** Details/List ViewModel'leri route argümanını `toRoute` yerine `Screen::alan.name` ile okuyor (JVM testinde Android `Bundle` gerektirmemesi için); Mockito 5.20.0'a yükseltildi
-- [ ] 8. README.md / DETAILS.md güncelle
+- [x] 8. README.md / DETAILS.md güncelle
 
 ## Doğrulama
 - Her adım: `./gradlew assembleDebug`
