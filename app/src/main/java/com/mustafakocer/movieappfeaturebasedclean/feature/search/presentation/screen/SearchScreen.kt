@@ -5,73 +5,58 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.paging.compose.collectAsLazyPagingItems
-import com.mustafakocer.movieappfeaturebasedclean.feature.search.presentation.components.SearchInitialPrompt
-import com.mustafakocer.movieappfeaturebasedclean.feature.search.presentation.components.SearchTopBar
-import com.mustafakocer.movieappfeaturebasedclean.feature.search.presentation.contract.SearchEvent
-import com.mustafakocer.movieappfeaturebasedclean.feature.search.presentation.contract.SearchUiState
+import androidx.paging.compose.LazyPagingItems
+import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.model.MovieListItem
 import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.presentation.components.commonpagination.HandlePagingLoadState
 import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.presentation.components.list.PaginatedMovieList
+import com.mustafakocer.movieappfeaturebasedclean.feature.search.presentation.components.SearchInitialPrompt
+import com.mustafakocer.movieappfeaturebasedclean.feature.search.presentation.components.SearchTopBar
+import com.mustafakocer.movieappfeaturebasedclean.feature.search.presentation.viewmodel.MIN_SEARCH_QUERY_LENGTH
 
 /**
- * The main stateless UI component for the movie search screen.
- *
- * This composable is responsible for laying out the screen's visual elements based on the
- * provided [state] and forwarding user interactions to the ViewModel via the [onEvent] callback.
- * It contains no business logic itself.
- *
- * @param state The current [SearchUiState] to render.
- * @param onEvent A function to call when a user interaction occurs.
- * @param snackbarHostState The state manager for displaying Snackbars.
+ * Stateless search screen: a search bar on top and either the initial prompt (query too short)
+ * or the paged results below it.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    state: SearchUiState,
-    onEvent: (SearchEvent) -> Unit,
-    snackbarHostState: SnackbarHostState,
+    searchQuery: String,
+    searchResults: LazyPagingItems<MovieListItem>,
+    onQueryChange: (String) -> Unit,
+    onClearSearch: () -> Unit,
+    onSearchSubmitted: () -> Unit,
+    onBackClick: () -> Unit,
+    onMovieClick: (movieId: Int) -> Unit,
 ) {
+    val canSearch = searchQuery.trim().length >= MIN_SEARCH_QUERY_LENGTH
+
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             SearchTopBar(
-                searchQuery = state.searchQuery,
-                onQueryChange = { query -> onEvent(SearchEvent.QueryChanged(query)) },
-                onClearSearch = { onEvent(SearchEvent.ClearSearch) },
-                onNavigateBack = { onEvent(SearchEvent.BackClicked) },
-                onSearchSubmitted = { onEvent(SearchEvent.SearchSubmitted) }
+                searchQuery = searchQuery,
+                onQueryChange = onQueryChange,
+                onClearSearch = onClearSearch,
+                onNavigateBack = onBackClick,
+                onSearchSubmitted = onSearchSubmitted,
             )
         }
     ) { paddingValues ->
-        val lazyMovieItems = state.searchResults.collectAsLazyPagingItems()
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-
-            if (state.showInitialPrompt || !state.canSearch) {
-                SearchInitialPrompt()
-            } else {
-                // Architectural Decision: `HandlePagingLoadState` is a shared, reusable composable
-                // that centralizes the logic for displaying loading spinners, error messages, or
-                // an empty state based on the `LoadState` from the Paging library. This keeps
-                // this screen-level composable clean and focused on the "success" state.
-                HandlePagingLoadState(lazyPagingItems = lazyMovieItems) {
-                    // This content lambda is only invoked when the paging data is successfully loaded.
-                    // It displays the actual list of movies using another shared component.
+            if (canSearch) {
+                HandlePagingLoadState(lazyPagingItems = searchResults) {
                     PaginatedMovieList(
-                        lazyPagingItems = lazyMovieItems,
-                        onMovieClick = { movie ->
-                            onEvent(SearchEvent.MovieClicked(movie.id))
-                        }
+                        lazyPagingItems = searchResults,
+                        onMovieClick = { movie -> onMovieClick(movie.id) }
                     )
                 }
+            } else {
+                SearchInitialPrompt()
             }
         }
     }

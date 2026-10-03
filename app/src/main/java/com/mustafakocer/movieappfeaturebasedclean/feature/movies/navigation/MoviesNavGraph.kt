@@ -9,7 +9,6 @@ import com.mustafakocer.movieappfeaturebasedclean.feature.home.presentation.scre
 import com.mustafakocer.movieappfeaturebasedclean.feature.list.presentation.screen.MovieListRoute
 import com.mustafakocer.movieappfeaturebasedclean.feature.search.presentation.screen.SearchRoute
 import com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.screen.SettingsRoute
-import com.mustafakocer.movieappfeaturebasedclean.navigation.actions.movies.SearchNavActions
 import com.mustafakocer.movieappfeaturebasedclean.navigation.AccountScreen
 import com.mustafakocer.movieappfeaturebasedclean.navigation.HomeScreen
 import com.mustafakocer.movieappfeaturebasedclean.navigation.MovieDetailsScreen
@@ -64,16 +63,10 @@ fun NavGraphBuilder.moviesNavGraph(
         }
 
         composable<SearchScreen> {
-            val navActions = object : SearchNavActions {
-                override fun navigateToMovieDetails(movieId: Int) {
-                    navController.navigate(MovieDetailsScreen(movieId))
-                }
-
-                override fun navigateUp() {
-                    navController.navigateUp()
-                }
-            }
-            SearchRoute(navActions = navActions)
+            SearchRoute(
+                onNavigateToMovieDetails = { navController.navigate(MovieDetailsScreen(it)) },
+                onNavigateUp = { navController.navigateUp() },
+            )
         }
 
         composable<SettingsScreen> {
