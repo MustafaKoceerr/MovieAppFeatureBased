@@ -118,13 +118,7 @@ dependencies {
     implementation(project(":core-android"))
     implementation(project(":core-data"))
 
-    // Feature Modülleri
-    implementation(project(":feature-movies"))
-    implementation(project(":feature-auth"))
-    implementation(project(":feature-splash"))
-    implementation(project(":navigation-contracts"))
-
-    // Hilt (Uygulama seviyesi)
+    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
@@ -133,12 +127,19 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat) // Genellikle Activity temaları için hala gereklidir
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     // ROOM
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
+    // Paging (collectAsLazyPagingItems)
+    implementation(libs.paging.compose)
+
+    // Görsel yükleme
+    implementation(libs.coil.network.okhttp)
+    implementation(libs.coil.compose)
 
     // --- TEST ---
     testImplementation(libs.junit)

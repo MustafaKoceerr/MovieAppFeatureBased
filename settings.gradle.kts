@@ -24,9 +24,5 @@ dependencyResolutionManagement {
 rootProject.name = "MovieAppFeatureBasedClean"
 include(":app")
 include(":core-ui")
-include(":feature-movies")
-include(":navigation-contracts")
 include(":core-data")
-include(":feature-auth")
 include(":core-android")
-include(":feature-splash")
