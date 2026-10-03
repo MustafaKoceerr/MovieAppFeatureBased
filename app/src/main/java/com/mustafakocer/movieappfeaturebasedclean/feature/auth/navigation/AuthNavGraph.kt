@@ -7,8 +7,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.mustafakocer.movieappfeaturebasedclean.feature.auth.account.presentation.screen.AccountRoute
 import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.presentation.screen.WelcomeRoute
-import com.mustafakocer.movieappfeaturebasedclean.navigation.actions.auth.AccountNavActions
-import com.mustafakocer.movieappfeaturebasedclean.navigation.actions.auth.WelcomeNavActions
 import com.mustafakocer.movieappfeaturebasedclean.navigation.AccountScreen
 import com.mustafakocer.movieappfeaturebasedclean.navigation.AuthFeatureGraph
 import com.mustafakocer.movieappfeaturebasedclean.navigation.MoviesFeatureGraph
@@ -33,34 +31,27 @@ fun NavGraphBuilder.authNavGraph(
         startDestination = WelcomeScreen
     ) {
         composable<WelcomeScreen> {
-            val navActions = object : WelcomeNavActions {
-                override fun navigateToHome() {
+            WelcomeRoute(
+                onNavigateToHome = {
                     navController.navigate(MoviesFeatureGraph) {
-                        // Clear the auth graph from the back stack upon successful login.
                         popUpTo(AuthFeatureGraph) { inclusive = true }
                     }
                 }
-            }
-            WelcomeRoute(navActions = navActions)
+            )
         }
 
         composable<AccountScreen> {
-            val navActions = object : AccountNavActions {
-                override fun navigateToWelcome() {
+            AccountRoute(
+                onNavigateToWelcome = {
                     navController.navigate(WelcomeScreen) {
-                        // On logout, clear the entire back stack and start fresh at the Welcome screen.
                         popUpTo(navController.graph.findStartDestination().id) {
                             inclusive = true
                         }
                         launchSingleTop = true
                     }
-                }
-
-                override fun navigateUp() {
-                    navController.navigateUp()
-                }
-            }
-            AccountRoute(navActions = navActions)
+                },
+                onNavigateUp = { navController.navigateUp() }
+            )
         }
     }
 }

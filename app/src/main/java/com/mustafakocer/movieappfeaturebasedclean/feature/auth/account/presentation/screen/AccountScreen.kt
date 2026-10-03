@@ -36,32 +36,35 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mustafakocer.core_ui.component.util.bounceClick
 import com.mustafakocer.movieappfeaturebasedclean.R
-import com.mustafakocer.movieappfeaturebasedclean.feature.auth.account.presentation.contract.AccountEvent
-import com.mustafakocer.movieappfeaturebasedclean.feature.auth.account.presentation.contract.AccountUiState
+import com.mustafakocer.movieappfeaturebasedclean.feature.auth.account.presentation.viewmodel.AccountUiState
 
 /**
  * A purely visual, "dumb" component that displays the user's account information or a guest view.
  *
  * @param state The current UI state to render.
- * @param onEvent A lambda to propagate user interactions up to the ViewModel.
+ * @param onBackClick Called when the back arrow is pressed.
+ * @param onLoginClick Called when a guest taps the login button.
+ * @param onLogoutClick Called when a logged-in user taps logout.
  *
  * Architectural Note:
  * This Composable is responsible only for the presentation of the Account screen. It is driven
- * entirely by the `AccountUiState` and communicates user actions via the `onEvent` callback.
+ * entirely by the `AccountUiState` and communicates user actions via callbacks.
  * This makes it stateless, easy to preview, and decoupled from business logic.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountScreen(
     state: AccountUiState,
-    onEvent: (AccountEvent) -> Unit,
+    onBackClick: () -> Unit,
+    onLoginClick: () -> Unit,
+    onLogoutClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(R.string.account_title)) },
                 navigationIcon = {
-                    IconButton(onClick = { onEvent(AccountEvent.BackClicked) }) {
+                    IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.back_button_desc)
@@ -82,9 +85,9 @@ fun AccountScreen(
             if (state.isLoggedIn) {
                 LoggedInProfileCard()
                 Spacer(modifier = Modifier.height(16.dp))
-                LogoutButton(onLogoutClick = { onEvent(AccountEvent.LogoutClicked) })
+                LogoutButton(onLogoutClick = onLogoutClick)
             } else {
-                GuestProfileCard(onLoginClick = { onEvent(AccountEvent.LoginClicked) })
+                GuestProfileCard(onLoginClick = onLoginClick)
             }
         }
     }

@@ -37,7 +37,7 @@ import com.mustafakocer.core_ui.R.drawable.img_app_logo as appLogo
 import com.mustafakocer.core_ui.component.util.bounceClick
 import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
 import com.mustafakocer.movieappfeaturebasedclean.R
-import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.presentation.contract.WelcomeUiState
+import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.presentation.viewmodel.WelcomeUiState
 import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.presentation.screen.WelcomeScreen
 
 /**
@@ -202,6 +202,6 @@ private fun GuestButton(
 @Composable
 private fun WelcomeScreenPreview() {
     MovieDiscoveryTheme {
-        WelcomeScreen(WelcomeUiState(), {})
+        WelcomeScreen(WelcomeUiState(), {}, {})
     }
 }

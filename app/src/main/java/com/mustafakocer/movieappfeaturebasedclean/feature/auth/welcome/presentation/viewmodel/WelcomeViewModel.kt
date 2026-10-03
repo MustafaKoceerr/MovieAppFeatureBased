@@ -1,107 +1,75 @@
 package com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.presentation.viewmodel
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mustafakocer.core_android.presentation.BaseViewModel
+import com.mustafakocer.core_domain.exception.AppException
 import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.movieappfeaturebasedclean.feature.auth.shared.util.AuthConstants
 import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.domain.handler.AuthCallbackHandler
 import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.domain.usecase.CreateRequestTokenUseCase
 import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.domain.usecase.CreateSessionUseCase
-import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.presentation.contract.WelcomeEffect
-import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.presentation.contract.WelcomeEvent
-import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.presentation.contract.WelcomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 
-/**
- * Manages the user authentication flow for the Welcome screen.
- *
- * @param createRequestTokenUseCase For initiating the login process by getting a request token.
- * @param createSessionUseCase For finalizing the login with an approved token.
- * @param authCallbackHandler A bridge to receive the callback token from the web auth flow.
- *
- * Architectural Note:
- * This ViewModel orchestrates the entire multi-step TMDB login process. Its key design features are:
- * 1.  **Decoupling with a Handler:** It uses `AuthCallbackHandler` to receive the result from the
- *     web authentication flow. This decouples the ViewModel from the Android component (e.g., an
- *     Activity) that captures the deep link, preventing lifecycle issues and direct dependencies.
- * 2.  **Centralized Resource Handling:** A private extension function, `handleResource`, is used
- *     to process `Resource` streams. This avoids repetitive `when` blocks and centralizes the
- *     logic for updating loading and error states, leading to cleaner and more maintainable code.
- */
+data class WelcomeUiState(
+    val isLoading: Boolean = false,
+    val error: AppException? = null,
+    /** TMDB approval page; the route opens it and calls [WelcomeViewModel.onLoginUrlHandled]. */
+    val loginUrl: String? = null,
+    /** True once a session was created; the route navigates to home. */
+    val loggedIn: Boolean = false,
+)
+
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
     private val createRequestTokenUseCase: CreateRequestTokenUseCase,
     private val createSessionUseCase: CreateSessionUseCase,
     private val authCallbackHandler: AuthCallbackHandler,
-) : BaseViewModel<WelcomeUiState, WelcomeEvent, WelcomeEffect>(
-    initialState = WelcomeUiState()
-) {
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(WelcomeUiState())
+    val uiState: StateFlow<WelcomeUiState> = _uiState.asStateFlow()
 
     init {
-        // Immediately start listening for an approved token from the web auth callback.
-        listenForAuthCallback()
-    }
-
-    override fun onEvent(event: WelcomeEvent) {
-        when (event) {
-            is WelcomeEvent.LoginClicked -> handleLoginClick()
-            is WelcomeEvent.GuestClicked -> sendEffect(WelcomeEffect.NavigateToHome)
-            is WelcomeEvent.DismissError -> setState { copy(error = null) }
-        }
-    }
-
-    private fun handleLoginClick() {
-        createRequestTokenUseCase()
-            .handleResource(
-                onSuccess = { requestToken ->
-                    val tmdbAuthUrl = "${AuthConstants.TMDB_AUTHENTICATION_URL}$requestToken?redirect_to=${AuthConstants.REDIRECT_URL}"
-                    sendEffect(WelcomeEffect.NavigateToTmdbLogin(url = tmdbAuthUrl))
-                }
-            )
-    }
-
-    private fun listenForAuthCallback() {
+        // The TMDB redirect delivers the approved token through AuthCallbackActivity.
         authCallbackHandler.tokenFlow
             .onEach { approvedToken ->
-                // An approved token has been received; now create a session with it.
-                createSessionUseCase(approvedToken)
-                    .handleResource(
-                        onSuccess = {
-                            // Session created successfully, navigate to the main app content.
-                            sendEffect(WelcomeEffect.NavigateToHome)
-                        }
-                    )
+                createSessionUseCase(approvedToken).collectResource {
+                    _uiState.update { it.copy(loggedIn = true) }
+                }
             }
             .launchIn(viewModelScope)
     }
 
-    /**
-     * A private extension function to centralize the handling of `Resource` streams.
-     * This reduces boilerplate by managing the `when` block for `Loading`, `Success`,
-     * and `Error` states and standardizing UI state updates.
-     *
-     * @param T The type of data within the `Resource.Success` state.
-     * @param onSuccess A lambda to be executed only when the resource is `Success`.
-     */
-    private fun <T> Flow<Resource<T>>.handleResource(
-        onSuccess: (data: T) -> Unit
-    ) {
-        this.onEach { resource ->
+    fun onLoginClick() {
+        createRequestTokenUseCase().collectResource { requestToken ->
+            val url = "${AuthConstants.TMDB_AUTHENTICATION_URL}$requestToken" +
+                "?redirect_to=${AuthConstants.REDIRECT_URL}"
+            _uiState.update { it.copy(loginUrl = url) }
+        }
+    }
+
+    fun onLoginUrlHandled() {
+        _uiState.update { it.copy(loginUrl = null) }
+    }
+
+    private fun <T> Flow<Resource<T>>.collectResource(onSuccess: (T) -> Unit) {
+        onEach { resource ->
             when (resource) {
-                is Resource.Loading -> {
-                    setState { copy(isLoading = true, error = null) }
-                }
+                is Resource.Loading -> _uiState.update { it.copy(isLoading = true, error = null) }
                 is Resource.Success -> {
-                    setState { copy(isLoading = false) }
+                    _uiState.update { it.copy(isLoading = false) }
                     onSuccess(resource.data)
                 }
-                is Resource.Error -> {
-                    setState { copy(isLoading = false, error = resource.exception) }
-                }
+                is Resource.Error ->
+                    _uiState.update { it.copy(isLoading = false, error = resource.exception) }
             }
         }.launchIn(viewModelScope)
     }

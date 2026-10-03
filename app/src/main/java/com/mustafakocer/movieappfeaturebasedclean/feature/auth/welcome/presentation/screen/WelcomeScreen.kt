@@ -8,32 +8,33 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.presentation.components.WelcomeContent
-import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.presentation.contract.WelcomeEvent
-import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.presentation.contract.WelcomeUiState
+import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.presentation.viewmodel.WelcomeUiState
 
 /**
  * A purely visual, "dumb" component that displays the main welcome UI.
  *
  * @param state The current UI state to render.
- * @param onEvent A lambda to propagate user interactions up to the ViewModel.
+ * @param onLoginClick Called when the login button is pressed.
+ * @param onGuestClick Called when the guest button is pressed.
  *
  * Architectural Note:
  * This Composable acts as a simple container and theming wrapper. Its primary responsibility
  * is to delegate the actual UI rendering to more specific components like `WelcomeContent`.
  * It remains stateless and is driven entirely by the `state` object, forwarding all user
- * actions through the `onEvent` callback. This separation of concerns makes the UI hierarchy
+ * actions through callbacks. This separation of concerns makes the UI hierarchy
  * cleaner and easier to manage.
  */
 @Composable
 fun WelcomeScreen(
     state: WelcomeUiState,
-    onEvent: (WelcomeEvent) -> Unit,
+    onLoginClick: () -> Unit,
+    onGuestClick: () -> Unit,
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         WelcomeContent(
             state = state,
-            onLoginClick = { onEvent(WelcomeEvent.LoginClicked) },
-            onGuestClick = { onEvent(WelcomeEvent.GuestClicked) },
+            onLoginClick = onLoginClick,
+            onGuestClick = onGuestClick,
             modifier = Modifier
                 .fillMaxSize()
                 .background(
