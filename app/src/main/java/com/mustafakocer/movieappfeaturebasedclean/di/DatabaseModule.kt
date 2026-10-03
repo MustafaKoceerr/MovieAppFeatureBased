@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.mustafakocer.core_database.dao.RemoteKeyDao
-import com.mustafakocer.feature_movies.home.data.local.dao.HomeMovieDao
-import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
+import com.mustafakocer.movieappfeaturebasedclean.feature.home.data.local.dao.HomeMovieDao
+import com.mustafakocer.movieappfeaturebasedclean.feature.list.data.local.dao.MovieListDao
 import com.mustafakocer.movieappfeaturebasedclean.data.database.AppDatabase
 import com.mustafakocer.movieappfeaturebasedclean.data.database.DatabaseConstants
 import dagger.Module

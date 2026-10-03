@@ -5,10 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.mustafakocer.feature_auth.navigation.authNavGraph
-import com.mustafakocer.feature_movies.navigation.moviesNavGraph
-import com.mustafakocer.feature_splash.navigation.splashNavGraph
-import com.mustafakocer.navigation_contracts.navigation.SplashFeatureGraph
+import com.mustafakocer.movieappfeaturebasedclean.feature.auth.navigation.authNavGraph
+import com.mustafakocer.movieappfeaturebasedclean.feature.movies.navigation.moviesNavGraph
+import com.mustafakocer.movieappfeaturebasedclean.feature.splash.navigation.splashNavGraph
+import com.mustafakocer.movieappfeaturebasedclean.navigation.SplashFeatureGraph
 
 /**
  * The main navigation host for the entire application.

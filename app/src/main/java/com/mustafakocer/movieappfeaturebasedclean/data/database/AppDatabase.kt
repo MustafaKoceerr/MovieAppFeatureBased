@@ -5,11 +5,11 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.mustafakocer.core_database.dao.RemoteKeyDao
 import com.mustafakocer.core_database.pagination.RemoteKey
-import com.mustafakocer.feature_movies.home.data.local.dao.HomeMovieDao
-import com.mustafakocer.feature_movies.list.data.local.dao.MovieListDao
-import com.mustafakocer.feature_movies.shared.data.local.converter.MovieConverters
-import com.mustafakocer.feature_movies.shared.data.local.entity.HomeMovieEntity
-import com.mustafakocer.feature_movies.shared.data.local.entity.MovieListEntity
+import com.mustafakocer.movieappfeaturebasedclean.feature.home.data.local.dao.HomeMovieDao
+import com.mustafakocer.movieappfeaturebasedclean.feature.list.data.local.dao.MovieListDao
+import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.data.local.converter.MovieConverters
+import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.data.local.entity.HomeMovieEntity
+import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.data.local.entity.MovieListEntity
 
 /**
  * Centralizes database metadata, such as the name and version, for easy management.

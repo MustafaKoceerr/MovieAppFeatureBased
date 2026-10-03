@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import com.mustafakocer.feature_auth.welcome.domain.handler.AuthCallbackHandler
+import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.domain.handler.AuthCallbackHandler
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
