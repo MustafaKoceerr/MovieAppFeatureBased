@@ -8,20 +8,22 @@ import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.viewmodel.SettingsViewModel
+import com.mustafakocer.movieappfeaturebasedclean.util.applyAppLanguage
 
 @Composable
 fun SettingsRoute(
     onNavigateUp: () -> Unit,
-    onLanguageChanged: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(state.restartRequired) {
-        if (state.restartRequired) {
-            viewModel.onRestartHandled()
-            onLanguageChanged()
+    // The language is already saved when this fires. Applying it recreates the activity, so the
+    // flag is cleared first.
+    LaunchedEffect(state.languageToApply) {
+        state.languageToApply?.let { language ->
+            viewModel.onLanguageApplied()
+            applyAppLanguage(language)
         }
     }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.MovieAppFeatureBasedClean" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.MovieAppFeatureBasedClean" parent="Theme.AppCompat.Light.NoActionBar" />
 
     <!-- YENİ TRANSPARAN TEMA -->
     <style name="Theme.Transparent" parent="android:Theme.Translucent.NoTitleBar">

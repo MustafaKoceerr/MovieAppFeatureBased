@@ -225,7 +225,7 @@ data class SettingsUiState(
     val currentLanguage: LanguagePreference = LanguagePreference.ENGLISH,
     val isSaving: Boolean = false,
     val error: AppException? = null,
-    val restartRequired: Boolean = false,
+    val languageToApply: LanguagePreference? = null,
 )
 
 @HiltViewModel
@@ -240,12 +240,12 @@ class SettingsViewModel @Inject constructor(
     fun onLanguageSelected(language: LanguagePreference) {
         val state = _uiState.value
         if (language == state.currentLanguage || state.isSaving) return
-        save(onSaved = { _uiState.update { it.copy(restartRequired = true) } }) {
+        save(onSaved = { _uiState.update { it.copy(languageToApply = language) } }) {
             languageRepository.setLanguage(language)
         }
     }
 
-    fun onRestartHandled() = _uiState.update { it.copy(restartRequired = false) }
+    fun onLanguageApplied() = _uiState.update { it.copy(languageToApply = null) }
     // ...
 }
 ```
@@ -253,14 +253,13 @@ class SettingsViewModel @Inject constructor(
 **Route: collects state, consumes the one-shot flag, stays free of business logic:**
 ```kotlin
 @Composable
-fun SettingsRoute(onNavigateUp: () -> Unit, onLanguageChanged: () -> Unit,
-                  viewModel: SettingsViewModel = hiltViewModel()) {
+fun SettingsRoute(onNavigateUp: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(state.restartRequired) {
-        if (state.restartRequired) {
-            viewModel.onRestartHandled()
-            onLanguageChanged()
+    LaunchedEffect(state.languageToApply) {
+        state.languageToApply?.let { language ->
+            viewModel.onLanguageApplied()
+            applyAppLanguage(language) // AppCompatDelegate.setApplicationLocales(...)
         }
     }
 
@@ -339,7 +338,7 @@ fun NavGraphBuilder.splashNavGraph(navController: NavController) {
 fun AppNavHost(navController: NavHostController, ...) {
     NavHost(navController = navController, startDestination = startDestination) {
         splashNavGraph(navController)
-        moviesNavGraph(navController, onLanguageChanged = { activity?.recreate() })
+        moviesNavGraph(navController)
         authNavGraph(navController)
     }
 }

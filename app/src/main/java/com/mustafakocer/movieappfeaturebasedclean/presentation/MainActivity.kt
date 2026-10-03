@@ -1,8 +1,7 @@
 package com.mustafakocer.movieappfeaturebasedclean.presentation
 
-import android.content.Context
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContent
@@ -17,75 +16,22 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.mustafakocer.movieappfeaturebasedclean.util.updateLocale
-import com.mustafakocer.core_preferences.repository.LanguageRepository
 import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
 import com.mustafakocer.movieappfeaturebasedclean.navigation.AppNavHost
 import com.mustafakocer.movieappfeaturebasedclean.presentation.viewmodel.MainViewModel
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
-import java.util.Locale
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-
-/**
- * A Hilt Entry Point to access dependencies from non-Hilt-aware classes.
- *
- * Architectural Decision: This interface is crucial for applying the user's selected language
- * at the earliest possible moment in the app's lifecycle (`attachBaseContext`). The
- * `attachBaseContext` method runs before Hilt's standard dependency injection is available
- * for the Activity. This Entry Point provides a "backdoor" to access the Hilt dependency graph
- * and retrieve the `LanguageRepository` instance manually, allowing us to set the app's locale
- * before any UI is created.
- */
-@EntryPoint
-@InstallIn(SingletonComponent::class)
-interface LanguageRepositoryEntryPoint {
-    fun languageRepository(): LanguageRepository
-}
 
 /**
  * The main and only Activity in this Single-Activity Architecture application.
  *
- * This Activity serves as the host for the entire Jetpack Compose UI. Its primary responsibilities
- * are:
- * - Setting up the application's theme and language based on user preferences.
- * - Hosting the `AppNavHost`, which manages all navigation between composable screens.
- * - Responding to global configuration changes requested by feature modules (e.g., restarting
- *   the activity after a language change).
+ * It hosts the entire Jetpack Compose UI: it applies the user's theme and hosts the `AppNavHost`
+ * that manages all navigation between composable screens.
+ *
+ * It extends [AppCompatActivity] because AppCompat's per-app locale support (used for the in-app
+ * language setting, see `applyAppLanguage`) needs it on Android 12 and below.
  */
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
-
-    /**
-     * Overridden to set the application's locale based on the user's saved preference
-     * *before* the Activity's UI is created. This is the correct lifecycle point to ensure
-     * that all resources are loaded with the correct language configuration.
-     */
-    override fun attachBaseContext(newBase: Context) {
-        // Use the Hilt Entry Point to access the LanguageRepository.
-        val entryPoint = EntryPointAccessors.fromApplication(
-            newBase.applicationContext,
-            LanguageRepositoryEntryPoint::class.java
-        )
-        val repo = entryPoint.languageRepository()
-
-        // Architectural Trade-off: `runBlocking` is used here as a pragmatic solution to bridge
-        // the synchronous world of `attachBaseContext` with the asynchronous `Flow` from DataStore.
-        // This blocks the main thread to get the initial language value. While blocking the main
-        // thread is generally discouraged, it is acceptable in this specific, controlled scenario
-        // because it's a one-time, extremely fast read from a local file during app startup.
-        val languageCode = runBlocking {
-            repo.languageFlow.first()
-        }.code
-
-        val locale = Locale(languageCode)
-        // The custom extension function applies the new locale to the context.
-        super.attachBaseContext(newBase.updateLocale(locale))
-    }
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

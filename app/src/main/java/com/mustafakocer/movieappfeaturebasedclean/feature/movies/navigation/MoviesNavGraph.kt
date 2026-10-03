@@ -24,13 +24,9 @@ import com.mustafakocer.movieappfeaturebasedclean.navigation.SettingsScreen
  * [MoviesFeatureGraph]. Routes receive plain navigation lambdas, not the NavController.
  *
  * @param navController The top-level NavController used for navigating between screens.
- * @param onLanguageChanged A hoisted callback function to be invoked when an action within this
- *                          graph requires a full application restart (e.g., after a language change).
- *                          Only the `Activity` can perform a restart.
  */
 fun NavGraphBuilder.moviesNavGraph(
     navController: NavController,
-    onLanguageChanged: () -> Unit,
 ) {
 
     navigation<MoviesFeatureGraph>(
@@ -66,10 +62,7 @@ fun NavGraphBuilder.moviesNavGraph(
         }
 
         composable<SettingsScreen> {
-            SettingsRoute(
-                onNavigateUp = { navController.navigateUp() },
-                onLanguageChanged = onLanguageChanged
-            )
+            SettingsRoute(onNavigateUp = { navController.navigateUp() })
         }
     }
 }

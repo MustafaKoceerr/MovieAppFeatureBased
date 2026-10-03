@@ -1,6 +1,5 @@
 package com.mustafakocer.movieappfeaturebasedclean.navigation
 
-import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -26,11 +25,6 @@ fun AppNavHost(
     modifier: Modifier = Modifier,
     startDestination: SplashFeatureGraph = SplashFeatureGraph,
 ) {
-    // Architectural Decision: `LocalActivity.current` is used to get a reference to the host
-    // Activity. This is necessary for implementing "hoisted actions" – actions that a feature
-    // module requests but cannot perform itself, such as restarting the activity.
-    val activity = LocalActivity.current
-
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -46,14 +40,7 @@ fun AppNavHost(
         splashNavGraph(navController = navController)
 
         // The main movies feature graph.
-        moviesNavGraph(
-            navController = navController,
-            // Hoisted Action Implementation: The `moviesNavGraph` requires a function to handle
-            // language changes. Here in the `:app` module, we provide the concrete implementation
-            // for that action by calling `activity.recreate()`. This keeps the `feature-movies`
-            // module independent of the Android Activity framework, a key goal of Clean Architecture.
-            onLanguageChanged = { activity?.recreate() }
-        )
+        moviesNavGraph(navController = navController)
 
         // The authentication feature graph.
         authNavGraph(

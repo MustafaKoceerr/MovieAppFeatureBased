@@ -119,8 +119,8 @@ Cozuldu:
   B9  22 unit test (Home/Details/Search VM, log maskeleme, hata eslemesi); 6 yeni ekran icin @Preview.
 
 Acik kalanlar:
-  - MainActivity.attachBaseContext icindeki runBlocking (cihazda dogrulanabildiginde
-    AppCompatDelegate.setApplicationLocales'e gecis).
+  - (Cozuldu, fix/per-app-locale) MainActivity runBlocking: AppCompatDelegate.setApplicationLocales'e gecildi;
+    dil Application.onCreate'te DataStore'dan asenkron uygulaniyor. Cihazda dogrulanmadi.
   - Kalan ViewModel'ler (List, Settings, Welcome, Account), repository ve Compose UI testleri.
   - Release build'de proguard/R8 kurallari test edilmedi (isMinifyEnabled=true).
   - Tum degisiklikler yalnizca derleme + unit test ile dogrulandi; cihazda manuel akis denenmedi.

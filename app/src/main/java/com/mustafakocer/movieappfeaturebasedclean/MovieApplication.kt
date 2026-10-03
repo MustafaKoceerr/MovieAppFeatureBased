@@ -1,20 +1,38 @@
 package com.mustafakocer.movieappfeaturebasedclean
 
 import android.app.Application
+import com.mustafakocer.core_preferences.repository.LanguageRepository
+import com.mustafakocer.movieappfeaturebasedclean.util.applyAppLanguage
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
-/**
- * The custom `Application` class for the application.
- *
- * Architectural Decision: Annotating the `Application` class with `@HiltAndroidApp` is the
- * mandatory first step to enable Dagger Hilt for dependency injection. This annotation triggers
- * Hilt's code generation, which creates a top-level dependency container attached to the
- * application's lifecycle. This container serves as the parent for all other dependency
- * containers in the app, allowing Hilt to manage dependencies on an application-wide scale.
- *
- * While this class is currently empty, it serves as a central entry point and can be used in the
- * future for initializing application-wide libraries, setting up logging, or performing other
- * tasks that need to run once when the application starts.
- */
 @HiltAndroidApp
-class MovieApplication : Application()
+class MovieApplication : Application() {
+
+    @Inject
+    lateinit var languageRepository: LanguageRepository
+
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
+    override fun onCreate() {
+        super.onCreate()
+        syncAppLanguage()
+    }
+
+    /**
+     * The saved language (DataStore) is the source of truth for both the UI and the API language.
+     * It is applied asynchronously instead of blocking the main thread at startup. After the first
+     * run the language is already applied by AppCompat/the system, so this is normally a no-op;
+     * on the very first run it switches the UI from the device language to the saved default.
+     */
+    private fun syncAppLanguage() {
+        applicationScope.launch {
+            applyAppLanguage(languageRepository.languageFlow.first())
+        }
+    }
+}

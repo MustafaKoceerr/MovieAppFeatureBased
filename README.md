@@ -271,7 +271,7 @@ feature/details/
 - 🔜 **Push notifications** *(planned)*
 - 🔜 **Favorites and rating feature for logged-in users** *(planned)*
 - 🔜 **Broader test coverage (remaining ViewModels, repositories, UI tests)** *(planned)*
-- 🔜 **Per-app language via `AppCompatDelegate.setApplicationLocales`** *(planned; removes the startup `runBlocking`)*
+- ✅ **Per-app language via `AppCompatDelegate.setApplicationLocales`** *(no blocking read at startup)*
 - 🔜 **Onboarding flow with ViewPager2** *(planned)*
 
 

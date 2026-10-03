@@ -24,8 +24,8 @@ data class SettingsUiState(
     val currentLanguage: LanguagePreference = LanguagePreference.ENGLISH,
     val isSaving: Boolean = false,
     val error: AppException? = null,
-    /** Set after a language change; the route recreates the activity and calls [SettingsViewModel.onRestartHandled]. */
-    val restartRequired: Boolean = false,
+    /** Set after the language was saved; the route applies it to the UI and calls [SettingsViewModel.onLanguageApplied]. */
+    val languageToApply: LanguagePreference? = null,
 )
 
 @HiltViewModel
@@ -58,7 +58,7 @@ class SettingsViewModel @Inject constructor(
     fun onLanguageSelected(language: LanguagePreference) {
         val state = _uiState.value
         if (language == state.currentLanguage || state.isSaving) return
-        save(onSaved = { _uiState.update { it.copy(restartRequired = true) } }) {
+        save(onSaved = { _uiState.update { it.copy(languageToApply = language) } }) {
             languageRepository.setLanguage(language)
         }
     }
@@ -67,8 +67,8 @@ class SettingsViewModel @Inject constructor(
         _uiState.update { it.copy(error = null) }
     }
 
-    fun onRestartHandled() {
-        _uiState.update { it.copy(restartRequired = false) }
+    fun onLanguageApplied() {
+        _uiState.update { it.copy(languageToApply = null) }
     }
 
     private fun save(onSaved: () -> Unit = {}, block: suspend () -> Unit) {
