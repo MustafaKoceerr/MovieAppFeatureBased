@@ -1,0 +1,102 @@
+MOVIEAPP - MIMARI ANALIZ (Tarih: 2026-10-03)
+=============================================
+Mevcut durum: 11 modullu, her ekranda MVI kullanan Compose uygulamasi.
+Modüller: app, core-domain, core-ui, core-network, core-database, core-preferences,
+core-android, navigation-contracts, feature-movies, feature-auth, feature-splash.
+Surumler: AGP 8.9.2, Kotlin 2.1.0, Compose BOM 2025.06.01, Hilt 2.56.2, KSP,
+Room 2.6.1, Paging 3.2.1, Navigation 2.8.4, Coil 3.2.0, minSdk 24, target/compile 35.
+
+
+A) DOGRU OLANLAR (korunacak)
+----------------------------
+1.  Type-safe Navigation: @Serializable route'lar (navigation-contracts).
+2.  collectAsStateWithLifecycle her Route'ta kullaniliyor; MainViewModel stateIn(WhileSubscribed(5000)).
+3.  Route / Screen ayrimi: stateless Screen + state hoisting.
+4.  Hilt + KSP (kapt yok), version catalog (libs.versions.toml) kullaniliyor.
+5.  Paging3 + RemoteMediator (liste), PagingSource (arama) dogru ihtiyaca uygun secilmis.
+6.  Feature'lar arasi dogrudan bagimlilik yok.
+7.  Coil 3, Material3 tema, shimmer/skeleton, paylasilan PaginatedMovieList / HandlePagingLoadState.
+8.  Resource<T> + AppException sealed hiyerarsisi ve ErrorMapper ile merkezi hata esleme.
+9.  BaseViewModel'de StateFlow.update ile race condition duzeltilmis.
+10. API anahtari kaynak kodda degil, local.properties -> BuildConfig uzerinden.
+11. Surumler guncel.
+
+
+B) YANLIS / IYILESTIRILECEK OLANLAR
+-----------------------------------
+B1. Mimari karmasikligi
+  - 11 modul, proje boyutu icin gereksiz; her modulde tekrarlanan android{} blogu (convention plugin yok).
+  - Her ekranda MVI: Contract + State + Event + Effect (+ BaseViewModel). Kucuk ekranlar icin ceremony.
+  - Navigasyon event'leri (MovieClicked, BackClicked) ViewModel'den gecip Effect olarak geri donuyor
+    (saf pass-through, hicbir is mantigi yok).
+  - SharedFlow effect (replay=0, buffer=1): collector yokken effect kaybolabilir.
+  - BaseUiState (isLoading/isRefreshing/error) her state'e zorlaniyor; SplashUiState/AccountUiState
+    anlamsiz sabit override ediyor; SplashEvent bos; SplashUiState data class degil.
+  - BaseUi*/UiContract "domain" modulunde (presentation kavrami domain'de).
+  - UiContract 3 tip parametresi tasiyor (gereksiz soyutlama).
+  - Event'ler object (data object degil): toString okunmuyor.
+  - Yukleme hem Resource.Loading hem isLoading ile iki kez modelleniyor.
+
+B2. State tasarimi
+  - MovieListUiState.movies ve SearchUiState.searchResults icinde Flow<PagingData> tasiyor
+    (esitlik bozulur, state'in parcasi olmamali).
+  - HomeViewModel manuel onEach.launchIn + Job iptali yapiyor (flatMapLatest/stateIn daha sade).
+
+B3. Katman ihlalleri / asiri soyutlama
+  - feature-movies domain katmani androidx.paging.PagingData import ediyor
+    (MovieListRepository, GetMovieListUseCase, SearchRepository, SearchMoviesUseCase).
+  - UseCase'ler data katmani sinifi LanguageRepository'yi dogrudan import ediyor
+    (GetHomeScreenDataUseCase, GetMovieDetailsUseCase).
+  - Cogu UseCase tek satirlik wrapper (GetMovieDetails, RefreshMovieList, GetMovieList, SearchMovies).
+  - Tek implementasyonlu repository interface'leri; LoginRepository/AccountRepository ayni
+    AuthRepositoryImpl'e bagli (ayrim kozmetik).
+  - AppDatabase app modulunde ve feature-movies entity/DAO'larini taniyor; feature kendi tablosuna sahip degil.
+  - core-ui, core-preferences'a api bagimli.
+  - Settings ekrani feature-movies icinde, domain/data'si yok; Settings/Splash VM'leri preferences'i
+    dogrudan kullaniyor (digerleriyle tutarsiz).
+  - core-domain Android library ama android.* kullanmiyor.
+
+B4. Mapper / veri
+  - MovieMappers.kt'de toDomainList() 3 kez kopyalanmis (MovieListEntity, HomeMovieEntity, MovieDto).
+  - Mapper'larda hard-coded Ingilizce fallback ("Unknown Title", "No overview available") -> yerellestirme yok.
+  - Yil cikarma substring(0,4) + try/catch.
+  - toAppException(): her IOException NoInternet'e esleniyor.
+  - Gson sadece MovieConverters'ta; geri kalani kotlinx-serialization (tutarsiz).
+
+B5. Coroutines
+  - MainActivity:81 runBlocking (attachBaseContext icin dil okuma) -> acilis blogu.
+  - safeApiCall Dispatchers.IO'yu sabit kodluyor (test edilemez; dispatcher inject edilmeli).
+
+B6. Build
+  - settings.gradle.kts: include(":feature-splash") pluginManagement'tan once, siralama garip.
+  - local.properties'e kosulsuz Properties().load(); dosya yoksa script coker.
+  - API_KEY yoksa BuildConfig'e literal null yazilir -> runtime hatasi.
+  - debug/release buildConfigField tekrar.
+  - room.runtime iki kez; app'te gereksiz room/gson/ksp bagimliliklari (AppDatabase yuzunden).
+  - Kullanilmayan androidx.navigation.safeargs plugin + artakalan "BURAYI EKLE" yorumu.
+  - Catalog: mockito-core "# Room" basligi altinda; ksp ve hilt-navigation-compose surumleri sabit.
+  - app'te isMinifyEnabled=true, kutuphanelerde false; proguard test edilmemis.
+  - core-network/di/ icinde DI olmayan interceptor'lar (ApiKeyInterceptor, LanguageInterceptor).
+
+B7. Guvenlik / hijyen
+  - api_key query parametresi OkHttp logger ile debug'da loglaniyor.
+  - AuthCallbackActivity:74 Log.d ile intent logluyor.
+  - BuildConfig'teki anahtar APK'dan cikarilabilir (TMDB icin kabul edilebilir ama bilinmeli).
+
+B8. Isimlendirme
+  - SettingsContact.kt -> SettingsContract.kt yazim hatasi; ListContract.kt adlandirma tutarsiz.
+  - MovieListScreen/MovieDetailsScreen'de KEY_* sabitleri typed route ile cakisiyor.
+
+B9. Test ve Compose
+  - Test yok: tum modullerde sadece Example*Test sablonu. Mockito/Turbine/coroutines-test
+    bagimliliklari var ama kullanilmiyor. Fake repository yok.
+  - @Preview yalnizca 2 dosyada (ErrorScreen, WelcomeContent).
+
+
+C) KARAR OZETI
+--------------
+- MVI -> basit MVVM (tek UiState StateFlow + VM fonksiyonlari, nav lambda ile).
+- Moduller: :app + :core-data + :core-ui (11 -> 3).
+- UseCase yalnizca gercek is mantigi varsa; digerleri ViewModel -> Repository.
+- Calisma: refactor/mad-mvvm branch'i, adim basi commit.
+- Detayli adimlar: MovieAppPlan.md
