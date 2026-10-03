@@ -1,6 +1,7 @@
 package com.mustafakocer.core_domain.exception
 
 import java.io.IOException
+import java.net.SocketTimeoutException
 
 /**
  * Defines a type-safe hierarchy for all custom exceptions within the application.
@@ -80,6 +81,7 @@ sealed class AppException(
 fun Throwable.toAppException(): AppException {
     return when (this) {
         is AppException -> this // Avoid re-wrapping if it's already our custom type.
+        is SocketTimeoutException -> AppException.Network.Timeout(this)
         is IOException -> AppException.Network.NoInternet(this)
         // Future platform-specific or library exceptions can be mapped here.
         else -> AppException.Unknown(this)

@@ -2,7 +2,6 @@ package com.mustafakocer.movieappfeaturebasedclean.presentation
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import com.mustafakocer.movieappfeaturebasedclean.feature.auth.shared.util.AuthCallbackHandler
 import dagger.hilt.android.AndroidEntryPoint
@@ -71,7 +70,6 @@ class AuthCallbackActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("AuthCallbackActivity", "Activity created with intent: $intent")
 
         val uri = intent.data
         // Validate that the incoming intent is the one we expect.
@@ -88,8 +86,6 @@ class AuthCallbackActivity : ComponentActivity() {
                 // In a production app, we might notify the handler of the cancellation.
                 // e.g., authCallbackHandler.onAuthCancelled()
             }
-        } else {
-//            Log.e("AuthCallbackActivity", "Invalid URI received for auth callback: $uri")
         }
 
         // Regardless of the outcome, the task of this Activity is complete. We bring the main

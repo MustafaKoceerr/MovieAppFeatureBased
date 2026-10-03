@@ -2,6 +2,7 @@ package com.mustafakocer.core_network.error
 
 import com.mustafakocer.core_domain.exception.AppException
 import java.io.IOException
+import java.net.SocketTimeoutException
 import retrofit2.HttpException
 import retrofit2.Response
 
@@ -31,6 +32,7 @@ object ErrorMapper {
             }
             // IOException is a common parent for network issues like no connectivity
             // or request timeouts.
+            is SocketTimeoutException -> AppException.Network.Timeout(throwable)
             is IOException -> AppException.Network.NoInternet(throwable)
             else -> AppException.Unknown(throwable)
         }

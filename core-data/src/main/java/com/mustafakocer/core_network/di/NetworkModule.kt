@@ -1,11 +1,13 @@
 package com.mustafakocer.core_network.di
 
 import android.content.Context
+import android.util.Log
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.mustafakocer.core_domain.config.NetworkConfigProvider
 import com.mustafakocer.core_network.config.NetworkConfig
 import com.mustafakocer.core_network.interceptor.ApiKeyInterceptor
 import com.mustafakocer.core_network.interceptor.LanguageInterceptor
+import com.mustafakocer.core_network.util.redactSecrets
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,6 +21,8 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+
+private const val LOG_TAG = "OkHttp"
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -38,13 +42,14 @@ object NetworkModule {
 
     /**
      * Provides an HttpLoggingInterceptor that logs network traffic only in debug builds.
+     * Secrets (api key, session id, request token) are masked before anything is logged.
      */
     @Provides
     @Singleton
     fun provideHttpLoggingInterceptor(
         configProvider: NetworkConfigProvider,
     ): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().apply {
+        return HttpLoggingInterceptor { message -> Log.d(LOG_TAG, message.redactSecrets()) }.apply {
             level = if (configProvider.isDebug && configProvider.enableLogging) {
                 HttpLoggingInterceptor.Level.BODY
             } else {
