@@ -116,10 +116,7 @@ dependencies {
     // Core Modüller
     implementation(project(":core-ui"))
     implementation(project(":core-android"))
-    implementation(project(":core-network"))
-    implementation(project(":core-database"))
-    implementation(project(":core-preferences"))
-    implementation(project(":core-domain"))
+    implementation(project(":core-data"))
 
     // Feature Modülleri
     implementation(project(":feature-movies"))
@@ -142,8 +139,6 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
-    // GSON
-    implementation(libs.gson)
 
     // --- TEST ---
     testImplementation(libs.junit)

@@ -40,9 +40,7 @@ android {
 }
 
 dependencies {
-    api(project(":core-domain"))
-    // MovieDiscoveryTheme, ThemePreference enum'ını kullanıyor.
-    api(project(":core-preferences"))
+    api(project(":core-data"))
 
     // --- COMPOSE KÜTÜPHANELERİ ---
     // Bu modülün temel amacı Compose olduğu için, bu bağımlılıklar 'api' olmalı

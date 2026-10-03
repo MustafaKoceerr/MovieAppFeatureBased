@@ -45,10 +45,8 @@ android {
 dependencies {
     // --- CORE MODÜL BAĞIMLILIKLARI ---
     implementation(project(":core-ui"))
-    implementation(project(":core-network"))
-    implementation(project(":core-preferences"))
     implementation(project(":core-android"))
-    implementation(project(":core-domain"))
+    implementation(project(":core-data"))
     implementation(project(":navigation-contracts"))
 
     // Navigation

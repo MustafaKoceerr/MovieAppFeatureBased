@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-    api(project(":core-domain"))
+    api(project(":core-data"))
 
     api(libs.androidx.lifecycle.viewmodel.ktx)
 
