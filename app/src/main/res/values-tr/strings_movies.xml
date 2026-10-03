@@ -78,6 +78,7 @@
     <string name="customize_experience">Deneyimini Özelleştir</string>
     <string name="personalize_app">Uygulamayı tercihlerine göre kişiselleştir</string>
     <string name="app_theme">Uygulama Teması</string>
+    <string name="language_title">Dil</string>
     <string name="theme_light_always">Her zaman açık tema kullan</string>
     <string name="theme_dark_always">Her zaman koyu tema kullan</string>
     <string name="theme_follow_system">Sistem ayarlarını takip et</string>

@@ -61,16 +61,16 @@ class SettingsScreenTest {
     fun `the current theme is selected and the others are not`() {
         show(SettingsUiState(currentTheme = ThemePreference.DARK))
 
-        composeRule.onNodeWithText(ThemePreference.DARK.displayName).assertIsSelected()
-        composeRule.onNodeWithText(ThemePreference.LIGHT.displayName).assertIsNotSelected()
-        composeRule.onNodeWithText(ThemePreference.SYSTEM.displayName).assertIsNotSelected()
+        composeRule.onNodeWithText(composeRule.string(R.string.theme_dark)).assertIsSelected()
+        composeRule.onNodeWithText(composeRule.string(R.string.theme_light)).assertIsNotSelected()
+        composeRule.onNodeWithText(composeRule.string(R.string.theme_system)).assertIsNotSelected()
     }
 
     @Test
     fun `choosing a theme reports it`() {
         show(SettingsUiState(currentTheme = ThemePreference.SYSTEM))
 
-        composeRule.onNodeWithText(ThemePreference.LIGHT.displayName).performClick()
+        composeRule.onNodeWithText(composeRule.string(R.string.theme_light)).performClick()
 
         assertEquals(listOf(ThemePreference.LIGHT), selectedThemes)
     }
@@ -79,15 +79,15 @@ class SettingsScreenTest {
     fun `theme options are disabled while a preference is being saved`() {
         show(SettingsUiState(isSaving = true))
 
-        composeRule.onNodeWithText(ThemePreference.LIGHT.displayName).assertIsNotEnabled()
-        composeRule.onNodeWithText(ThemePreference.DARK.displayName).assertIsNotEnabled()
+        composeRule.onNodeWithText(composeRule.string(R.string.theme_light)).assertIsNotEnabled()
+        composeRule.onNodeWithText(composeRule.string(R.string.theme_dark)).assertIsNotEnabled()
     }
 
     @Test
     fun `theme options are enabled when nothing is being saved`() {
         show(SettingsUiState(isSaving = false))
 
-        composeRule.onNodeWithText(ThemePreference.LIGHT.displayName).assertIsEnabled()
+        composeRule.onNodeWithText(composeRule.string(R.string.theme_light)).assertIsEnabled()
     }
 
     // --- language ---

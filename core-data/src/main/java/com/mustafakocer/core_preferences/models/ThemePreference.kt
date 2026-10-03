@@ -13,13 +13,6 @@ enum class ThemePreference {
     DARK,
     SYSTEM;
 
-    val displayName: String
-        get() = when (this) {
-            LIGHT -> "Light"
-            DARK -> "Dark"
-            SYSTEM -> "System"
-        }
-
     companion object {
 
         val DEFAULT = SYSTEM

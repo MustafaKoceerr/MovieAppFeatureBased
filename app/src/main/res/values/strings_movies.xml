@@ -80,6 +80,7 @@
     <string name="customize_experience">Customize Your Experience</string>
     <string name="personalize_app">Personalize the app to match your preferences</string>
     <string name="app_theme">App Theme</string>
+    <string name="language_title">Language</string>
     <string name="theme_light_always">Always use light theme</string>
     <string name="theme_dark_always">Always use dark theme</string>
     <string name="theme_follow_system">Follow system setting</string>

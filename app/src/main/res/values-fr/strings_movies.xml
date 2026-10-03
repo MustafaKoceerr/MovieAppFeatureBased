@@ -81,6 +81,7 @@
     <string name="customize_experience">Personnalisez Votre Expérience</string>
     <string name="personalize_app">Personnalisez l\'application selon vos préférences</string>
     <string name="app_theme">Thème de l\'Application</string>
+    <string name="language_title">Langue</string>
     <string name="theme_light_always">Toujours utiliser le thème clair</string>
     <string name="theme_dark_always">Toujours utiliser le thème sombre</string>
     <string name="theme_follow_system">Suivre les paramètres du système</string>

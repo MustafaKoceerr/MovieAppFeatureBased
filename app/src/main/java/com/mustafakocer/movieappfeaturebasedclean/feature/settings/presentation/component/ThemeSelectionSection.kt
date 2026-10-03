@@ -71,7 +71,7 @@ fun ThemeSelectionSection(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             ThemeOption(
-                theme = ThemePreference.LIGHT,
+                title = stringResource(R.string.theme_light),
                 icon = Icons.Default.LightMode,
                 description = stringResource(R.string.theme_light_always),
                 isSelected = currentTheme == ThemePreference.LIGHT,
@@ -79,7 +79,7 @@ fun ThemeSelectionSection(
                 onSelected = { onThemeSelected(ThemePreference.LIGHT) }
             )
             ThemeOption(
-                theme = ThemePreference.DARK,
+                title = stringResource(R.string.theme_dark),
                 icon = Icons.Default.DarkMode,
                 description = stringResource(R.string.theme_dark_always),
                 isSelected = currentTheme == ThemePreference.DARK,
@@ -87,7 +87,7 @@ fun ThemeSelectionSection(
                 onSelected = { onThemeSelected(ThemePreference.DARK) }
             )
             ThemeOption(
-                theme = ThemePreference.SYSTEM,
+                title = stringResource(R.string.theme_system),
                 icon = Icons.Default.Settings,
                 description = stringResource(R.string.theme_follow_system),
                 isSelected = currentTheme == ThemePreference.SYSTEM,
@@ -103,7 +103,7 @@ fun ThemeSelectionSection(
  *
  * It provides strong visual feedback for the selected state and is designed with accessibility in mind.
  *
- * @param theme The [ThemePreference] this option represents.
+ * @param title The localized name of the theme this option represents.
  * @param icon The icon associated with this theme.
  * @param description A short description of the theme option.
  * @param isSelected Whether this option is the currently selected one.
@@ -112,7 +112,7 @@ fun ThemeSelectionSection(
  */
 @Composable
 private fun ThemeOption(
-    theme: ThemePreference,
+    title: String,
     icon: ImageVector,
     description: String,
     isSelected: Boolean,
@@ -161,7 +161,7 @@ private fun ThemeOption(
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = theme.displayName,
+                    text = title,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
                     color = if (isEnabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
