@@ -17,12 +17,7 @@ import com.mustafakocer.movieappfeaturebasedclean.navigation.WelcomeScreen
  *
  * @param navController The top-level NavController for the application.
  *
- * Architectural Note:
- * This function encapsulates the entire navigation flow for the authentication feature. Its most
- * critical role is to provide the concrete implementations for the `WelcomeNavActions` and
- * `AccountNavActions` interfaces. This is where the abstract navigation contracts are fulfilled,
- * connecting the feature's requests (e.g., `navigateToHome`) to the actual `navController`
- * actions. This pattern is essential for decoupling the feature module from the rest of the app.
+ * The routes receive plain navigation lambdas, so screens never depend on the NavController.
  */
 fun NavGraphBuilder.authNavGraph(
     navController: NavController,

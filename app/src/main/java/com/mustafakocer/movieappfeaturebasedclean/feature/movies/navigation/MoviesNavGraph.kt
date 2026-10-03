@@ -20,17 +20,13 @@ import com.mustafakocer.movieappfeaturebasedclean.navigation.SettingsScreen
 /**
  * Defines the encapsulated navigation graph for the entire movies feature.
  *
- * Architectural Decision: Using a nested navigation graph (`navigation(...)`) for the `movies`
- * feature promotes modularity and encapsulation. It groups all related screens under a single
- * logical unit (`MoviesFeatureGraph`). This makes the overall navigation structure of the app
- * cleaner, easier to manage, and allows for better separation of concerns between different
- * feature modules.
+ * A nested navigation graph (`navigation(...)`) groups all movie screens under
+ * [MoviesFeatureGraph]. Routes receive plain navigation lambdas, not the NavController.
  *
  * @param navController The top-level NavController used for navigating between screens.
  * @param onLanguageChanged A hoisted callback function to be invoked when an action within this
  *                          graph requires a full application restart (e.g., after a language change).
- *                          This is a key architectural pattern that keeps feature modules decoupled
- *                          from the `Activity` context, as only the `Activity` can perform a restart.
+ *                          Only the `Activity` can perform a restart.
  */
 fun NavGraphBuilder.moviesNavGraph(
     navController: NavController,

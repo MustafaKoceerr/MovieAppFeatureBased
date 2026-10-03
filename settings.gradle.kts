@@ -25,4 +25,3 @@ rootProject.name = "MovieAppFeatureBasedClean"
 include(":app")
 include(":core-ui")
 include(":core-data")
-include(":core-android")

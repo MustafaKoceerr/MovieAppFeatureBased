@@ -30,24 +30,14 @@ object HomeScreen
  * @param categoryEndpoint The unique identifier for the movie category (e.g., "popular", "top_rated").
  */
 @Serializable
-data class MovieListScreen(val categoryEndpoint: String) {
-    companion object {
-
-        const val KEY_CATEGORY_ENDPOINT = "categoryEndpoint"
-    }
-}
+data class MovieListScreen(val categoryEndpoint: String)
 
 /**
  * Represents the type-safe route for the screen that displays the details of a single movie.
  * @param movieId The unique identifier for the movie.
  */
 @Serializable
-data class MovieDetailsScreen(val movieId: Int) {
-    companion object {
-
-        const val KEY_MOVIE_ID = "movieId"
-    }
-}
+data class MovieDetailsScreen(val movieId: Int)
 
 /**
  * Represents the type-safe route for the movie Search screen.

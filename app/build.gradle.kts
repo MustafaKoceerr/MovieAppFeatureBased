@@ -115,7 +115,6 @@ android {
 dependencies {
     // Core Modüller
     implementation(project(":core-ui"))
-    implementation(project(":core-android"))
     implementation(project(":core-data"))
 
     // Hilt

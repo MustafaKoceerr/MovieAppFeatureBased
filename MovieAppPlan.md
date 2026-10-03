@@ -23,7 +23,7 @@ Navigasyon composable'dan lambda ile; ViewModel'den geçmez.
 - [x] 1. Build temizliği: catalog, safeargs, çift room, API_KEY güvenli okuma, debug/release tekrarı
 - [x] 2. Core birleştirme: core-domain/network/preferences/database → `:core-data` (paket adları korundu, interceptor sınıfları `interceptor/` paketine alındı); Gson → kotlinx-serialization. **Not:** `core-android` ve `BaseUi*`/`UiContract` MVI ViewModel'leri tarafından kullanıldığı için Adım 4 sonunda silinecek; `safeApiCall` dispatcher inject işi Adım 6'ya kaldı
 - [x] 3. Feature'ları `:app`'e taşı (paketler `...movieappfeaturebasedclean.feature.{splash,auth,home,details,list,search,settings,movies}`); `navigation-contracts` route'ları `:app/navigation`'a; eski modüller kaldırıldı. **Not:** `NavActions` → lambda dönüşümü, her ekran Adım 4'te MVVM'e geçerken yapılacak (aynı dosyalara iki kez dokunmamak için)
-- [ ] 4. MVI → MVVM, ekran ekran: Splash, Settings, Welcome, Account, Home, Details, List, Search
+- [x] 4. MVI → MVVM, ekran ekran: Splash, Settings, Welcome, Account, Home, Details, List, Search. Tek seferlik olaylar state olarak tüketiliyor, navigasyon lambda ile; `NavActions`, Contract dosyaları, `BaseViewModel`/`BaseUi*`/`UiContract` ve `:core-android` modülü silindi (`LocaleUtils` → `app/util`). Modüller: `:app`, `:core-data`, `:core-ui`
 - [ ] 5. Domain sadeleştirme: tek satırlık UseCase'ler silinir; paging/data import'ları temizlenir; mapper tekrarları birleşir; hard-coded string'ler UI'a
 - [ ] 6. Kalite/güvenlik: runBlocking, api_key log redaksiyonu, Log.d, yükleme state'i tek kaynak
 - [ ] 7. Testler (Home, Details, Search VM) + @Preview

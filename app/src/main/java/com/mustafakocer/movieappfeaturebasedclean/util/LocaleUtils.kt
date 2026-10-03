@@ -1,4 +1,4 @@
-package com.mustafakocer.core_android.util
+package com.mustafakocer.movieappfeaturebasedclean.util
 
 import android.content.Context
 import android.content.ContextWrapper
