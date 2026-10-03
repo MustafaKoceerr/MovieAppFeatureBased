@@ -16,4 +16,9 @@
     <string name="back_button_desc">Torna indietro</string>
 
 
+    <string name="guest_card_title">Non hai un account?</string>
+    <string name="guest_card_subtitle">Accedi per tenere traccia dei tuoi preferiti, creare liste e molto altro.</string>
+    <string name="account_avatar_description">Avatar</string>
+    <string name="account_greeting">Ciao, utente!</string>
+    <string name="account_welcome_back">Bentornato</string>
 </resources>

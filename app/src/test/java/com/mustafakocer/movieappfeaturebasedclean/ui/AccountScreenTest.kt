@@ -66,6 +66,23 @@ class AccountScreenTest {
     }
 
     @Test
+    fun `guest card shows the localized title and subtitle`() {
+        show(AccountUiState(isLoggedIn = false))
+
+        composeRule.onNodeWithText(string(R.string.guest_card_title)).assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.guest_card_subtitle)).assertIsDisplayed()
+    }
+
+    @Test
+    fun `logged in profile shows greeting welcome text and avatar`() {
+        show(AccountUiState(isLoggedIn = true))
+
+        composeRule.onNodeWithText(string(R.string.account_greeting)).assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.account_welcome_back)).assertIsDisplayed()
+        composeRule.onNodeWithContentDescription(string(R.string.account_avatar_description)).assertIsDisplayed()
+    }
+
+    @Test
     fun `back button is wired`() {
         show(AccountUiState())
 

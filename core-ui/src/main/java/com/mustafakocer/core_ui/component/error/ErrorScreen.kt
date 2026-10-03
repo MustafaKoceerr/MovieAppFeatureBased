@@ -38,9 +38,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mustafakocer.core_domain.exception.AppException
+import com.mustafakocer.core_ui.R
 import com.mustafakocer.core_ui.component.util.bounceClick
 import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
 
@@ -150,7 +152,7 @@ fun ErrorScreen(
                             ) {
                                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                                 Spacer(Modifier.width(8.dp))
-                                Text("Go Back")
+                                Text(stringResource(R.string.error_go_back))
                             }
                         }
                         onRetry?.let {
@@ -162,7 +164,7 @@ fun ErrorScreen(
                             ) {
                                 Icon(Icons.Default.Refresh, contentDescription = null)
                                 Spacer(Modifier.width(8.dp))
-                                Text(error.retryText)
+                                Text(stringResource(R.string.error_retry))
                             }
                         }
                     }

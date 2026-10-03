@@ -17,4 +17,6 @@
 
     <string name="error_title_unknown">Ein unerwarteter Fehler</string>
     <string name="error_desc_unknown">Etwas ist auf unserer Seite schiefgegangen. Wir arbeiten daran, es zu beheben!</string>
+    <string name="error_retry">Erneut versuchen</string>
+    <string name="error_go_back">Zurück</string>
 </resources>

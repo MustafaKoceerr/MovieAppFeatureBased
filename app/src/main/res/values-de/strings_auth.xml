@@ -16,4 +16,9 @@
     <string name="back_button_desc">Zurückgehen</string>
 
 
+    <string name="guest_card_title">Noch kein Konto?</string>
+    <string name="guest_card_subtitle">Melden Sie sich an, um Ihre Favoriten zu verfolgen, Listen zu erstellen und vieles mehr.</string>
+    <string name="account_avatar_description">Avatar</string>
+    <string name="account_greeting">Hallo, Benutzer!</string>
+    <string name="account_welcome_back">Willkommen zurück</string>
 </resources>

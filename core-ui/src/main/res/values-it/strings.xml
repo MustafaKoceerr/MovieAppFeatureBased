@@ -17,4 +17,6 @@
 
     <string name="error_title_unknown">Un Errore Inaspettato</string>
     <string name="error_desc_unknown">Qualcosa è andato storto dal nostro lato. Stiamo lavorando per risolverlo!</string>
+    <string name="error_retry">Riprova</string>
+    <string name="error_go_back">Indietro</string>
 </resources>

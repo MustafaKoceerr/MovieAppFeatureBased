@@ -17,4 +17,6 @@
 
     <string name="error_title_unknown">Une Erreur Inattendue</string>
     <string name="error_desc_unknown">Quelque chose s\'est mal passé de notre côté. Nous travaillons pour le réparer !</string>
+    <string name="error_retry">Réessayer</string>
+    <string name="error_go_back">Retour</string>
 </resources>

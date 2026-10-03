@@ -111,7 +111,7 @@ class MovieDetailsScreenTest {
         composeRule.waitForIdle()
 
         composeRule.onAllNodesWithText(composeRule.string(R.string.overview)).assertCountEquals(0)
-        composeRule.onAllNodesWithText("Try Again").assertCountEquals(0)
+        composeRule.onAllNodesWithText(composeRule.string(CoreUiR.string.error_retry)).assertCountEquals(0)
     }
 
     @Test
@@ -119,7 +119,7 @@ class MovieDetailsScreenTest {
         show(MovieDetailsUiState(error = AppException.Api.NotFound()))
 
         composeRule.onNodeWithText(composeRule.string(CoreUiR.string.error_title_not_found)).assertIsDisplayed()
-        composeRule.onNodeWithText("Try Again").performClick()
+        composeRule.onNodeWithText(composeRule.string(CoreUiR.string.error_retry)).performClick()
 
         assertEquals(1, refreshes)
     }

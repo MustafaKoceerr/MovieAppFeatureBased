@@ -17,7 +17,10 @@
     <string name="back_button_desc">Go back</string>
 
 
-    <string name="guest_card_title" translatable="false">Don\'t have an account?</string>
-    <string name="guest_card_subtitle" translatable="false">Sign in to track your favorites, create lists, and much more.</string>
+    <string name="guest_card_title">Don\'t have an account?</string>
+    <string name="guest_card_subtitle">Sign in to track your favorites, create lists, and much more.</string>
     <string name="settings_card_title" translatable="false">App Settings</string>
+    <string name="account_avatar_description">Avatar</string>
+    <string name="account_greeting">Hello, User!</string>
+    <string name="account_welcome_back">Welcome back</string>
 </resources>

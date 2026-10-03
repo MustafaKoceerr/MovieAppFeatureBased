@@ -15,4 +15,9 @@
     <string name="login_button">Iniciar sesión</string>
     <string name="back_button_desc">Volver</string>
 
+    <string name="guest_card_title">¿No tienes una cuenta?</string>
+    <string name="guest_card_subtitle">Inicia sesión para seguir tus favoritos, crear listas y mucho más.</string>
+    <string name="account_avatar_description">Avatar</string>
+    <string name="account_greeting">¡Hola, usuario!</string>
+    <string name="account_welcome_back">Bienvenido de nuevo</string>
 </resources>

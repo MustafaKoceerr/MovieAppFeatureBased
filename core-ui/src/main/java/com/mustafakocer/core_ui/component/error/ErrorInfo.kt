@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
  * @property helpText Optional text offering a hint or context to the user.
  * @property icon A vector graphic representing the type of error.
  * @property emoji A simple emoji to add a bit of character to the error display.
- * @property retryText The text for the action button, typically for retrying the failed operation.
  */
 data class ErrorInfo(
     val title: String,
@@ -24,5 +23,4 @@ data class ErrorInfo(
     val helpText: String = "",
     val icon: ImageVector,
     val emoji: String,
-    val retryText: String = "Try Again",
 )

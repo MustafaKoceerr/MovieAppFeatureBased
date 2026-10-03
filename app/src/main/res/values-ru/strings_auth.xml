@@ -15,4 +15,9 @@
     <string name="login_button">Войти</string>
     <string name="back_button_desc">Назад</string>
 
+    <string name="guest_card_title">Нет аккаунта?</string>
+    <string name="guest_card_subtitle">Войдите, чтобы отслеживать избранное, создавать списки и многое другое.</string>
+    <string name="account_avatar_description">Аватар</string>
+    <string name="account_greeting">Здравствуйте, пользователь!</string>
+    <string name="account_welcome_back">С возвращением</string>
 </resources>

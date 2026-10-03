@@ -111,7 +111,7 @@ class HomeScreenTest {
 
         composeRule.onNodeWithText(composeRule.string(R.string.app_name)).assertIsDisplayed()
         composeRule.onAllNodesWithText(composeRule.string(R.string.view_all)).assertCountEquals(0)
-        composeRule.onAllNodesWithText("Try Again").assertCountEquals(0)
+        composeRule.onAllNodesWithText(composeRule.string(CoreUiR.string.error_retry)).assertCountEquals(0)
     }
 
     @Test
@@ -119,7 +119,7 @@ class HomeScreenTest {
         show(HomeUiState(error = AppException.Network.NoInternet()))
 
         composeRule.onNodeWithText(composeRule.string(CoreUiR.string.error_title_no_internet)).assertIsDisplayed()
-        composeRule.onNodeWithText("Try Again").performClick()
+        composeRule.onNodeWithText(composeRule.string(CoreUiR.string.error_retry)).performClick()
 
         assertEquals(1, refreshes)
     }
@@ -129,6 +129,6 @@ class HomeScreenTest {
         show(content.copy(error = AppException.Network.NoInternet()))
 
         composeRule.onNodeWithText("Popular One").assertIsDisplayed()
-        composeRule.onAllNodesWithText("Try Again").assertCountEquals(0)
+        composeRule.onAllNodesWithText(composeRule.string(CoreUiR.string.error_retry)).assertCountEquals(0)
     }
 }

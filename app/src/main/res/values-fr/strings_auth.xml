@@ -15,4 +15,9 @@
     <string name="login_button">Se connecter</string>
     <string name="back_button_desc">Retour</string>
 
+    <string name="guest_card_title">Vous n\'avez pas de compte ?</string>
+    <string name="guest_card_subtitle">Connectez-vous pour suivre vos favoris, créer des listes et bien plus encore.</string>
+    <string name="account_avatar_description">Avatar</string>
+    <string name="account_greeting">Bonjour, utilisateur !</string>
+    <string name="account_welcome_back">Content de vous revoir</string>
 </resources>

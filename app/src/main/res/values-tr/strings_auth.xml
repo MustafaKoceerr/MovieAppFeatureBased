@@ -14,4 +14,9 @@
     <string name="logout_button">Çıkış Yap</string>
     <string name="login_button">Giriş Yap</string>
     <string name="back_button_desc">Geri git</string>
+    <string name="guest_card_title">Hesabınız yok mu?</string>
+    <string name="guest_card_subtitle">Favorilerinizi takip etmek, listeler oluşturmak ve çok daha fazlası için giriş yapın.</string>
+    <string name="account_avatar_description">Profil resmi</string>
+    <string name="account_greeting">Merhaba, Kullanıcı!</string>
+    <string name="account_welcome_back">Tekrar hoş geldiniz</string>
 </resources>

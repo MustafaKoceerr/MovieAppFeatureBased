@@ -17,4 +17,6 @@
 
     <string name="error_title_unknown">Beklenmedik Bir Hata</string>
     <string name="error_desc_unknown">Bizim tarafımızda bir şeyler ters gitti. Düzeltmek için çalışıyoruz!</string>
+    <string name="error_retry">Tekrar Dene</string>
+    <string name="error_go_back">Geri Dön</string>
 </resources>

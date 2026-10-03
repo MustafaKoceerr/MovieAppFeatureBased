@@ -17,4 +17,6 @@
 
     <string name="error_title_unknown">An Unexpected Error</string>
     <string name="error_desc_unknown">Something went wrong on our end. We are working to fix it!</string>
+    <string name="error_retry">Try Again</string>
+    <string name="error_go_back">Go Back</string>
 </resources>

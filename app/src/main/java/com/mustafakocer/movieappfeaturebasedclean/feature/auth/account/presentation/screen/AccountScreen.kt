@@ -148,13 +148,17 @@ private fun LoggedInProfileCard() {
         ) {
             Icon(
                 imageVector = Icons.Default.Person,
-                contentDescription = "Avatar",
+                contentDescription = stringResource(R.string.account_avatar_description),
                 modifier = Modifier.size(56.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        Text("Hello, User!", style = MaterialTheme.typography.headlineSmall)
-        Text("Welcome back", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(stringResource(R.string.account_greeting), style = MaterialTheme.typography.headlineSmall)
+        Text(
+            stringResource(R.string.account_welcome_back),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 

@@ -192,7 +192,7 @@ class SearchAndListScreenTest {
         composeRule.waitUntilTextExists(composeRule.string(CoreUiR.string.error_title_no_internet))
 
         composeRule.onNodeWithText(composeRule.string(CoreUiR.string.error_title_no_internet)).assertIsDisplayed()
-        composeRule.onNodeWithText("Try Again").assertIsDisplayed()
+        composeRule.onNodeWithText(composeRule.string(CoreUiR.string.error_retry)).assertIsDisplayed()
     }
 
     @Test

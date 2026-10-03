@@ -17,4 +17,6 @@
 
     <string name="error_title_unknown">Неожиданная ошибка</string>
     <string name="error_desc_unknown">Что-то пошло не так с нашей стороны. Мы работаем над устранением проблемы!</string>
+    <string name="error_retry">Попробовать снова</string>
+    <string name="error_go_back">Назад</string>
 </resources>
