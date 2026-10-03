@@ -13,7 +13,7 @@ appcompat = "1.7.1"
 # Architecture
 hilt = "2.56.2"
 hilt-navigation-compose = "1.2.0"
-mockitoCore = "5.8.0"
+mockitoCore = "5.20.0"
 navigation = "2.8.4"
 room = "2.6.1"
 paging = "3.2.1"

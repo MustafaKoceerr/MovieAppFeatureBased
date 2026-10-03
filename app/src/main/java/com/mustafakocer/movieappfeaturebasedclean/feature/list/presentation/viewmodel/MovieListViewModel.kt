@@ -3,7 +3,6 @@ package com.mustafakocer.movieappfeaturebasedclean.feature.list.presentation.vie
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.mustafakocer.movieappfeaturebasedclean.feature.list.data.repository.MovieListRepository
@@ -27,7 +26,9 @@ class MovieListViewModel @Inject constructor(
 
     /** Null when the route carries an unknown endpoint; the route then navigates back. */
     val category: MovieCategory? =
-        MovieCategory.fromApiEndpoint(savedStateHandle.toRoute<MovieListScreen>().categoryEndpoint)
+        MovieCategory.fromApiEndpoint(
+            checkNotNull(savedStateHandle[MovieListScreen::categoryEndpoint.name]) { "categoryEndpoint is required" }
+        )
 
     val movies: Flow<PagingData<MovieListItem>> =
         category?.let { movieListRepository.getMoviesByCategory(it).cachedIn(viewModelScope) } ?: emptyFlow()

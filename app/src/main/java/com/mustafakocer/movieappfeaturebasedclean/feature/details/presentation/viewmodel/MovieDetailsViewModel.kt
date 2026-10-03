@@ -3,7 +3,6 @@ package com.mustafakocer.movieappfeaturebasedclean.feature.details.presentation.
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.mustafakocer.core_domain.exception.AppException
 import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.movieappfeaturebasedclean.feature.details.data.repository.MovieDetailsRepository
@@ -32,7 +31,7 @@ class MovieDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val movieId: Int = savedStateHandle.toRoute<MovieDetailsScreen>().movieId
+    private val movieId: Int = checkNotNull(savedStateHandle[MovieDetailsScreen::movieId.name]) { "movieId is required" }
 
     private val _uiState = MutableStateFlow(MovieDetailsUiState())
     val uiState: StateFlow<MovieDetailsUiState> = _uiState.asStateFlow()
