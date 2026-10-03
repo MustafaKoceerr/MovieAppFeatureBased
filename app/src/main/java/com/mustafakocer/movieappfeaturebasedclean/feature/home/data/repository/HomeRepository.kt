@@ -5,7 +5,6 @@ import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.core_network.error.ErrorMapper
 import com.mustafakocer.core_preferences.provider.LanguageProvider
 import com.mustafakocer.movieappfeaturebasedclean.feature.home.data.local.dao.HomeMovieDao
-import com.mustafakocer.movieappfeaturebasedclean.feature.home.domain.repository.HomeRepository
 import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.data.api.MovieApiService
 import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.data.mapper.toDomainList
 import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.data.mapper.toHomeMovieEntityList
@@ -29,11 +28,11 @@ import javax.inject.Singleton
  * user experience and offline support.
  */
 @Singleton
-class HomeRepositoryImpl @Inject constructor(
+class HomeRepository @Inject constructor(
     private val movieApiService: MovieApiService,
     private val homeMovieDao: HomeMovieDao,
     private val languageProvider: LanguageProvider,
-) : HomeRepository {
+) {
 
     /**
      * Fetches movies for a given category, implementing the cache-first strategy.
@@ -43,7 +42,7 @@ class HomeRepositoryImpl @Inject constructor(
      *                  from the network.
      * @return A Flow emitting resource states for the movie list.
      */
-    override fun getMoviesForCategory(
+    fun getMoviesForCategory(
         category: MovieCategory,
         isRefresh: Boolean,
     ): Flow<Resource<List<MovieListItem>>> = flow {

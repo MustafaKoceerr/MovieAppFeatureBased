@@ -228,19 +228,19 @@ private fun MovieInfo(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
-            text = movie.title,
+            text = movie.title.ifBlank { stringResource(R.string.unknown_title) },
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis // Prevents long titles from breaking the layout.
         )
         Text(
-            text = movie.releaseYear,
+            text = movie.releaseYear.ifBlank { stringResource(R.string.unknown_year) },
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
-            text = movie.overview,
+            text = movie.overview.ifBlank { stringResource(R.string.no_overview) },
             style = MaterialTheme.typography.bodySmall,
             maxLines = 3,
             overflow = TextOverflow.Ellipsis, // Prevents long overviews from taking up too much space.

@@ -98,4 +98,7 @@
         <item quantity="other">%d мин</item>
     </plurals>
 
+    <string name="unknown_title">Название неизвестно</string>
+    <string name="no_overview">Описание отсутствует</string>
+    <string name="unknown_year">Неизвестно</string>
 </resources>

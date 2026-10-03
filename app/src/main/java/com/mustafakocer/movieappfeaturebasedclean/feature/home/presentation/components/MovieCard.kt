@@ -86,7 +86,7 @@ fun MovieCard(
                     .padding(8.dp)
             ) {
                 Text(
-                    text = movie.title,
+                    text = movie.title.ifBlank { stringResource(R.string.unknown_title) },
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White,
                     maxLines = 2,

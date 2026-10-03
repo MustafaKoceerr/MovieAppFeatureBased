@@ -1,4 +1,4 @@
-package com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.domain.handler
+package com.mustafakocer.movieappfeaturebasedclean.feature.auth.shared.util
 
 import javax.inject.Inject
 import javax.inject.Singleton

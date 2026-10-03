@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.mustafakocer.movieappfeaturebasedclean.feature.list.domain.usecase.GetMovieListUseCase
+import com.mustafakocer.movieappfeaturebasedclean.feature.list.data.repository.MovieListRepository
 import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.model.MovieCategory
 import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.model.MovieListItem
 import com.mustafakocer.movieappfeaturebasedclean.navigation.MovieListScreen
@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.emptyFlow
  */
 @HiltViewModel
 class MovieListViewModel @Inject constructor(
-    getMovieListUseCase: GetMovieListUseCase,
+    movieListRepository: MovieListRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -30,5 +30,5 @@ class MovieListViewModel @Inject constructor(
         MovieCategory.fromApiEndpoint(savedStateHandle.toRoute<MovieListScreen>().categoryEndpoint)
 
     val movies: Flow<PagingData<MovieListItem>> =
-        category?.let { getMovieListUseCase(it).cachedIn(viewModelScope) } ?: emptyFlow()
+        category?.let { movieListRepository.getMoviesByCategory(it).cachedIn(viewModelScope) } ?: emptyFlow()
 }

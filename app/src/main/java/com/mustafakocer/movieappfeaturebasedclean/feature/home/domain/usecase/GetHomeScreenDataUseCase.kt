@@ -2,7 +2,7 @@ package com.mustafakocer.movieappfeaturebasedclean.feature.home.domain.usecase
 
 import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.core_preferences.repository.LanguageRepository
-import com.mustafakocer.movieappfeaturebasedclean.feature.home.domain.repository.HomeRepository
+import com.mustafakocer.movieappfeaturebasedclean.feature.home.data.repository.HomeRepository
 import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.model.MovieCategory
 import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.model.MovieListItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi

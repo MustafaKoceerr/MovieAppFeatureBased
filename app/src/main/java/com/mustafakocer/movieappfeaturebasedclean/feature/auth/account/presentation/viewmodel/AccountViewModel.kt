@@ -2,8 +2,7 @@ package com.mustafakocer.movieappfeaturebasedclean.feature.auth.account.presenta
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mustafakocer.movieappfeaturebasedclean.feature.auth.account.domain.usecase.LogoutUseCase
-import com.mustafakocer.movieappfeaturebasedclean.feature.auth.account.domain.usecase.ObserveSessionUseCase
+import com.mustafakocer.movieappfeaturebasedclean.feature.auth.shared.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -23,14 +22,13 @@ data class AccountUiState(
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
-    observeSessionUseCase: ObserveSessionUseCase,
-    private val logoutUseCase: LogoutUseCase,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AccountUiState())
     val uiState: StateFlow<AccountUiState> = _uiState.asStateFlow()
 
-    private val sessionObserverJob: Job = observeSessionUseCase()
+    private val sessionObserverJob: Job = authRepository.observeSessionId()
         .onEach { sessionId -> _uiState.update { it.copy(isLoggedIn = !sessionId.isNullOrBlank()) } }
         .launchIn(viewModelScope)
 
@@ -38,7 +36,7 @@ class AccountViewModel @Inject constructor(
         // Stop observing so the UI does not flash the guest state before navigating away.
         sessionObserverJob.cancel()
         viewModelScope.launch {
-            logoutUseCase()
+            authRepository.logout()
             _uiState.update { it.copy(loggedOut = true) }
         }
     }

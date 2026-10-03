@@ -35,49 +35,14 @@ import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.m
  *
  * @return A [MovieListItem] domain model.
  */
-fun MovieListEntity.toDomainList(): MovieListItem {
-    return MovieListItem(
-        id = id,
-        // Defensive Programming: Provides a default title if the cached title is null or blank.
-        title = title?.takeIf { it.isNotBlank() } ?: "Unknown Title",
-        overview = overview?.takeIf { it.isNotBlank() } ?: "No overview available",
-        // The poster path is converted to a full, usable URL by the builder.
-        posterUrl = posterPath,
-        // Safely extracts the year from the release date string, with a fallback for invalid formats.
-        releaseYear = releaseDate?.takeIf { it.isNotBlank() }?.let { date ->
-            try {
-                date.substring(0, 4)
-            } catch (e: Exception) {
-                "Unknown"
-            }
-        } ?: "Unknown",
-        voteAverage = voteAverage ?: 0.0,
-        voteCount = voteCount ?: 0
-    )
-}
+fun MovieListEntity.toDomainList(): MovieListItem = movieListItem(id, title, overview, posterPath, releaseDate, voteAverage, voteCount)
 
 /**
  * Maps a [HomeMovieEntity] from the database to a [MovieListItem] domain model.
  *
  * @return A [MovieListItem] domain model.
  */
-fun HomeMovieEntity.toDomainList(): MovieListItem {
-    return MovieListItem(
-        id = id,
-        title = title?.takeIf { it.isNotBlank() } ?: "Unknown Title",
-        overview = overview?.takeIf { it.isNotBlank() } ?: "No overview available",
-        posterUrl = posterPath,
-        releaseYear = releaseDate?.takeIf { it.isNotBlank() }?.let { date ->
-            try {
-                date.substring(0, 4)
-            } catch (e: Exception) {
-                "Unknown"
-            }
-        } ?: "Unknown",
-        voteAverage = voteAverage ?: 0.0,
-        voteCount = voteCount ?: 0
-    )
-}
+fun HomeMovieEntity.toDomainList(): MovieListItem = movieListItem(id, title, overview, posterPath, releaseDate, voteAverage, voteCount)
 
 // ============================================
 // 2. DTO -> DOMAIN MAPPERS
@@ -91,29 +56,35 @@ fun HomeMovieEntity.toDomainList(): MovieListItem {
  *
  * @return A [MovieListItem] domain model.
  */
-fun MovieDto.toDomainList(): MovieListItem {
-    return MovieListItem(
-        id = id,
-        title = title?.takeIf { it.isNotBlank() } ?: "Unknown Title",
-        overview = overview?.takeIf { it.isNotBlank() } ?: "No overview available",
-        posterUrl = posterPath,
-        releaseYear = releaseDate?.takeIf { it.isNotBlank() }?.let { date ->
-            try {
-                date.substring(0, 4)
-            } catch (e: Exception) {
-                "Unknown"
-            }
-        } ?: "Unknown",
-        voteAverage = voteAverage ?: 0.0,
-        voteCount = voteCount ?: 0
-    )
-}
+fun MovieDto.toDomainList(): MovieListItem = movieListItem(id, title, overview, posterPath, releaseDate, voteAverage, voteCount)
 
 /**
  * Maps a [MovieDetailsDto] from the network to a rich [MovieDetails] domain model.
  *
  * @return A [MovieDetails] domain model.
  */
+/**
+ * Shared by all list-item mappers. Missing text is mapped to an empty string (and a missing year to
+ * an empty year) so the UI can show localized fallbacks instead of hard-coded English text.
+ */
+private fun movieListItem(
+    id: Int,
+    title: String?,
+    overview: String?,
+    posterPath: String?,
+    releaseDate: String?,
+    voteAverage: Double?,
+    voteCount: Int?,
+) = MovieListItem(
+    id = id,
+    title = title?.takeIf { it.isNotBlank() }.orEmpty(),
+    overview = overview?.takeIf { it.isNotBlank() }.orEmpty(),
+    posterUrl = posterPath,
+    releaseYear = releaseDate.orEmpty().take(4),
+    voteAverage = voteAverage ?: 0.0,
+    voteCount = voteCount ?: 0,
+)
+
 fun MovieDetailsDto.toDomain(): MovieDetails {
     return MovieDetails(
         id = id.toInt(),
@@ -283,4 +254,4 @@ fun List<MovieDto>.toHomeMovieEntityList(
     language: String,
 ): List<HomeMovieEntity> {
     return this.map { it.toHomeMovieEntity(category, language) }
-}
+}

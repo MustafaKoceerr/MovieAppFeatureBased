@@ -94,4 +94,7 @@
         <item quantity="one">%d min</item>
         <item quantity="other">%d min</item>
     </plurals>
+    <string name="unknown_title">Título desconocido</string>
+    <string name="no_overview">Sin descripción disponible</string>
+    <string name="unknown_year">Desconocido</string>
 </resources>

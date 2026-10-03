@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.mustafakocer.core_domain.exception.AppException
 import com.mustafakocer.core_domain.util.Resource
-import com.mustafakocer.movieappfeaturebasedclean.feature.details.domain.usecase.GetMovieDetailsUseCase
+import com.mustafakocer.movieappfeaturebasedclean.feature.details.data.repository.MovieDetailsRepository
 import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.model.MovieDetails
 import com.mustafakocer.movieappfeaturebasedclean.navigation.MovieDetailsScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +28,7 @@ data class MovieDetailsUiState(
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
-    private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
+    private val movieDetailsRepository: MovieDetailsRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -47,7 +47,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     private fun loadMovieDetails(isRefresh: Boolean) {
         dataCollectionJob?.cancel()
-        dataCollectionJob = getMovieDetailsUseCase(movieId)
+        dataCollectionJob = movieDetailsRepository.getMovieDetails(movieId)
             .onEach { resource ->
                 _uiState.update { current ->
                     when (resource) {

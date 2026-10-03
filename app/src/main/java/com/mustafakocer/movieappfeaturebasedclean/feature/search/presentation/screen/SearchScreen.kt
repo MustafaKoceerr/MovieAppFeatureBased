@@ -13,7 +13,7 @@ import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.presenta
 import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.presentation.components.list.PaginatedMovieList
 import com.mustafakocer.movieappfeaturebasedclean.feature.search.presentation.components.SearchInitialPrompt
 import com.mustafakocer.movieappfeaturebasedclean.feature.search.presentation.components.SearchTopBar
-import com.mustafakocer.movieappfeaturebasedclean.feature.search.presentation.viewmodel.MIN_SEARCH_QUERY_LENGTH
+import com.mustafakocer.movieappfeaturebasedclean.feature.search.domain.model.SearchQuery
 
 /**
  * Stateless search screen: a search bar on top and either the initial prompt (query too short)
@@ -30,7 +30,7 @@ fun SearchScreen(
     onBackClick: () -> Unit,
     onMovieClick: (movieId: Int) -> Unit,
 ) {
-    val canSearch = searchQuery.trim().length >= MIN_SEARCH_QUERY_LENGTH
+    val canSearch = searchQuery.trim().length >= SearchQuery.MIN_LENGTH
 
     Scaffold(
         topBar = {

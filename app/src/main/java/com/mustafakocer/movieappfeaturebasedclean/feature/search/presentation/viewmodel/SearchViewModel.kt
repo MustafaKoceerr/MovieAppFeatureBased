@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.model.MovieListItem
-import com.mustafakocer.movieappfeaturebasedclean.feature.search.domain.usecase.SearchMoviesUseCase
+import com.mustafakocer.movieappfeaturebasedclean.feature.search.data.repository.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
@@ -16,9 +16,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 
-/** Queries shorter than this are not sent to the API. */
-const val MIN_SEARCH_QUERY_LENGTH = 3
-
 private const val SEARCH_DEBOUNCE_MILLIS = 500L
 
 /**
@@ -27,14 +24,14 @@ private const val SEARCH_DEBOUNCE_MILLIS = 500L
  */
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    searchMoviesUseCase: SearchMoviesUseCase,
+    searchRepository: SearchRepository,
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     @OptIn(FlowPreview::class)
-    val searchResults: Flow<PagingData<MovieListItem>> = searchMoviesUseCase(
+    val searchResults: Flow<PagingData<MovieListItem>> = searchRepository.searchMovies(
         queryFlow = _searchQuery
             .debounce(SEARCH_DEBOUNCE_MILLIS)
             .distinctUntilChanged()

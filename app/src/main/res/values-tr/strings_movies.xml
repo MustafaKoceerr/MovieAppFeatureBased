@@ -91,4 +91,7 @@
         <item quantity="one">%d dk</item>
         <item quantity="other">%d dk</item>
     </plurals>
+    <string name="unknown_title">Bilinmeyen başlık</string>
+    <string name="no_overview">Özet mevcut değil</string>
+    <string name="unknown_year">Bilinmiyor</string>
 </resources>

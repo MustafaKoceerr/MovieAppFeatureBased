@@ -5,9 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.mustafakocer.core_domain.exception.AppException
 import com.mustafakocer.core_domain.util.Resource
 import com.mustafakocer.movieappfeaturebasedclean.feature.auth.shared.util.AuthConstants
-import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.domain.handler.AuthCallbackHandler
-import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.domain.usecase.CreateRequestTokenUseCase
-import com.mustafakocer.movieappfeaturebasedclean.feature.auth.welcome.domain.usecase.CreateSessionUseCase
+import com.mustafakocer.movieappfeaturebasedclean.feature.auth.shared.data.repository.AuthRepository
+import com.mustafakocer.movieappfeaturebasedclean.feature.auth.shared.util.AuthCallbackHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -29,8 +28,7 @@ data class WelcomeUiState(
 
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
-    private val createRequestTokenUseCase: CreateRequestTokenUseCase,
-    private val createSessionUseCase: CreateSessionUseCase,
+    private val authRepository: AuthRepository,
     private val authCallbackHandler: AuthCallbackHandler,
 ) : ViewModel() {
 
@@ -41,7 +39,7 @@ class WelcomeViewModel @Inject constructor(
         // The TMDB redirect delivers the approved token through AuthCallbackActivity.
         authCallbackHandler.tokenFlow
             .onEach { approvedToken ->
-                createSessionUseCase(approvedToken).collectResource {
+                authRepository.createSession(approvedToken).collectResource {
                     _uiState.update { it.copy(loggedIn = true) }
                 }
             }
@@ -49,7 +47,7 @@ class WelcomeViewModel @Inject constructor(
     }
 
     fun onLoginClick() {
-        createRequestTokenUseCase().collectResource { requestToken ->
+        authRepository.createRequestToken().collectResource { requestToken ->
             val url = "${AuthConstants.TMDB_AUTHENTICATION_URL}$requestToken" +
                 "?redirect_to=${AuthConstants.REDIRECT_URL}"
             _uiState.update { it.copy(loginUrl = url) }
