@@ -116,11 +116,11 @@ Cozuldu:
   B6  local.properties/API_KEY guvenli okunuyor; build config tekrarlari, cift room, safeargs, catalog duzeni.
   B7  Log'larda api_key/session_id/request_token maskeleniyor; AuthCallbackActivity Log.d kaldirildi.
   B8  SettingsContact/ListContract ve KEY_* sabitleri silindi.
-  B9  22 unit test (Home/Details/Search VM, log maskeleme, hata eslemesi); 6 yeni ekran icin @Preview.
+  B9  Tum ViewModel'ler + log maskeleme + hata eslemesi icin unit test; 6 yeni ekran icin @Preview.
 
 Acik kalanlar:
   - (Cozuldu, fix/per-app-locale) MainActivity runBlocking: AppCompatDelegate.setApplicationLocales'e gecildi;
     dil Application.onCreate'te DataStore'dan asenkron uygulaniyor. Cihazda dogrulanmadi.
-  - Kalan ViewModel'ler (List, Settings, Welcome, Account), repository ve Compose UI testleri.
+  - Repository ve Compose UI testleri (tum ViewModel'ler test edildi: 39 unit test, 9 test sinifi).
   - Release build'de proguard/R8 kurallari test edilmedi (isMinifyEnabled=true).
   - Tum degisiklikler yalnizca derleme + unit test ile dogrulandi; cihazda manuel akis denenmedi.

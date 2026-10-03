@@ -181,7 +181,7 @@ Movie Discovery App allows users to explore, search, and discover movies with a 
 - Pagination in search & list screens
 - Language & API key as interceptors for network requests; secrets are redacted from debug logs
 - Enum-based language architecture: add a new language with a single line
-- Unit tests for ViewModels (coroutines-test, Turbine, Mockito) and the network error/log helpers
+- Unit tests for every ViewModel (coroutines-test, Turbine, Mockito) and the network error/log helpers
 - Shimmer loading animation for all network-fetched data (user always sees a polished loading state)
 - Smooth transitions between screens and UI states
 
@@ -270,7 +270,7 @@ feature/details/
 - 🔜 **Profile feature** *(planned)*
 - 🔜 **Push notifications** *(planned)*
 - 🔜 **Favorites and rating feature for logged-in users** *(planned)*
-- 🔜 **Broader test coverage (remaining ViewModels, repositories, UI tests)** *(planned)*
+- 🔜 **Broader test coverage (repositories, Compose UI tests)** *(planned)*
 - ✅ **Per-app language via `AppCompatDelegate.setApplicationLocales`** *(no blocking read at startup)*
 - 🔜 **Onboarding flow with ViewPager2** *(planned)*
 
