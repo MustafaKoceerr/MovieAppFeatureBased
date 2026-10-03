@@ -1,5 +1,7 @@
 package com.mustafakocer.movieappfeaturebasedclean.feature.search.presentation.components
 
+import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -77,5 +79,13 @@ fun SearchInitialPrompt(modifier: Modifier = Modifier) {
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SearchInitialPromptPreview() {
+    MovieDiscoveryTheme {
+        SearchInitialPrompt()
     }
 }

@@ -154,3 +154,12 @@ private fun LoadingDotsIndicator() {
     }
 }
 
+
+
+@Preview(showBackground = true)
+@Composable
+private fun SplashScreenPreview() {
+    MovieDiscoveryTheme {
+        SplashScreen()
+    }
+}

@@ -1,5 +1,7 @@
 package com.mustafakocer.movieappfeaturebasedclean.feature.auth.account.presentation.screen
 
+import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -172,5 +174,31 @@ private fun LogoutButton(onLogoutClick: () -> Unit) {
         Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null)
         Spacer(modifier = Modifier.width(8.dp))
         Text(stringResource(R.string.logout_button))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AccountScreenGuestPreview() {
+    MovieDiscoveryTheme {
+        AccountScreen(
+            state = AccountUiState(isLoggedIn = false),
+            onBackClick = {},
+            onLoginClick = {},
+            onLogoutClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AccountScreenLoggedInPreview() {
+    MovieDiscoveryTheme {
+        AccountScreen(
+            state = AccountUiState(isLoggedIn = true),
+            onBackClick = {},
+            onLoginClick = {},
+            onLogoutClick = {},
+        )
     }
 }

@@ -1,5 +1,9 @@
 package com.mustafakocer.movieappfeaturebasedclean.feature.home.presentation.screen
 
+import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.model.MovieListItem
+import androidx.compose.runtime.remember
+import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
+import androidx.compose.ui.tooling.preview.Preview
 import HomeScreenSkeleton
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
@@ -177,5 +181,56 @@ fun MovieCategory.toLocalizedTitle(): String {
         MovieCategory.POPULAR -> stringResource(id = R.string.category_title_popular)
         MovieCategory.TOP_RATED -> stringResource(id = R.string.category_title_top_rated)
         MovieCategory.UPCOMING -> stringResource(id = R.string.category_title_upcoming)
+    }
+}
+
+private val previewMovies = List(6) { index ->
+    MovieListItem(
+        id = index,
+        title = "Movie ${index + 1}",
+        overview = "A short overview of the movie.",
+        posterUrl = null,
+        releaseYear = "2024",
+        voteAverage = 7.5,
+        voteCount = 1200,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun HomeScreenContentPreview() {
+    MovieDiscoveryTheme {
+        HomeScreen(
+            state = HomeUiState(
+                categories = mapOf(
+                    MovieCategory.POPULAR to previewMovies,
+                    MovieCategory.TOP_RATED to previewMovies.reversed(),
+                )
+            ),
+            snackbarHostState = remember { SnackbarHostState() },
+            onRefresh = {},
+            onMovieClick = {},
+            onViewAllClick = {},
+            onSearchClick = {},
+            onSettingsClick = {},
+            onAccountClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun HomeScreenLoadingPreview() {
+    MovieDiscoveryTheme {
+        HomeScreen(
+            state = HomeUiState(isLoading = true),
+            snackbarHostState = remember { SnackbarHostState() },
+            onRefresh = {},
+            onMovieClick = {},
+            onViewAllClick = {},
+            onSearchClick = {},
+            onSettingsClick = {},
+            onAccountClick = {},
+        )
     }
 }

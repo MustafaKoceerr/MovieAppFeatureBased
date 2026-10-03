@@ -1,5 +1,10 @@
 package com.mustafakocer.movieappfeaturebasedclean.feature.details.presentation.screen
 
+import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.model.Genre
+import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.model.MovieDetails
+import androidx.compose.runtime.remember
+import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -76,5 +81,46 @@ fun MovieDetailsScreen(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MovieDetailsScreenPreview() {
+    MovieDiscoveryTheme {
+        MovieDetailsScreen(
+            state = MovieDetailsUiState(
+                movie = MovieDetails(
+                    id = 1,
+                    title = "Preview Movie",
+                    overview = "A longer overview that explains what the movie is about.",
+                    posterUrl = "",
+                    backdropUrl = "",
+                    releaseDate = "2024-05-01",
+                    voteAverage = 8.1,
+                    runtime = 128,
+                    tagline = "The best preview ever",
+                    genres = listOf(Genre(1, "Action"), Genre(2, "Drama")),
+                )
+            ),
+            snackbarHostState = remember { SnackbarHostState() },
+            onBackClick = {},
+            onRefresh = {},
+            onShareClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MovieDetailsScreenLoadingPreview() {
+    MovieDiscoveryTheme {
+        MovieDetailsScreen(
+            state = MovieDetailsUiState(isLoading = true),
+            snackbarHostState = remember { SnackbarHostState() },
+            onBackClick = {},
+            onRefresh = {},
+            onShareClick = {},
+        )
     }
 }

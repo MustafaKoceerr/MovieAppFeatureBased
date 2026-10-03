@@ -1,5 +1,8 @@
 package com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.screen
 
+import androidx.compose.runtime.remember
+import com.mustafakocer.core_ui.ui.theme.MovieDiscoveryTheme
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -123,5 +126,20 @@ private fun SettingsContent(
         )
 
         Spacer(modifier = Modifier.height(32.dp))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SettingsScreenPreview() {
+    MovieDiscoveryTheme {
+        SettingsScreen(
+            state = SettingsUiState(),
+            snackbarHostState = remember { SnackbarHostState() },
+            onBackClick = {},
+            onThemeSelected = {},
+            onLanguageSelected = {},
+            onErrorShown = {},
+        )
     }
 }
