@@ -110,6 +110,12 @@ android {
         compose = true
         buildConfig = true  // ✅ BuildConfig enable
     }
+    testOptions {
+        unitTests {
+            // android.util.Log etc. return defaults instead of throwing in JVM unit tests.
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 dependencies {
@@ -145,6 +151,7 @@ dependencies {
     testImplementation(libs.mockito.core)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+    testImplementation(libs.paging.testing)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

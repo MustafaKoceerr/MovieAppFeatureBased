@@ -121,6 +121,8 @@ Cozuldu:
 Acik kalanlar:
   - (Cozuldu, fix/per-app-locale) MainActivity runBlocking: AppCompatDelegate.setApplicationLocales'e gecildi;
     dil Application.onCreate'te DataStore'dan asenkron uygulaniyor. Cihazda dogrulanmadi.
-  - Repository ve Compose UI testleri (tum ViewModel'ler test edildi: 39 unit test, 9 test sinifi).
+  - Compose UI testleri (tum ViewModel'ler, repository'ler, mapper'lar ve core-data yardimcilari unit testli: 102 test).
+  - Gozlem: LanguageProvider.getLanguageParam() ilk DataStore degeri gelene kadar "" donuyor (HomeRepository ve
+    LanguageInterceptor kullaniyor); acilista dil bos gidebilir. Cihazda dogrulanmadi, duzeltilmedi.
   - Release build'de proguard/R8 kurallari test edilmedi (isMinifyEnabled=true).
   - Tum degisiklikler yalnizca derleme + unit test ile dogrulandi; cihazda manuel akis denenmedi.
