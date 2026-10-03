@@ -1,82 +1,34 @@
 package com.mustafakocer.movieappfeaturebasedclean.feature.list.presentation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.mustafakocer.core_android.presentation.BaseViewModel
 import com.mustafakocer.movieappfeaturebasedclean.feature.list.domain.usecase.GetMovieListUseCase
-import com.mustafakocer.movieappfeaturebasedclean.feature.list.presentation.contract.MovieListEffect
-import com.mustafakocer.movieappfeaturebasedclean.feature.list.presentation.contract.MovieListEvent
-import com.mustafakocer.movieappfeaturebasedclean.feature.list.presentation.contract.MovieListUiState
 import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.model.MovieCategory
+import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.model.MovieListItem
 import com.mustafakocer.movieappfeaturebasedclean.navigation.MovieListScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 /**
- * Manages the UI state and business logic for the paginated movie list screen.
- *
- * Its responsibilities include:
- * - Retrieving the required movie category from navigation arguments via [SavedStateHandle].
- * - Invoking the [GetMovieListUseCase] to get a reactive stream of paginated movie data.
- * - Caching the PagingData stream within the ViewModel's lifecycle to handle configuration changes.
- * - Translating UI events into navigation or other side effects.
+ * Paging drives the whole screen, so there is no UiState: the category comes from the route
+ * argument and the paged movies are exposed as a separate flow (never stored inside a state class).
  */
 @HiltViewModel
 class MovieListViewModel @Inject constructor(
-    private val getMovieListUseCase: GetMovieListUseCase,
-    // Architectural Decision: SavedStateHandle is used to access navigation arguments.
-    // This is the recommended approach as it's lifecycle-aware and allows the ViewModel
-    // to survive process death and configuration changes without losing its context.
+    getMovieListUseCase: GetMovieListUseCase,
     savedStateHandle: SavedStateHandle,
-) : BaseViewModel<MovieListUiState, MovieListEvent, MovieListEffect>(
-    initialState = MovieListUiState()
-) {
-    // The category endpoint is retrieved from the navigation arguments.
-    private val categoryEndpoint: String = savedStateHandle[MovieListScreen.KEY_CATEGORY_ENDPOINT]
-        ?: throw IllegalStateException("Category endpoint is required for MovieListScreen")
+) : ViewModel() {
 
-    init {
-        val category = MovieCategory.fromApiEndpoint(categoryEndpoint)
+    /** Null when the route carries an unknown endpoint; the route then navigates back. */
+    val category: MovieCategory? =
+        MovieCategory.fromApiEndpoint(savedStateHandle.toRoute<MovieListScreen>().categoryEndpoint)
 
-        if (category == null) {
-            sendEffect(MovieListEffect.ShowSnackbar("Category not found."))
-            sendEffect(MovieListEffect.NavigateBack)
-        } else {
-            loadMovies(category)
-        }
-    }
-
-    /**
-     * Handles incoming user events from the UI.
-     */
-    override fun onEvent(event: MovieListEvent) {
-        when (event) {
-            is MovieListEvent.MovieClicked -> {
-                sendEffect(MovieListEffect.NavigateToMovieDetail(event.movieId))
-            }
-
-            is MovieListEvent.BackClicked -> {
-                sendEffect(MovieListEffect.NavigateBack)
-            }
-        }
-    }
-
-    /**
-     * Initiates the loading of the paginated movie list for a given category.
-     *
-     * @param category The [MovieCategory] for which to load movies.
-     */
-    private fun loadMovies(category: MovieCategory) {
-
-        val moviesPagingFlow = getMovieListUseCase(category)
-            .cachedIn(viewModelScope)
-
-        setState {
-            copy(
-                movies = moviesPagingFlow,
-                category = category
-            )
-        }
-    }
+    val movies: Flow<PagingData<MovieListItem>> =
+        category?.let { getMovieListUseCase(it).cachedIn(viewModelScope) } ?: emptyFlow()
 }
