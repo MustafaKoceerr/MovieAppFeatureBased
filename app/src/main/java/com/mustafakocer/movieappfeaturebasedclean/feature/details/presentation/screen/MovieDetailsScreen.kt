@@ -16,14 +16,15 @@ import com.mustafakocer.movieappfeaturebasedclean.feature.details.presentation.c
 import com.mustafakocer.movieappfeaturebasedclean.feature.details.presentation.components.MovieDetailsTopBar
 import com.mustafakocer.movieappfeaturebasedclean.feature.details.presentation.components.ShareFloatingActionButton
 import com.mustafakocer.movieappfeaturebasedclean.feature.details.presentation.components.formatShareContent
-import com.mustafakocer.movieappfeaturebasedclean.feature.details.presentation.contract.MovieDetailsEvent
-import com.mustafakocer.movieappfeaturebasedclean.feature.details.presentation.contract.MovieDetailsUiState
+import com.mustafakocer.movieappfeaturebasedclean.feature.details.presentation.viewmodel.MovieDetailsUiState
 
 /**
  * A purely visual, "dumb" component that displays the UI for the movie details screen.
  *
  * @param state The current UI state to render.
- * @param onEvent A lambda to propagate user interactions up to the ViewModel.
+ * @param onBackClick Called when the back arrow is pressed.
+ * @param onRefresh Called when the error retry button is pressed.
+ * @param onShareClick Called with the formatted share text when the share button is pressed.
  * @param snackbarHostState The state manager for displaying Snackbars.
  *
  * Architectural Note:
@@ -39,7 +40,9 @@ import com.mustafakocer.movieappfeaturebasedclean.feature.details.presentation.c
 @Composable
 fun MovieDetailsScreen(
     state: MovieDetailsUiState,
-    onEvent: (MovieDetailsEvent) -> Unit,
+    onBackClick: () -> Unit,
+    onRefresh: () -> Unit,
+    onShareClick: (String) -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     Scaffold(
@@ -47,15 +50,14 @@ fun MovieDetailsScreen(
         topBar = {
             MovieDetailsTopBar(
                 title = state.movie?.title ?: "",
-                onNavigateBack = { onEvent(MovieDetailsEvent.BackPressed) },
+                onNavigateBack = onBackClick,
             )
         },
         floatingActionButton = {
             state.movie?.let { movie ->
                 val shareContent = formatShareContent(movie = movie)
                 ShareFloatingActionButton(
-                    isSharing = state.isSharing,
-                    onClick = { onEvent(MovieDetailsEvent.ShareMovie(content = shareContent)) }
+                    onClick = { onShareClick(shareContent) }
                 )
             }
         }
@@ -70,7 +72,7 @@ fun MovieDetailsScreen(
                 state.movie != null -> MovieDetailsContent(movie = state.movie, isRefreshLoading = state.isRefreshing)
                 state.error != null -> ErrorScreen(
                     error = state.error.toErrorInfo(),
-                    onRetry = { onEvent(MovieDetailsEvent.Refresh) }
+                    onRetry = onRefresh
                 )
             }
         }
