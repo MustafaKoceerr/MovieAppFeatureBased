@@ -259,6 +259,11 @@ feature/details/
    ./gradlew testDebugUnitTest
    ```
    Tests run with a fixed English locale (set in `app/build.gradle.kts`), so they behave the same on every machine.
+   Release build (R8) sanity check:
+   ```
+   ./gradlew :app:assembleRelease
+   scripts/check-r8-release.sh
+   ```
 
 ---
 

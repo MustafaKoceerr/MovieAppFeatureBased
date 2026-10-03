@@ -123,7 +123,14 @@ Acik kalanlar:
     dil Application.onCreate'te DataStore'dan asenkron uygulaniyor. Cihazda dogrulanmadi.
   - Cihaz/emulator uzerinde instrumented testler (Compose UI testleri Robolectric ile JVM'de yazildi: 44 test;
     gercek GPU/animasyon/ekran goruntusu dogrulamasi yok). Toplam 153 test.
+  - (Cozuldu, test/r8-release) Release/R8: DeleteSessionResponseDto, yalnizca Response<...> tip argumani olarak
+    kullanildigi icin R8 tarafindan siliniyor ve imzasi Response<Object>'e donuyordu; logout'ta TMDB oturumu
+    sunucuda silinmiyordu (hata yutuluyordu). app/proguard-rules.pro'ya DTO paketleri icin keep kurali eklendi,
+    scripts/check-r8-release.sh ile kontrol edilebiliyor. Emulatorde (API 29) release APK ile Splash, Welcome,
+    Home, Details, List, Search, Settings, dil degisimi + surec yeniden baslatma, TMDB request token akisi denendi.
+    Denenmeyen: gercek giris/logout (TMDB hesabi gerekir), Account ekrani, tema degisimi, paylasim.
+  - Gozlem: Settings'te "Light/Dark/System", "Language" ve ErrorInfo'daki "Try Again/Go Back" sabit Ingilizce
+    (cevrilmemis), dil Almanca iken de Ingilizce gorunuyor.
   - (Cozuldu, fix/language-provider) LanguageProvider artik onbellek tutmuyor, her seferinde kayitli dili okuyor:
     acilista bos dil ve dil degisince eski dille istek gitme yarisi kalmadi (LanguageProviderTest). Cihazda dogrulanmadi.
-  - Release build'de proguard/R8 kurallari test edilmedi (isMinifyEnabled=true).
   - Tum degisiklikler yalnizca derleme + unit test ile dogrulandi; cihazda manuel akis denenmedi.
