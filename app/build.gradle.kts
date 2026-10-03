@@ -1,14 +1,17 @@
 // app module gradle.
 import java.util.Properties
 
-// Dosyanın en üstüne bu bloğu ekliyoruz.
-// Bu blok, projenin kök dizinindeki local.properties dosyasını bulur.
-val localPropertiesFile = rootProject.file("local.properties")
-val localProperties = Properties()
-localProperties.load(localPropertiesFile.inputStream())
-
-// local.properties'den API_KEY değerini okur.
-val apiKey = localProperties.getProperty("API_KEY")
+// local.properties'ten API_KEY okunur. Dosya veya anahtar yoksa boş string kullanılır, build kırılmaz.
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+val apiKey: String = localProperties.getProperty("API_KEY")
+    ?.trim()?.removeSurrounding("\"")
+    .orEmpty()
+if (apiKey.isEmpty()) {
+    logger.warn("API_KEY local.properties içinde bulunamadı; TMDB istekleri başarısız olacak.")
+}
 
 plugins {
     alias(libs.plugins.android.application)
@@ -32,6 +35,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "API_URL", "\"https://api.themoviedb.org/3/\"")
+        buildConfigField("String", "API_KEY", "\"$apiKey\"")
     }
 
     buildTypes {
@@ -45,9 +51,6 @@ android {
                 "proguard-rules.pro"
             )
 
-            // ✅ EKSİK FIELD'LAR EKLENDI
-            buildConfigField("String", "API_URL", "\"https://api.themoviedb.org/3/\"")
-            buildConfigField("String", "API_KEY", "$apiKey")
             buildConfigField("String", "APP_NAME", "\"Movie App\"")
             buildConfigField("Boolean", "ENABLE_LOGGING", "false")
         }
@@ -58,9 +61,6 @@ android {
             isDebuggable = true
             isMinifyEnabled = false
 
-            // ✅ EKSİK FIELD'LAR EKLENDI
-            buildConfigField("String", "API_URL", "\"https://api.themoviedb.org/3/\"")
-            buildConfigField("String", "API_KEY", "$apiKey")
             buildConfigField("String", "APP_NAME", "\"Movie App Debug\"")
             buildConfigField("Boolean", "ENABLE_LOGGING", "true")
         }
@@ -138,7 +138,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     // ROOM
-    implementation(libs.room.runtime)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)

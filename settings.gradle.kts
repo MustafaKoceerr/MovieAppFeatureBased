@@ -1,9 +1,5 @@
 import org.gradle.api.initialization.resolve.RepositoriesMode.FAIL_ON_PROJECT_REPOS
 
-include(":feature-splash")
-
-
-
 pluginManagement {
     repositories {
         google {
@@ -36,3 +32,4 @@ include(":navigation-contracts")
 include(":core-preferences")
 include(":feature-auth")
 include(":core-android")
+include(":feature-splash")

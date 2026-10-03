@@ -20,7 +20,7 @@ Navigasyon composable'dan lambda ile; ViewModel'den geçmez.
 
 ## Adımlar
 - [x] 0. Hazırlık: branch, `MovieAppAnalysis.txt`, `MovieAppPlan.md`
-- [ ] 1. Build temizliği: catalog, safeargs, çift room, API_KEY güvenli okuma, debug/release tekrarı
+- [x] 1. Build temizliği: catalog, safeargs, çift room, API_KEY güvenli okuma, debug/release tekrarı
 - [ ] 2. Core birleştirme: core-domain/network/preferences/database → `:core-data`; `core-android` ve `BaseUi*`/`UiContract` silinir; safeApiCall dispatcher inject; Gson → kotlinx-serialization
 - [ ] 3. Feature'ları `:app`'e taşı (splash → auth → movies); `navigation-contracts` route'ları `:app`'e; NavActions → lambda; eski modülleri kaldır
 - [ ] 4. MVI → MVVM, ekran ekran: Splash, Settings, Welcome, Account, Home, Details, List, Search
