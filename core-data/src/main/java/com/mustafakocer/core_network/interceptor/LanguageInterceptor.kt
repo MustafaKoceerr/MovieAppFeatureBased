@@ -3,6 +3,7 @@ package com.mustafakocer.core_network.interceptor
 import com.mustafakocer.core_preferences.provider.LanguageProvider
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -23,7 +24,9 @@ class LanguageInterceptor @Inject constructor(
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val languageParam = languageProvider.getLanguageParam()
+        // OkHttp runs interceptors on its own background threads (Retrofit suspend calls are enqueued),
+        // never on the main thread, so waiting for the stored language here is safe.
+        val languageParam = runBlocking { languageProvider.getLanguageParam() }
 
         val originalRequest = chain.request()
         val url = originalRequest.url.newBuilder()
