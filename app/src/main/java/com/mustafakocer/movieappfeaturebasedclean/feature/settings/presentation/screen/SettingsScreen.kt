@@ -24,25 +24,26 @@ import com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.
 import com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.component.SettingsHeader
 import com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.component.SettingsTopBar
 import com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.component.ThemeSelectionSection
-import com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.contract.SettingsEvent
-import com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.contract.SettingsUiState
+import com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.viewmodel.SettingsUiState
 
 /**
  * The main stateless UI component for the settings screen.
  *
  * This composable is responsible for laying out the screen's visual elements based on the
- * provided [state] and forwarding user interactions to the ViewModel via the [onEvent] callback.
+ * provided [state] and forwarding user interactions through callbacks.
  * It also encapsulates the logic for displaying error Snackbars.
  *
  * @param state The current [SettingsUiState] to render.
- * @param onEvent A function to call when a user interaction occurs.
  * @param snackbarHostState The state manager for displaying Snackbars.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     state: SettingsUiState,
-    onEvent: (SettingsEvent) -> Unit,
+    onBackClick: () -> Unit,
+    onThemeSelected: (ThemePreference) -> Unit,
+    onLanguageSelected: (LanguagePreference) -> Unit,
+    onErrorShown: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     // Architectural Decision: Error handling is managed reactively within this composable.
@@ -60,7 +61,7 @@ fun SettingsScreen(
                 duration = SnackbarDuration.Short
             )
             // After showing the error, we notify the ViewModel to clear it from the state.
-            onEvent(SettingsEvent.DismissError)
+            onErrorShown()
         }
     }
 
@@ -68,7 +69,7 @@ fun SettingsScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             SettingsTopBar(
-                onBackPressed = { onEvent(SettingsEvent.BackClicked) }
+                onBackPressed = onBackClick
             )
         }
     ) { paddingValues ->
@@ -78,12 +79,8 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
             state = state,
-            onThemeSelected = { theme ->
-                onEvent(SettingsEvent.ThemeSelected(theme))
-            },
-            onLanguageSelected = { language ->
-                onEvent(SettingsEvent.LanguageSelected(language))
-            }
+            onThemeSelected = onThemeSelected,
+            onLanguageSelected = onLanguageSelected
         )
     }
 }
@@ -115,13 +112,13 @@ private fun SettingsContent(
             currentTheme = state.currentTheme,
             // The `isLoading` state can be used to disable the selection buttons or show an
             // indicator while a preference is being saved, preventing concurrent modifications.
-            isLoading = state.isLoading,
+            isLoading = state.isSaving,
             onThemeSelected = onThemeSelected
         )
 
         LanguageSelectionSection(
             currentLanguage = state.currentLanguage,
-            isLoading = state.isLoading,
+            isLoading = state.isSaving,
             onLanguageSelected = onLanguageSelected
         )
 

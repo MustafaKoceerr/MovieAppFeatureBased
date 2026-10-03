@@ -1,146 +1,85 @@
 package com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.viewmodel
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mustafakocer.core_android.presentation.BaseViewModel
+import com.mustafakocer.core_domain.exception.AppException
 import com.mustafakocer.core_domain.exception.toAppException
 import com.mustafakocer.core_preferences.models.LanguagePreference
 import com.mustafakocer.core_preferences.models.ThemePreference
 import com.mustafakocer.core_preferences.repository.LanguageRepository
 import com.mustafakocer.core_preferences.repository.ThemeRepository
-import com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.contract.SettingsEffect
-import com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.contract.SettingsEvent
-import com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.contract.SettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * Manages the UI state and business logic for the settings screen.
- *
- * This ViewModel is responsible for:
- * - Reactively observing the current theme and language preferences from their respective repositories.
- * - Handling user events to change these preferences.
- * - Managing loading and error states during preference-saving operations.
- * - Emitting side effects for navigation or for applying critical configuration changes (like restarting the app).
- */
+data class SettingsUiState(
+    val currentTheme: ThemePreference = ThemePreference.SYSTEM,
+    val currentLanguage: LanguagePreference = LanguagePreference.ENGLISH,
+    val isSaving: Boolean = false,
+    val error: AppException? = null,
+    /** Set after a language change; the route recreates the activity and calls [SettingsViewModel.onRestartHandled]. */
+    val restartRequired: Boolean = false,
+)
+
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val themeRepository: ThemeRepository,
     private val languageRepository: LanguageRepository,
-) : BaseViewModel<SettingsUiState, SettingsEvent, SettingsEffect>(
-    SettingsUiState()
-) {
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(SettingsUiState())
+    val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
     init {
-        // Start observing the preference flows as soon as the ViewModel is created.
-        observeThemeChanges()
-        observeLanguageChanges()
-    }
-
-    /**
-     * Handles incoming user events from the UI.
-     */
-    override fun onEvent(event: SettingsEvent) {
-        when (event) {
-            is SettingsEvent.ThemeSelected -> {
-                // Prevent redundant operations if the user selects the currently active theme.
-                if (event.theme == currentState.currentTheme) return
-                saveSelectedTheme(event.theme)
-            }
-
-            is SettingsEvent.LanguageSelected -> {
-                // Prevent redundant operations if the user selects the currently active language.
-                if (event.language == currentState.currentLanguage) return
-                saveSelectedLanguage(event.language)
-            }
-
-            is SettingsEvent.BackClicked -> {
-                sendEffect(SettingsEffect.NavigateBack)
-            }
-
-            is SettingsEvent.DismissError -> {
-                // Architectural Decision: This event is part of a "one-shot" error display pattern.
-                // The UI shows the error from the state, then immediately sends this event to clear it.
-                // This prevents the error from being shown again on recomposition or configuration change.
-                setState { copy(error = null) }
-            }
-        }
-    }
-
-    /**
-     * Subscribes to the theme preference flow from the repository.
-     * This ensures the UI state is always in sync with the persisted theme preference.
-     */
-    private fun observeThemeChanges() {
         themeRepository.themeFlow
-            .catch { e ->
-                // If an error occurs while observing the flow, reflect it in the state.
-                setState { copy(error = e.toAppException()) }
-            }
-            .onEach { theme ->
-                // Update the state whenever a new theme preference is emitted.
-                setState { copy(currentTheme = theme) }
-            }
+            .catch { e -> _uiState.update { it.copy(error = e.toAppException()) } }
+            .onEach { theme -> _uiState.update { it.copy(currentTheme = theme) } }
             .launchIn(viewModelScope)
-    }
 
-    /**
-     * Subscribes to the language preference flow from the repository.
-     * This ensures the UI state is always in sync with the persisted language preference.
-     */
-    private fun observeLanguageChanges() {
         languageRepository.languageFlow
-            .catch { e ->
-                setState { copy(error = e.toAppException()) }
-            }
-            .onEach { language ->
-                setState { copy(currentLanguage = language) }
-            }
+            .catch { e -> _uiState.update { it.copy(error = e.toAppException()) } }
+            .onEach { language -> _uiState.update { it.copy(currentLanguage = language) } }
             .launchIn(viewModelScope)
     }
 
-    /**
-     * Saves the user's selected theme preference to the repository.
-     * @param theme The [ThemePreference] to be saved.
-     */
-    private fun saveSelectedTheme(theme: ThemePreference) {
-        if (currentState.isLoading) return
+    fun onThemeSelected(theme: ThemePreference) {
+        val state = _uiState.value
+        if (theme == state.currentTheme || state.isSaving) return
+        save { themeRepository.setTheme(theme) }
+    }
 
-        viewModelScope.launch {
-            setState { copy(isLoading = true) }
-            try {
-                themeRepository.setTheme(theme)
-                // On success, simply clear the loading state. The `observeThemeChanges` flow
-                // will automatically receive the new value and update the UI state.
-                setState { copy(isLoading = false) }
-            } catch (e: Exception) {
-                setState { copy(isLoading = false, error = e.toAppException()) }
-            }
+    fun onLanguageSelected(language: LanguagePreference) {
+        val state = _uiState.value
+        if (language == state.currentLanguage || state.isSaving) return
+        save(onSaved = { _uiState.update { it.copy(restartRequired = true) } }) {
+            languageRepository.setLanguage(language)
         }
     }
 
-    /**
-     * Saves the user's selected language preference to the repository.
-     * @param language The [LanguagePreference] to be saved.
-     */
-    private fun saveSelectedLanguage(language: LanguagePreference) {
-        if (currentState.isLoading) return
+    fun onErrorShown() {
+        _uiState.update { it.copy(error = null) }
+    }
 
+    fun onRestartHandled() {
+        _uiState.update { it.copy(restartRequired = false) }
+    }
+
+    private fun save(onSaved: () -> Unit = {}, block: suspend () -> Unit) {
         viewModelScope.launch {
-            setState { copy(isLoading = true) }
+            _uiState.update { it.copy(isSaving = true) }
             try {
-                languageRepository.setLanguage(language)
-                setState { copy(isLoading = false) }
-                // Architectural Decision: Changing the app's language often requires an activity
-                // restart to ensure all resources and configurations are reloaded correctly.
-                // We send a specific side effect to the UI layer to trigger this "hoisted action,"
-                // keeping the ViewModel decoupled from Android framework specifics.
-                sendEffect(SettingsEffect.RestartActivity)
+                block()
+                _uiState.update { it.copy(isSaving = false) }
+                onSaved()
             } catch (e: Exception) {
-                setState { copy(isLoading = false, error = e.toAppException()) }
+                _uiState.update { it.copy(isSaving = false, error = e.toAppException()) }
             }
         }
     }

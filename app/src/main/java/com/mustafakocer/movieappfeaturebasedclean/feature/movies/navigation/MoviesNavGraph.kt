@@ -13,7 +13,6 @@ import com.mustafakocer.movieappfeaturebasedclean.navigation.actions.movies.Home
 import com.mustafakocer.movieappfeaturebasedclean.navigation.actions.movies.MovieDetailsNavActions
 import com.mustafakocer.movieappfeaturebasedclean.navigation.actions.movies.MovieListNavActions
 import com.mustafakocer.movieappfeaturebasedclean.navigation.actions.movies.SearchNavActions
-import com.mustafakocer.movieappfeaturebasedclean.navigation.actions.movies.SettingsNavActions
 import com.mustafakocer.movieappfeaturebasedclean.navigation.AccountScreen
 import com.mustafakocer.movieappfeaturebasedclean.navigation.HomeScreen
 import com.mustafakocer.movieappfeaturebasedclean.navigation.MovieDetailsScreen
@@ -113,13 +112,8 @@ fun NavGraphBuilder.moviesNavGraph(
         }
 
         composable<SettingsScreen> {
-            val navActions = object : SettingsNavActions {
-                override fun navigateUp() {
-                    navController.navigateUp()
-                }
-            }
             SettingsRoute(
-                navActions = navActions,
+                onNavigateUp = { navController.navigateUp() },
                 onLanguageChanged = onLanguageChanged
             )
         }
