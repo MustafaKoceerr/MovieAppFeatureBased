@@ -1,36 +1,35 @@
 package com.mustafakocer.movieappfeaturebasedclean.feature.splash.presentation.viewmodel
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mustafakocer.core_android.presentation.BaseViewModel
 import com.mustafakocer.core_domain.provider.SessionProvider
-import com.mustafakocer.movieappfeaturebasedclean.feature.splash.presentation.contract.SplashEffect
-import com.mustafakocer.movieappfeaturebasedclean.feature.splash.presentation.contract.SplashEvent
-import com.mustafakocer.movieappfeaturebasedclean.feature.splash.presentation.contract.SplashUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
+enum class SplashDestination { Home, Welcome }
+
+/** [destination] is null while the splash is showing; once set, the route navigates away. */
+data class SplashUiState(val destination: SplashDestination? = null)
+
 /**
- * Manages the business logic for the Splash screen.
- *
- * @param sessionProvider The provider for checking the current user session state.
- *
- * Architectural Note:
- * The primary responsibility of this ViewModel is to determine the user's authentication status
- * and then emit a navigation effect. It orchestrates two parallel tasks: a minimum display timer
- * and a session check. This ensures the splash screen is displayed for a pleasant duration while
- * efficiently deciding the next navigation destination.
+ * Waits for the minimum splash time and the stored session in parallel,
+ * then decides where the user should land.
  */
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val sessionProvider: SessionProvider,
-) : BaseViewModel<SplashUiState, SplashEvent, SplashEffect>(
-    initialState = SplashUiState()
-) {
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(SplashUiState())
+    val uiState: StateFlow<SplashUiState> = _uiState.asStateFlow()
 
     init {
         checkUserSession()
@@ -38,34 +37,20 @@ class SplashViewModel @Inject constructor(
 
     private fun checkUserSession() {
         viewModelScope.launch {
-            // Architectural Decision:
-            // Two jobs are launched in parallel using `async` for efficiency.
-            // - `timerJob`: Guarantees a minimum branding display time, improving user experience.
-            // - `sessionJob`: Fetches the session state from the data layer.
-            // `awaitAll` ensures that we wait for the slower of the two tasks to complete before
-            // proceeding, which is the most efficient way to handle this dual requirement.
-            val timerJob = async { delay(1500L) }
+            val timerJob = async { delay(MIN_SPLASH_MILLIS) }
             val sessionJob = async {
                 runCatching { sessionProvider.observeSessionId().first() }
             }
-
             awaitAll(timerJob, sessionJob)
 
-            val sessionResult = sessionJob.await()
-            sessionResult.onSuccess { sessionId ->
-                if (sessionId.isNullOrBlank()) {
-                    sendEffect(SplashEffect.NavigateToWelcome)
-                } else {
-                    sendEffect(SplashEffect.NavigateToHome)
-                }
-            }.onFailure {
-                // In case of an error reading the session, default to the welcome screen.
-                sendEffect(SplashEffect.NavigateToWelcome)
-            }
+            val hasSession = sessionJob.await().getOrNull()?.isNotBlank() == true
+            _uiState.value = SplashUiState(
+                destination = if (hasSession) SplashDestination.Home else SplashDestination.Welcome
+            )
         }
     }
 
-    override fun onEvent(event: SplashEvent) {
-        // No user interactions on this screen.
+    private companion object {
+        const val MIN_SPLASH_MILLIS = 1500L
     }
 }
