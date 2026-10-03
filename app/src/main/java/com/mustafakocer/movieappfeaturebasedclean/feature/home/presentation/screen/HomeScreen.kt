@@ -33,14 +33,19 @@ import com.mustafakocer.core_ui.component.util.bounceClick
 import com.mustafakocer.movieappfeaturebasedclean.R
 import com.mustafakocer.movieappfeaturebasedclean.feature.home.presentation.components.FakeSearchBar
 import com.mustafakocer.movieappfeaturebasedclean.feature.home.presentation.components.MovieCategorySection
-import com.mustafakocer.movieappfeaturebasedclean.feature.home.presentation.contract.*
+import com.mustafakocer.movieappfeaturebasedclean.feature.home.presentation.viewmodel.HomeUiState
 import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.model.MovieCategory
 
 /**
  * A purely visual, "dumb" component that displays the UI for the Home screen.
  *
  * @param state The current UI state to render.
- * @param onEvent A lambda to propagate user interactions up to the ViewModel.
+ * @param onRefresh Called on pull-to-refresh and on the error retry button.
+ * @param onMovieClick Called with the id of the tapped movie.
+ * @param onViewAllClick Called with the category whose "view all" was tapped.
+ * @param onSearchClick Called when the search bar is tapped.
+ * @param onSettingsClick Called when the settings icon is tapped.
+ * @param onAccountClick Called when the account icon is tapped.
  * @param snackbarHostState The state manager for displaying Snackbars.
  *
  * Architectural Note:
@@ -54,7 +59,12 @@ import com.mustafakocer.movieappfeaturebasedclean.feature.movies.shared.domain.m
 @Composable
 fun HomeScreen(
     state: HomeUiState,
-    onEvent: (HomeEvent) -> Unit,
+    onRefresh: () -> Unit,
+    onMovieClick: (Int) -> Unit,
+    onViewAllClick: (MovieCategory) -> Unit,
+    onSearchClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onAccountClick: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     Scaffold(
@@ -64,7 +74,7 @@ fun HomeScreen(
                 title = { Text(text = stringResource(R.string.app_name)) },
                 actions = {
                     IconButton(
-                        onClick = { onEvent(HomeEvent.AccountClicked) },
+                        onClick = onAccountClick,
                         modifier = Modifier.bounceClick()
                     ) {
                         Icon(
@@ -73,7 +83,7 @@ fun HomeScreen(
                         )
                     }
                     IconButton(
-                        onClick = { onEvent(HomeEvent.SettingsClicked) },
+                        onClick = onSettingsClick,
                         modifier = Modifier.bounceClick()
                     ) {
                         Icon(
@@ -99,7 +109,7 @@ fun HomeScreen(
                     if (state.showFullScreenError) {
                         ErrorScreen(
                             error = state.error!!.toErrorInfo(),
-                            onRetry = { onEvent(HomeEvent.Refresh) }
+                            onRetry = onRefresh
                         )
                     } else {
                         HomeScreenSkeleton()
@@ -107,10 +117,15 @@ fun HomeScreen(
                 } else {
                     PullToRefreshBox(
                         isRefreshing = state.isRefreshing,
-                        onRefresh = { onEvent(HomeEvent.Refresh) },
+                        onRefresh = onRefresh,
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        HomeContent(state = state, onEvent = onEvent)
+                        HomeContent(
+                            state = state,
+                            onMovieClick = onMovieClick,
+                            onViewAllClick = onViewAllClick,
+                            onSearchClick = onSearchClick,
+                        )
                     }
                 }
             }
@@ -122,14 +137,19 @@ fun HomeScreen(
  * Displays the main content of the Home screen, including search bar and movie categories.
  */
 @Composable
-private fun HomeContent(state: HomeUiState, onEvent: (HomeEvent) -> Unit) {
+private fun HomeContent(
+    state: HomeUiState,
+    onMovieClick: (Int) -> Unit,
+    onViewAllClick: (MovieCategory) -> Unit,
+    onSearchClick: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
 
-        FakeSearchBar(onClick = { onEvent(HomeEvent.SearchClicked) },
+        FakeSearchBar(onClick = onSearchClick,
             modifier = Modifier.padding(vertical = 16.dp))
 
         // Iterate through movie categories and display them.
@@ -138,8 +158,8 @@ private fun HomeContent(state: HomeUiState, onEvent: (HomeEvent) -> Unit) {
             MovieCategorySection(
                 categoryTitle = category.toLocalizedTitle(),
                 movies = movies,
-                onMovieClick = { movieId -> onEvent(HomeEvent.MovieClicked(movieId)) },
-                onViewAllClick = { onEvent(HomeEvent.ViewAllClicked(category)) }
+                onMovieClick = onMovieClick,
+                onViewAllClick = { onViewAllClick(category) }
             )
         }
 

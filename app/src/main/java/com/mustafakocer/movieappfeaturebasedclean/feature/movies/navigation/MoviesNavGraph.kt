@@ -9,7 +9,6 @@ import com.mustafakocer.movieappfeaturebasedclean.feature.home.presentation.scre
 import com.mustafakocer.movieappfeaturebasedclean.feature.list.presentation.screen.MovieListRoute
 import com.mustafakocer.movieappfeaturebasedclean.feature.search.presentation.screen.SearchRoute
 import com.mustafakocer.movieappfeaturebasedclean.feature.settings.presentation.screen.SettingsRoute
-import com.mustafakocer.movieappfeaturebasedclean.navigation.actions.movies.HomeNavActions
 import com.mustafakocer.movieappfeaturebasedclean.navigation.actions.movies.MovieDetailsNavActions
 import com.mustafakocer.movieappfeaturebasedclean.navigation.actions.movies.MovieListNavActions
 import com.mustafakocer.movieappfeaturebasedclean.navigation.actions.movies.SearchNavActions
@@ -46,34 +45,13 @@ fun NavGraphBuilder.moviesNavGraph(
     ) {
         // Defines the composable for the Home screen destination.
         composable<HomeScreen> {
-            // Architectural Decision: A `NavActions` interface is implemented here as an anonymous
-            // object. This is a form of dependency inversion. The `HomeRoute` composable depends
-            // on the `HomeNavActions` interface, not on the `NavController` directly. This makes
-            // `HomeRoute` more testable and decoupled from the navigation framework's implementation
-            // details. The anonymous object acts as an adapter, translating interface calls into
-            // `navController` actions.
-            val navActions = object : HomeNavActions {
-                override fun navigateToMovieDetails(movieId: Int) {
-                    navController.navigate(MovieDetailsScreen(movieId))
-                }
-
-                override fun navigateToMovieList(categoryEndpoint: String) {
-                    navController.navigate(MovieListScreen(categoryEndpoint))
-                }
-
-                override fun navigateToSearch() {
-                    navController.navigate(SearchScreen)
-                }
-
-                override fun navigateToSettings() {
-                    navController.navigate(SettingsScreen)
-                }
-
-                override fun navigateToAccount() {
-                    navController.navigate(AccountScreen)
-                }
-            }
-            HomeRoute(navActions = navActions)
+            HomeRoute(
+                onNavigateToMovieDetails = { navController.navigate(MovieDetailsScreen(it)) },
+                onNavigateToMovieList = { navController.navigate(MovieListScreen(it)) },
+                onNavigateToSearch = { navController.navigate(SearchScreen) },
+                onNavigateToSettings = { navController.navigate(SettingsScreen) },
+                onNavigateToAccount = { navController.navigate(AccountScreen) },
+            )
         }
 
         composable<MovieListScreen> {
