@@ -2,9 +2,7 @@ package com.mustafakocer.movieappfeaturebasedclean.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mustafakocer.core_preferences.models.LanguagePreference
 import com.mustafakocer.core_preferences.models.ThemePreference
-import com.mustafakocer.core_preferences.repository.LanguageRepository
 import com.mustafakocer.core_preferences.repository.ThemeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -16,18 +14,16 @@ import kotlinx.coroutines.flow.stateIn
  * A top-level ViewModel for the main application container (e.g., `MainActivity`).
  *
  * Architectural Decision: This ViewModel's primary responsibility is to hold and expose global,
- * application-wide UI state that affects the entire app, such as the current theme and language.
+ * application-wide UI state that affects the entire app, such as the current theme.
  * By providing this state from a central, lifecycle-aware location, the root UI layer can
  * reactively update the app's appearance and configuration without needing to manage this state itself.
  * This is a clean way to handle cross-cutting concerns that don't belong to any single feature.
  *
  * @param themeRepository The repository for managing theme preferences.
- * @param languageRepository The repository for managing language preferences.
  */
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val themeRepository: ThemeRepository,
-    private val languageRepository: LanguageRepository,
 ) : ViewModel() {
 
     /**

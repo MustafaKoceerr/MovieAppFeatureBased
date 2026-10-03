@@ -2,7 +2,6 @@ package com.mustafakocer.movieappfeaturebasedclean.presentation
 
 import app.cash.turbine.test
 import com.mustafakocer.core_preferences.models.ThemePreference
-import com.mustafakocer.core_preferences.repository.LanguageRepository
 import com.mustafakocer.core_preferences.repository.ThemeRepository
 import com.mustafakocer.movieappfeaturebasedclean.presentation.viewmodel.MainViewModel
 import com.mustafakocer.movieappfeaturebasedclean.testutil.MainDispatcherRule
@@ -25,10 +24,7 @@ class MainViewModelTest {
             if (invocation.method.name == "getThemeFlow") themeFlow else null
         }
 
-    private val languageRepository: LanguageRepository =
-        Mockito.mock(LanguageRepository::class.java)
-
-    private fun createViewModel() = MainViewModel(themeRepository, languageRepository)
+    private fun createViewModel() = MainViewModel(themeRepository)
 
     @Test
     fun `theme state follows the stored theme preference`() = runTest {
