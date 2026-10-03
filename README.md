@@ -182,6 +182,7 @@ Movie Discovery App allows users to explore, search, and discover movies with a 
 - Language & API key as interceptors for network requests; secrets are redacted from debug logs
 - Enum-based language architecture: add a new language with a single line
 - Unit tests for every ViewModel, repository and mapper (coroutines-test, Turbine, Mockito, paging-testing) plus the network helpers
+- Compose UI tests for the main screens (Robolectric, run on the JVM: no emulator needed)
 - Shimmer loading animation for all network-fetched data (user always sees a polished loading state)
 - Smooth transitions between screens and UI states
 
@@ -197,7 +198,7 @@ Movie Discovery App allows users to explore, search, and discover movies with a 
 - **DataStore** (Preferences) `1.1.7`
 - **Kotlin Coroutines & Flow** (Async, reactive) `1.9.0`
 - **Coil** (Image loading) `3.2.0`
-- **JUnit** `4.13.2`, **Mockito** `5.20.0`, **Turbine** `1.0.0`, **kotlinx-coroutines-test**, **paging-testing** (Testing)
+- **JUnit** `4.13.2`, **Mockito** `5.20.0`, **Turbine** `1.0.0`, **kotlinx-coroutines-test**, **paging-testing**, **Robolectric** + **Compose UI test** (Testing)
 
 ---
 
@@ -257,6 +258,7 @@ feature/details/
    ./gradlew assembleDebug
    ./gradlew testDebugUnitTest
    ```
+   Tests run with a fixed English locale (set in `app/build.gradle.kts`), so they behave the same on every machine.
 
 ---
 
@@ -270,7 +272,7 @@ feature/details/
 - 🔜 **Profile feature** *(planned)*
 - 🔜 **Push notifications** *(planned)*
 - 🔜 **Favorites and rating feature for logged-in users** *(planned)*
-- 🔜 **Compose UI tests** *(planned)*
+- ✅ **Compose UI tests** *(Robolectric; on-device instrumented tests are still planned)*
 - ✅ **Per-app language via `AppCompatDelegate.setApplicationLocales`** *(no blocking read at startup)*
 - 🔜 **Onboarding flow with ViewPager2** *(planned)*
 

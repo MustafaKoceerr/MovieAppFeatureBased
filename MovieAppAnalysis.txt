@@ -116,12 +116,13 @@ Cozuldu:
   B6  local.properties/API_KEY guvenli okunuyor; build config tekrarlari, cift room, safeargs, catalog duzeni.
   B7  Log'larda api_key/session_id/request_token maskeleniyor; AuthCallbackActivity Log.d kaldirildi.
   B8  SettingsContact/ListContract ve KEY_* sabitleri silindi.
-  B9  Tum ViewModel'ler + log maskeleme + hata eslemesi icin unit test; 6 yeni ekran icin @Preview.
+  B9  Tum ViewModel'ler, repository'ler, mapper'lar + log maskeleme + hata eslemesi icin unit test; ana ekranlar icin Compose UI testi; 6 yeni ekran icin @Preview.
 
 Acik kalanlar:
   - (Cozuldu, fix/per-app-locale) MainActivity runBlocking: AppCompatDelegate.setApplicationLocales'e gecildi;
     dil Application.onCreate'te DataStore'dan asenkron uygulaniyor. Cihazda dogrulanmadi.
-  - Compose UI testleri (tum ViewModel'ler, repository'ler, mapper'lar ve core-data yardimcilari unit testli: 102 test).
+  - Cihaz/emulator uzerinde instrumented testler (Compose UI testleri Robolectric ile JVM'de yazildi: 44 test;
+    gercek GPU/animasyon/ekran goruntusu dogrulamasi yok). Toplam 153 test.
   - (Cozuldu, fix/language-provider) LanguageProvider artik onbellek tutmuyor, her seferinde kayitli dili okuyor:
     acilista bos dil ve dil degisince eski dille istek gitme yarisi kalmadi (LanguageProviderTest). Cihazda dogrulanmadi.
   - Release build'de proguard/R8 kurallari test edilmedi (isMinifyEnabled=true).

@@ -14,6 +14,7 @@ appcompat = "1.7.1"
 hilt = "2.56.2"
 hilt-navigation-compose = "1.2.0"
 mockitoCore = "5.20.0"
+robolectric = "4.16"
 navigation = "2.8.4"
 room = "2.6.1"
 paging = "3.2.1"
@@ -92,6 +93,7 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 # UI Tests
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 
 # Unit Tests

@@ -114,6 +114,11 @@ android {
         unitTests {
             // android.util.Log etc. return defaults instead of throwing in JVM unit tests.
             isReturnDefaultValues = true
+            // Compose UI tests (Robolectric) need the app resources (strings, drawables).
+            isIncludeAndroidResources = true
+            // Fixed English locale: makes string assertions deterministic and avoids the Turkish-locale
+            // "WINDOWS".lowercase() -> "wındows" bug that stops Robolectric's native libs from loading.
+            all { it.jvmArgs("-Duser.language=en", "-Duser.country=US") }
         }
     }
 }
@@ -152,6 +157,9 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
     testImplementation(libs.paging.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
